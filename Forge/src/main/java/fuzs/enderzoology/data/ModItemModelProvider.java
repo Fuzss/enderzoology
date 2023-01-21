@@ -21,6 +21,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         this.spawnEgg(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get());
+        this.spawnEgg(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get());
     }
 
     public ItemModelBuilder spawnEgg(Item item) {

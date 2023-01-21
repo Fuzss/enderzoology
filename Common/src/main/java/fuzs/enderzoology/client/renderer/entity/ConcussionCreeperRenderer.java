@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.Creeper;
 
 public class ConcussionCreeperRenderer extends CreeperRenderer {
-    private static final ResourceLocation CREEPER_LOCATION = EnderZoology.id("textures/entity/creeper/concussion_creeper.png");
+    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/creeper/concussion_creeper.png");
 
     public ConcussionCreeperRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -15,6 +15,6 @@ public class ConcussionCreeperRenderer extends CreeperRenderer {
 
     @Override
     public ResourceLocation getTextureLocation(Creeper entity) {
-        return CREEPER_LOCATION;
+        return TEXTURE_LOCATION;
     }
 }

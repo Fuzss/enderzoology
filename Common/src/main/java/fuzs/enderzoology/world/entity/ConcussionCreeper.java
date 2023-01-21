@@ -12,10 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Fox;
@@ -41,7 +38,7 @@ public class ConcussionCreeper extends Creeper {
         return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.25);
     }
 
-    public static boolean randomTeleport(ServerLevel level, LivingEntity entity, int teleportRange, int maxAttempts) {
+    public static boolean teleportEntity(ServerLevel level, LivingEntity entity, int teleportRange, int maxAttempts) {
         for (int i = 0; i < maxAttempts; ++i) {
             double randomX = entity.getX() + (entity.getRandom().nextDouble() - 0.5) * teleportRange * 2;
             double randomY = Mth.clamp(entity.getY() + (entity.getRandom().nextInt(teleportRange * 2) - teleportRange), level.getMinBuildHeight(), level.getMinBuildHeight() + level.getLogicalHeight() - 1);
@@ -49,6 +46,7 @@ public class ConcussionCreeper extends Creeper {
             if (entity.isPassenger()) entity.stopRiding();
             Vec3 vec3 = entity.position();
             if (entity.randomTeleport(randomX, randomY, randomZ, true)) {
+                if (entity instanceof Mob mob) mob.getNavigation().stop();
                 level.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(entity));
                 SoundEvent soundEvent = entity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
                 level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), soundEvent, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -106,7 +104,7 @@ public class ConcussionCreeper extends Creeper {
             explosionRadius *= 1.5F;
             AABB aabb = new AABB(this.getX() - explosionRadius, this.getY() - explosionRadius, this.getZ() - explosionRadius, this.getX() + explosionRadius, this.getY() + explosionRadius, this.getZ() + explosionRadius);
             this.level.getEntitiesOfClass(LivingEntity.class, aabb, Predicate.not(Entity::isRemoved)).forEach(entity -> {
-                if (randomTeleport((ServerLevel) this.level, entity, 24, 20)) {
+                if (teleportEntity((ServerLevel) this.level, entity, 24, 20)) {
                     entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1));
                 }
             });

@@ -1,5 +1,7 @@
 {
   "entity.enderzoology.concussion_creeper": "Concussion Creeper",
+  "entity.enderzoology.ender_infested_zombie": "Ender-Infested Zombie",
   "item.enderzoology.concussion_creeper_spawn_egg": "Concussion Creeper Spawn Egg",
+  "item.enderzoology.ender_infested_zombie_spawn_egg": "Ender-Infested Zombie Spawn Egg",
   "itemGroup.enderzoology.main": "Ender Zoology"
 }

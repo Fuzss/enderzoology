@@ -15,6 +15,8 @@ public class ModLanguageProvider extends LanguageProvider {
     protected void addTranslations() {
         this.add("itemGroup.enderzoology.main", EnderZoology.MOD_NAME);
         this.add(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get(), "Concussion Creeper Spawn Egg");
+        this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get(), "Ender-Infested Zombie Spawn Egg");
         this.add(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), "Concussion Creeper");
+        this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Ender-Infested Zombie");
     }
 }
