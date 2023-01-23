@@ -2,6 +2,7 @@ package fuzs.enderzoology.world.entity.item;
 
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.level.EnderExplosion;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.entity.EntityType;
@@ -12,6 +13,8 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class PrimedCharge extends PrimedTnt {
+    public static final String TAG_ENTITY_INTERACTION = "EntityInteraction";
+
     @Nullable
     private LivingEntity owner;
     private EnderExplosion.EntityInteraction entityInteraction;
@@ -50,6 +53,18 @@ public class PrimedCharge extends PrimedTnt {
     @Override
     public LivingEntity getOwner() {
         return this.owner;
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putByte(TAG_ENTITY_INTERACTION, (byte) this.entityInteraction.ordinal());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.entityInteraction = EnderExplosion.EntityInteraction.values()[compound.getByte(TAG_ENTITY_INTERACTION)];
     }
 
     public EnderExplosion.EntityInteraction getEntityInteraction() {

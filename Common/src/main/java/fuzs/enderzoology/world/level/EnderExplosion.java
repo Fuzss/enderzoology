@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -87,7 +86,7 @@ public class EnderExplosion extends Explosion {
                 }
             }
         }
-        entities.removeIf(entity -> !(entities instanceof PrimedTnt));
+        entities.removeIf(entity -> !(entity instanceof PrimedTnt));
     }
 
     public static boolean teleportEntity(ServerLevel level, LivingEntity entity, int teleportRange, boolean endermiteChance) {
@@ -100,7 +99,7 @@ public class EnderExplosion extends Explosion {
             if (entity.randomTeleport(randomX, randomY, randomZ, true)) {
                 level.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(entity));
                 SoundEvent soundEvent = getEntityTeleportSound(entity);
-                level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), soundEvent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), soundEvent, entity.getSoundSource(), 1.0F, 1.0F);
                 entity.playSound(soundEvent, 1.0F, 1.0F);
                 if (endermiteChance && level.random.nextFloat() < 0.05F && level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
                     Endermite endermite = EntityType.ENDERMITE.create(level);

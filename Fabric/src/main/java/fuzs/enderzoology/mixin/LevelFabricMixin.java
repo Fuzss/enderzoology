@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 @Mixin(Level.class)
-abstract class LevelMixin {
+abstract class LevelFabricMixin {
     @Nullable
     @Unique
     private Explosion enderzoology$ongoingExplosion;

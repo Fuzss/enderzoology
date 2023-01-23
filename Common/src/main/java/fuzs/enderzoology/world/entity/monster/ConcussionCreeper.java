@@ -8,6 +8,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +26,15 @@ public class ConcussionCreeper extends Creeper implements EnderEnemy {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.25);
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        // store to list to avoid ConcurrentModificationException on goalSelector,
+        // also limit to 2 to hopefully just catch the first two entries from vanilla and not mess with other mods that might add their avoid entity goals to creepers
+        this.goalSelector.getAvailableGoals().stream().map(WrappedGoal::getGoal).filter(goal -> goal instanceof AvoidEntityGoal<?>).limit(2).toList().forEach(this.goalSelector::removeGoal);
+        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Enderminy.class, 6.0F, 1.0, 1.2));
     }
 
     @Override

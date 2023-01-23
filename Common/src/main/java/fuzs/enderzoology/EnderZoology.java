@@ -4,6 +4,7 @@ import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.entity.monster.ConcussionCreeper;
 import fuzs.enderzoology.world.entity.monster.EnderInfestedZombie;
+import fuzs.enderzoology.world.entity.monster.Enderminy;
 import fuzs.enderzoology.world.entity.projectile.ThrownOwlEgg;
 import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
@@ -36,6 +37,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
+import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
 
 public class EnderZoology implements ModConstructor {
     public static final String MOD_ID = "enderzoology";
@@ -88,28 +91,35 @@ public class EnderZoology implements ModConstructor {
     public void onEntityAttributeCreation(EntityAttributesCreateContext context) {
         context.registerEntityAttributes(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), ConcussionCreeper.createAttributes());
         context.registerEntityAttributes(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), EnderInfestedZombie.createAttributes());
+        context.registerEntityAttributes(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), Enderminy.createAttributes());
     }
 
     @Override
     public void onRegisterSpawnPlacements(SpawnPlacementsContext context) {
         context.registerSpawnPlacement(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        context.registerSpawnPlacement(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkEnderInfestedZombieSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
     }
 
     @Override
     public void onRegisterBiomeModifications(BiomeModificationsContext context) {
-        context.register(BiomeLoadingPhase.ADDITIONS, biomeLoadingContext -> {
-            return biomeLoadingContext.canGenerateIn(LevelStem.OVERWORLD);
+        context.register(BiomeLoadingPhase.ADDITIONS, loadingContext -> {
+            return loadingContext.canGenerateIn(LevelStem.OVERWORLD);
         }, biomeModificationContext -> {
-            registerSimilarSpawn(biomeModificationContext.mobSpawnSettings(), MobCategory.MONSTER, EntityType.CREEPER, ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get());
-            registerSimilarSpawn(biomeModificationContext.mobSpawnSettings(), MobCategory.MONSTER, EntityType.ZOMBIE, ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get());
+            MobSpawnSettingsContext settings = biomeModificationContext.mobSpawnSettings();
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), data.getWeight().asInt() / 4, data.minCount / 4, data.maxCount));
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), data.getWeight().asInt() / 4, data.minCount / 4, data.maxCount));
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ENDERMAN, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), data.getWeight().asInt() * 3, Math.min(data.maxCount, data.minCount * 4), data.maxCount));
         });
     }
 
-    private static void registerSimilarSpawn(MobSpawnSettingsContext spawnSettings, MobCategory mobCategory, EntityType<?> vanillaEntityType, EntityType<?> modEntityType) {
+    private static void registerSpawnData(MobSpawnSettingsContext spawnSettings, MobCategory mobCategory, EntityType<?> vanillaEntityType, Function<MobSpawnSettings.SpawnerData, MobSpawnSettings.SpawnerData> factory) {
         Optional<MobSpawnSettings.SpawnerData> optionalSpawnerData = spawnSettings.getSpawnerData(mobCategory).stream().filter(data -> data.type == vanillaEntityType).findAny();
-        optionalSpawnerData.ifPresent(spawnerData -> spawnSettings.addSpawn(mobCategory, new MobSpawnSettings.SpawnerData(modEntityType, spawnerData.getWeight().asInt() / 4, spawnerData.minCount / 4, spawnerData.maxCount)));
+        optionalSpawnerData.ifPresent(data -> spawnSettings.addSpawn(mobCategory, factory.apply(data)));
+    }
+
+    private static void registerSpawnCost(MobSpawnSettingsContext spawnSettings, EntityType<?> vanillaEntityType, EntityType<?> modEntityType, DoubleUnaryOperator chargeConverter, DoubleUnaryOperator energyBudgetConverter) {
         Optional<MobSpawnSettings.MobSpawnCost> optionalMobSpawnCost = Optional.ofNullable(spawnSettings.getSpawnCost(vanillaEntityType));
-        optionalMobSpawnCost.ifPresent(mobSpawnCost -> spawnSettings.setSpawnCost(modEntityType, mobSpawnCost.getCharge(), mobSpawnCost.getEnergyBudget()));
+        optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType, chargeConverter.applyAsDouble(cost.getCharge()), energyBudgetConverter.applyAsDouble(cost.getEnergyBudget())));
     }
 }

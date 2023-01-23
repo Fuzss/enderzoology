@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import java.util.List;
 
 @Mixin(Explosion.class)
-abstract class ExplosionMixin {
+abstract class ExplosionFabricMixin {
     @Shadow
     @Final
     private Level level;

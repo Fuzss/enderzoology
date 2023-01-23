@@ -24,12 +24,12 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 @Mixin(ServerLevel.class)
-abstract class ServerLevelMixin extends Level {
+abstract class ServerLevelFabricMixin extends Level {
     @Nullable
     @Unique
     private Explosion enderzoology$ongoingServerExplosion;
 
-    protected ServerLevelMixin(WritableLevelData writableLevelData, ResourceKey<Level> resourceKey, Holder<DimensionType> holder, Supplier<ProfilerFiller> supplier, boolean bl, boolean bl2, long l, int i) {
+    protected ServerLevelFabricMixin(WritableLevelData writableLevelData, ResourceKey<Level> resourceKey, Holder<DimensionType> holder, Supplier<ProfilerFiller> supplier, boolean bl, boolean bl2, long l, int i) {
         super(writableLevelData, resourceKey, holder, supplier, bl, bl2, l, i);
     }
 
