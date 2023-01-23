@@ -99,6 +99,18 @@
             }
           ],
           "name": "minecraft:potato"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "enchantments": [
+                "enderzoology:repellent"
+              ],
+              "function": "minecraft:enchant_randomly"
+            }
+          ],
+          "name": "minecraft:book"
         }
       ],
       "rolls": 1.0

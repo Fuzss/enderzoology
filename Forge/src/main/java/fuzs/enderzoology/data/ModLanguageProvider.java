@@ -25,10 +25,12 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get(), "Concussion Creeper Spawn Egg");
         this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get(), "Ender-Infested Zombie Spawn Egg");
         this.add(ModRegistry.ENDERMINY_SPAWN_EGG_ITEM.get(), "Enderminy Spawn Egg");
+        this.add(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get(), "Dire Wolf Spawn Egg");
         this.add(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), "Thrown Owl Egg");
         this.add(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), "Concussion Creeper");
         this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Ender-Infested Zombie");
         this.add(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), "Enderminy");
+        this.add(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), "Dire Wolf");
         this.add(ModRegistry.DECAY_ENCHANTMENT.get(), "Decay");
         this.add(ModRegistry.REPELLENT_ENCHANTMENT.get(), "Repellent");
         this.add(ModRegistry.SOULBOUND_ENCHANTMENT.get(), "Soulbound");
@@ -49,5 +51,12 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add("item.minecraft.lingering_potion.effect.decay", "Lingering Potion of Decay");
         this.add("item.minecraft.lingering_potion.effect.confusion", "Lingering Potion of Confusion");
         this.add("item.minecraft.lingering_potion.effect.rising", "Lingering Potion of Rising");
+        this.add("subtitles.entity.dire_wolf.hurt", "Dire Wolf hurts");
+        this.add("subtitles.entity.dire_wolf.death", "Dire Wolf dies");
+        this.add("subtitles.entity.dire_wolf.growl", "Dire Wolf growls");
+        this.add("subtitles.entity.dire_wolf.howl", "Dire Wolf howls");
+        this.add("subtitles.entity.owl.hoot_double", "Owl hoots");
+        this.add("subtitles.entity.owl.hoot_single", "Owl hoots");
+        this.add("subtitles.entity.owl.hurt", "Owl hurts");
     }
 }

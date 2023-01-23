@@ -1,9 +1,6 @@
 package fuzs.enderzoology.client;
 
-import fuzs.enderzoology.client.renderer.entity.ChargeRenderer;
-import fuzs.enderzoology.client.renderer.entity.ConcussionCreeperRenderer;
-import fuzs.enderzoology.client.renderer.entity.EnderInfestedZombieRenderer;
-import fuzs.enderzoology.client.renderer.entity.EnderminyRenderer;
+import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.puzzleslib.client.core.ClientModConstructor;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -18,6 +15,7 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), ConcussionCreeperRenderer::new);
         context.registerEntityRenderer(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), EnderInfestedZombieRenderer::new);
         context.registerEntityRenderer(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), EnderminyRenderer::new);
+        context.registerEntityRenderer(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolfRenderer::new);
     }
 
     @Override

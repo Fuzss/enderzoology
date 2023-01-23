@@ -3,6 +3,7 @@ package fuzs.enderzoology;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.entity.monster.ConcussionCreeper;
+import fuzs.enderzoology.world.entity.monster.DireWolf;
 import fuzs.enderzoology.world.entity.monster.EnderInfestedZombie;
 import fuzs.enderzoology.world.entity.monster.Enderminy;
 import fuzs.enderzoology.world.entity.projectile.ThrownOwlEgg;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -38,6 +40,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
@@ -103,6 +106,7 @@ public class EnderZoology implements ModConstructor {
         context.registerEntityAttributes(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), ConcussionCreeper.createAttributes());
         context.registerEntityAttributes(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), EnderInfestedZombie.createAttributes());
         context.registerEntityAttributes(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), Enderminy.createAttributes());
+        context.registerEntityAttributes(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolf.createAttributes());
     }
 
     @Override
@@ -110,23 +114,32 @@ public class EnderZoology implements ModConstructor {
         context.registerSpawnPlacement(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         context.registerSpawnPlacement(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
         context.registerSpawnPlacement(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkDireWolfSpawnRules);
     }
 
     @Override
     public void onRegisterBiomeModifications(BiomeModificationsContext context) {
         context.register(BiomeLoadingPhase.ADDITIONS, loadingContext -> {
             return loadingContext.canGenerateIn(LevelStem.OVERWORLD);
-        }, biomeModificationContext -> {
-            MobSpawnSettingsContext settings = biomeModificationContext.mobSpawnSettings();
-            registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), data.getWeight().asInt() / 4, data.minCount / 4, data.maxCount));
-            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), data.getWeight().asInt() / 4, data.minCount / 4, data.maxCount));
+        }, modificationContext -> {
+            MobSpawnSettingsContext settings = modificationContext.mobSpawnSettings();
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), Math.max(1, data.minCount / 4), data.maxCount));
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), Math.max(1, data.minCount / 4), data.maxCount));
             registerSpawnData(settings, MobCategory.MONSTER, EntityType.ENDERMAN, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), data.getWeight().asInt() * 3, Math.min(data.maxCount, data.minCount * 4), data.maxCount));
+            if (modificationContext.climateSettings().getPrecipitation() == Biome.Precipitation.SNOW) {
+                findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {
+                    settings.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 2, 6));
+                });
+            }
         });
     }
 
-    private static void registerSpawnData(MobSpawnSettingsContext spawnSettings, MobCategory mobCategory, EntityType<?> vanillaEntityType, Function<MobSpawnSettings.SpawnerData, MobSpawnSettings.SpawnerData> factory) {
-        Optional<MobSpawnSettings.SpawnerData> optionalSpawnerData = spawnSettings.getSpawnerData(mobCategory).stream().filter(data -> data.type == vanillaEntityType).findAny();
-        optionalSpawnerData.ifPresent(data -> spawnSettings.addSpawn(mobCategory, factory.apply(data)));
+    private static void registerSpawnData(MobSpawnSettingsContext settings, MobCategory category, EntityType<?> vanillaEntityType, Function<MobSpawnSettings.SpawnerData, MobSpawnSettings.SpawnerData> factory) {
+        findVanillaSpawnData(settings, category, vanillaEntityType).ifPresent(data -> settings.addSpawn(category, factory.apply(data)));
+    }
+
+    private static Optional<MobSpawnSettings.SpawnerData> findVanillaSpawnData(MobSpawnSettingsContext settings, MobCategory category, EntityType<?> entityType) {
+        return settings.getSpawnerData(category).stream().filter(data -> data.type == entityType).findAny();
     }
 
     private static void registerSpawnCost(MobSpawnSettingsContext spawnSettings, EntityType<?> vanillaEntityType, EntityType<?> modEntityType, DoubleUnaryOperator chargeConverter, DoubleUnaryOperator energyBudgetConverter) {

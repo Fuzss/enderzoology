@@ -22,6 +22,7 @@ public class ModRegistryForge {
     public static final RegistryReference<Item> CONCUSSION_CREEPER_SPAWN_EGG_ITEM = REGISTRY.registerItem("concussion_creeper_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE::get, 5701518, 16714274, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM = REGISTRY.registerItem("ender_infested_zombie_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE::get, 1257301, 2829596, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> ENDERMINY_SPAWN_EGG_ITEM = REGISTRY.registerItem("enderminy_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.ENDERMINY_ENTITY_TYPE::get, 0x27624D, 0x212121, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
+    public static final RegistryReference<Item> DIRE_WOLF_SPAWN_EGG_ITEM = REGISTRY.registerItem("dire_wolf_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.DIRE_WOLF_ENTITY_TYPE::get, 0x606060, 0xA0A0A0, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
 
     public static void touch() {
 
