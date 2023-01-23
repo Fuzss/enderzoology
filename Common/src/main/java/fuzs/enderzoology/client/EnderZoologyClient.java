@@ -27,14 +27,14 @@ public class EnderZoologyClient implements ClientModConstructor {
 
     @Override
     public void onRegisterItemModelProperties(ItemModelPropertiesContext context) {
-        context.registerItem(ModRegistry.GUARDIANS_BOW_ITEM.get(), new ResourceLocation("pull"), (stack, level, entity, data) -> {
+        context.registerItem(ModRegistry.HUNTING_BOW.get(), new ResourceLocation("pull"), (stack, level, entity, data) -> {
             if (entity == null) {
                 return 0.0F;
             } else {
                 return entity.getUseItem() != stack ? 0.0F : (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
             }
         });
-        context.registerItem(ModRegistry.GUARDIANS_BOW_ITEM.get(), new ResourceLocation("pulling"), (stack, level, entity, data) -> {
+        context.registerItem(ModRegistry.HUNTING_BOW.get(), new ResourceLocation("pulling"), (stack, level, entity, data) -> {
             return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
         });
     }

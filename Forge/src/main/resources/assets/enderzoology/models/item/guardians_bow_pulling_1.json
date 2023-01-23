@@ -1,6 +1,0 @@
-{
-    "parent": "enderzoology:item/guardians_bow",
-    "textures": {
-        "layer0": "enderzoology:item/guardians_bow_pulling_1"
-    }
-}

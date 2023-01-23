@@ -10,6 +10,7 @@ import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
 import fuzs.puzzleslib.api.biome.v1.MobSpawnSettingsContext;
 import fuzs.puzzleslib.core.ModConstructor;
+import fuzs.puzzleslib.init.PotionBrewingRegistry;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
@@ -26,6 +27,8 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
@@ -68,6 +71,14 @@ public class EnderZoology implements ModConstructor {
         registerChargeBehavior(ModRegistry.ENDER_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.ENDER);
         registerChargeBehavior(ModRegistry.CONFUSING_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.CONFUSION);
         registerChargeBehavior(ModRegistry.CONCUSSION_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.CONCUSSION);
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.WITHERING_DUST_ITEM.get(), ModRegistry.DECAY_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.REDSTONE, ModRegistry.LONG_DECAY_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_DECAY_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.CONFUSING_POWDER_ITEM.get(), ModRegistry.CONFUSION_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.CONFUSION_POTION.get(), Items.REDSTONE, ModRegistry.LONG_CONFUSION_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.CONFUSION_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_CONFUSION_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.OWL_EGG_ITEM.get(), ModRegistry.RISING_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.RISING_POTION.get(), Items.REDSTONE, ModRegistry.LONG_RISING_POTION.get());
     }
 
     private static void registerChargeBehavior(Block block, EnderExplosion.EntityInteraction entityInteraction) {

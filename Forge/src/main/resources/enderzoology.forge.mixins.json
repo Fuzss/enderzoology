@@ -5,9 +5,7 @@
   "package": "fuzs.enderzoology.mixin",
   "refmap": "enderzoology.refmap.json",
   "mixins": [
-    "PlayerMixin",
-    "VillagerHostilesSensorMixin",
-    "accessor.CreeperAccessor"
+    "BowItemForgeMixin"
   ],
   "client": [
   ],

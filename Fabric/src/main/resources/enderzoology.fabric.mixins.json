@@ -5,6 +5,7 @@
   "package": "fuzs.enderzoology.mixin",
   "refmap": "enderzoology.refmap.json",
   "mixins": [
+    "BowItemFabricMixin",
     "ExplosionFabricMixin",
     "LevelFabricMixin",
     "ServerLevelFabricMixin"
