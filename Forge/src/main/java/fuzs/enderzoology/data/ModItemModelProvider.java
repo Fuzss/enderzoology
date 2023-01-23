@@ -14,12 +14,17 @@ import java.util.Objects;
 
 public class ModItemModelProvider extends ItemModelProvider {
 
-    public ModItemModelProvider(DataGenerator dataGenerator, String modId, ExistingFileHelper existingFileHelper) {
-        super(dataGenerator, modId, existingFileHelper);
+    public ModItemModelProvider(DataGenerator dataGenerator, String modId, ExistingFileHelper fileHelper) {
+        super(dataGenerator, modId, fileHelper);
     }
 
     @Override
     protected void registerModels() {
+        this.basicItem(ModRegistry.CONFUSING_POWDER_ITEM.get());
+        this.basicItem(ModRegistry.ENDER_FRAGMENT_ITEM.get());
+        this.basicItem(ModRegistry.GUARDIANS_BOW_ITEM.get());
+        this.basicItem(ModRegistry.OWL_EGG_ITEM.get());
+        this.basicItem(ModRegistry.WITHERING_DUST_ITEM.get());
         this.spawnEgg(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get());
     }

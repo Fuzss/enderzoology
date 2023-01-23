@@ -1,8 +1,6 @@
 package fuzs.enderzoology;
 
-import fuzs.enderzoology.data.ModItemModelProvider;
-import fuzs.enderzoology.data.ModLanguageProvider;
-import fuzs.enderzoology.data.ModLootTableProvider;
+import fuzs.enderzoology.data.*;
 import fuzs.enderzoology.init.ModRegistryForge;
 import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.puzzleslib.core.CommonFactories;
@@ -35,10 +33,13 @@ public class EnderZoologyForge {
 
     @SubscribeEvent
     public static void onGatherData(final GatherDataEvent evt) {
-        DataGenerator generator = evt.getGenerator();
-        ExistingFileHelper existingFileHelper = evt.getExistingFileHelper();
-        generator.addProvider(true, new ModLanguageProvider(generator, EnderZoology.MOD_ID));
-        generator.addProvider(true, new ModLootTableProvider(generator, EnderZoology.MOD_ID));
-        generator.addProvider(true, new ModItemModelProvider(generator, EnderZoology.MOD_ID, existingFileHelper));
+        DataGenerator dataGenerator = evt.getGenerator();
+        ExistingFileHelper fileHelper = evt.getExistingFileHelper();
+        dataGenerator.addProvider(true, new ModBlockStateProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
+        dataGenerator.addProvider(true, new ModEntityTypeTagsProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
+        dataGenerator.addProvider(true, new ModItemModelProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
+        dataGenerator.addProvider(true, new ModLanguageProvider(dataGenerator, EnderZoology.MOD_ID));
+        dataGenerator.addProvider(true, new ModLootTableProvider(dataGenerator, EnderZoology.MOD_ID));
+        dataGenerator.addProvider(true, new ModRecipeProvider(dataGenerator, EnderZoology.MOD_ID));
     }
 }

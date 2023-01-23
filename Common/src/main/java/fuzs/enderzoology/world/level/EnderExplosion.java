@@ -46,6 +46,10 @@ public class EnderExplosion extends Explosion {
         this.entityInteraction = entityInteraction;
     }
 
+    public static Explosion explode(Level level, @Nullable Entity exploder, double x, double y, double z, float size, Explosion.BlockInteraction mode, EntityInteraction entityInteraction) {
+        return explode(level, exploder, null, null, x, y, z, size, false, mode, entityInteraction);
+    }
+
     public static Explosion explode(Level level, @Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Explosion.BlockInteraction mode, EntityInteraction entityInteraction) {
         Explosion explosion = new EnderExplosion(level, exploder, damageSource, context, x, y, z, size, causesFire, mode, entityInteraction);
         if (CommonAbstractions.INSTANCE.onExplosionStart(level, explosion)) return explosion;

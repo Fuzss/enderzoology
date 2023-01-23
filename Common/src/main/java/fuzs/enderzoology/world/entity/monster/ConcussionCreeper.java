@@ -69,7 +69,7 @@ public class ConcussionCreeper extends Creeper implements EnderEnemy {
             Explosion.BlockInteraction blockInteraction = this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
             float poweredMultiplier = this.isPowered() ? 2.0F : 1.0F;
             float explosionRadius = ((CreeperAccessor) this).enderzoology$getExplosionRadius() * poweredMultiplier;
-            EnderExplosion.explode(this.level, this, null, null, this.getX(), this.getY(), this.getZ(), explosionRadius, false, blockInteraction, EnderExplosion.EntityInteraction.CONCUSSION);
+            EnderExplosion.explode(this.level, this, this.getX(), this.getY(), this.getZ(), explosionRadius, blockInteraction, EnderExplosion.EntityInteraction.CONCUSSION);
             this.discard();
         }
     }
