@@ -12,21 +12,25 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class ConcussionCreeper extends Creeper {
 
@@ -46,11 +50,15 @@ public class ConcussionCreeper extends Creeper {
             if (entity.isPassenger()) entity.stopRiding();
             Vec3 vec3 = entity.position();
             if (entity.randomTeleport(randomX, randomY, randomZ, true)) {
-                if (entity instanceof Mob mob) mob.getNavigation().stop();
                 level.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(entity));
                 SoundEvent soundEvent = entity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
                 level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), soundEvent, SoundSource.PLAYERS, 1.0F, 1.0F);
                 entity.playSound(soundEvent, 1.0F, 1.0F);
+                if (level.random.nextFloat() < 0.05F && level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
+                    Endermite endermite = EntityType.ENDERMITE.create(level);
+                    endermite.moveTo(vec3.x, vec3.y, vec3.z, entity.getYRot(), entity.getXRot());
+                    level.addFreshEntity(endermite);
+                }
                 return true;
             }
         }
@@ -103,11 +111,25 @@ public class ConcussionCreeper extends Creeper {
             this.discard();
             explosionRadius *= 1.5F;
             AABB aabb = new AABB(this.getX() - explosionRadius, this.getY() - explosionRadius, this.getZ() - explosionRadius, this.getX() + explosionRadius, this.getY() + explosionRadius, this.getZ() + explosionRadius);
-            this.level.getEntitiesOfClass(LivingEntity.class, aabb, Predicate.not(Entity::isRemoved)).forEach(entity -> {
-                if (teleportEntity((ServerLevel) this.level, entity, 24, 20)) {
-                    entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1));
+            for (LivingEntity entity : this.level.getEntitiesOfClass(LivingEntity.class, aabb, EntitySelector.ENTITY_STILL_ALIVE.and(EntitySelector.NO_SPECTATORS))) {
+                Vec3 entityPosition = entity.position();
+                if (teleportEntity((ServerLevel) this.level, entity, 32, 16)) {
+                    applyConfusionPotion(this.position(), entityPosition, entity, explosionRadius);
                 }
-            });
+            }
+        }
+    }
+
+    public static void applyConfusionPotion(Vec3 sourcePosition, Vec3 entityPosition, LivingEntity entity, float explosionRadius) {
+        if (entity.isAffectedByPotions()) {
+            double distance = sourcePosition.distanceToSqr(entityPosition);
+            if (distance < explosionRadius * explosionRadius) {
+                double multiplier = 1.0 - Math.sqrt(distance) / explosionRadius;
+                int duration = (int) (multiplier * 300.0 + 0.5);
+                if (duration > 20) {
+                    entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1));
+                }
+            }
         }
     }
 
