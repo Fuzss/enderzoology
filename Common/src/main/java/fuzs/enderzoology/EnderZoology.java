@@ -1,8 +1,8 @@
 package fuzs.enderzoology;
 
 import fuzs.enderzoology.init.ModRegistry;
-import fuzs.enderzoology.world.entity.ConcussionCreeper;
-import fuzs.enderzoology.world.entity.EnderInfestedZombie;
+import fuzs.enderzoology.world.entity.monster.ConcussionCreeper;
+import fuzs.enderzoology.world.entity.monster.EnderInfestedZombie;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
 import fuzs.puzzleslib.api.biome.v1.MobSpawnSettingsContext;
 import fuzs.puzzleslib.core.ModConstructor;

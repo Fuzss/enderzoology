@@ -5,6 +5,9 @@
   "package": "fuzs.enderzoology.mixin",
   "refmap": "enderzoology.refmap.json",
   "mixins": [
+    "ExplosionMixin",
+    "LevelMixin",
+    "ServerLevelMixin"
   ],
   "client": [
   ],

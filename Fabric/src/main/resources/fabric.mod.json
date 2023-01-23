@@ -16,7 +16,7 @@
     "sources": "${modPageUrl}"
   },
 
-  "license": "Unlicense",
+  "license": "CC0-1.0",
   "icon": "mod_logo.png",
 
   "environment": "${modFabricEnvironment}",

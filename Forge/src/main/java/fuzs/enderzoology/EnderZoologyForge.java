@@ -4,11 +4,14 @@ import fuzs.enderzoology.data.ModItemModelProvider;
 import fuzs.enderzoology.data.ModLanguageProvider;
 import fuzs.enderzoology.data.ModLootTableProvider;
 import fuzs.enderzoology.init.ModRegistryForge;
+import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.puzzleslib.core.CommonFactories;
 import fuzs.puzzleslib.core.ContentRegistrationFlags;
 import net.minecraft.data.DataGenerator;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -21,6 +24,13 @@ public class EnderZoologyForge {
     public static void onConstructMod(final FMLConstructModEvent evt) {
         CommonFactories.INSTANCE.modConstructor(EnderZoology.MOD_ID, ContentRegistrationFlags.BIOMES).accept(new EnderZoology());
         ModRegistryForge.touch();
+        registerHandlers();
+    }
+
+    private static void registerHandlers() {
+        MinecraftForge.EVENT_BUS.addListener((final ExplosionEvent.Detonate evt) -> {
+            EnderExplosion.onExplosionDetonate(evt.getLevel(), evt.getExplosion(), evt.getAffectedEntities());
+        });
     }
 
     @SubscribeEvent

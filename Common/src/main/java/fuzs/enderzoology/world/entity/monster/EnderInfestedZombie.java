@@ -1,5 +1,6 @@
-package fuzs.enderzoology.world.entity;
+package fuzs.enderzoology.world.entity.monster;
 
+import fuzs.enderzoology.world.level.EnderExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
-public class EnderInfestedZombie extends Zombie {
+public class EnderInfestedZombie extends Zombie implements EnderEnemy {
 
     public EnderInfestedZombie(EntityType<? extends EnderInfestedZombie> entityType, Level level) {
         super(entityType, level);
@@ -64,7 +65,7 @@ public class EnderInfestedZombie extends Zombie {
             // ranges from 0.0 to 6.75 according to Minecraft Wiki
             float localDifficulty = this.level.getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
             if (!this.level.isClientSide && this.random.nextFloat() < localDifficulty / 10.0F) {
-                ConcussionCreeper.teleportEntity((ServerLevel) this.level, (LivingEntity) entity, 8, 16);
+                EnderExplosion.teleportEntity((ServerLevel) this.level, (LivingEntity) entity, 8, false);
             }
         }
         return flag;
@@ -74,7 +75,7 @@ public class EnderInfestedZombie extends Zombie {
     public boolean hurt(DamageSource source, float amount) {
         boolean flag = super.hurt(source, amount);
         if (flag && !this.level.isClientSide && amount > 0.0F && this.random.nextFloat() < 0.1F) {
-            ConcussionCreeper.teleportEntity((ServerLevel) this.level, this, 8, 16);
+            EnderExplosion.teleportEntity((ServerLevel) this.level, this, 8, false);
         }
         return flag;
     }

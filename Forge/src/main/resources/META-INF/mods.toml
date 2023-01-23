@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[${minFMLVersion},)"
-license="Unlicense"
+license="CC0-1.0"
 issueTrackerURL="${modIssueUrl}"
 
 [[mods]]

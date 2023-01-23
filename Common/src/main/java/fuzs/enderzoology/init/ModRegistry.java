@@ -1,8 +1,8 @@
 package fuzs.enderzoology.init;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.world.entity.ConcussionCreeper;
-import fuzs.enderzoology.world.entity.EnderInfestedZombie;
+import fuzs.enderzoology.world.entity.monster.ConcussionCreeper;
+import fuzs.enderzoology.world.entity.monster.EnderInfestedZombie;
 import fuzs.puzzleslib.core.CommonAbstractions;
 import fuzs.puzzleslib.core.CommonFactories;
 import fuzs.puzzleslib.core.ModLoader;
