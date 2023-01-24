@@ -88,9 +88,15 @@ public class HuntingBowHandler {
     }
 
     public static void applyWitheringEnchantment(AbstractArrow arrow, ItemStack stack) {
-        if (arrow instanceof Arrow) {
-            int level = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.WITHERING_ENCHANTMENT.get(), stack);
-            if (level > 0) ((Arrow) arrow).addEffect(new MobEffectInstance(MobEffects.WITHER, 5 * level));
-        }
+        applyWitheringEnchantment(arrow, EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.WITHERING_ENCHANTMENT.get(), stack));
+    }
+
+    public static void applyWitheringEnchantment(AbstractArrow arrow, LivingEntity shooter) {
+        applyWitheringEnchantment(arrow, EnchantmentHelper.getEnchantmentLevel(ModRegistry.WITHERING_ENCHANTMENT.get(), shooter));
+    }
+
+    private static void applyWitheringEnchantment(AbstractArrow arrow, int level) {
+        if (level > 0 && arrow instanceof Arrow)
+            ((Arrow) arrow).addEffect(new MobEffectInstance(MobEffects.WITHER, 5 * level));
     }
 }

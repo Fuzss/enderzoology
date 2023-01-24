@@ -2,10 +2,7 @@ package fuzs.enderzoology;
 
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
-import fuzs.enderzoology.world.entity.monster.ConcussionCreeper;
-import fuzs.enderzoology.world.entity.monster.DireWolf;
-import fuzs.enderzoology.world.entity.monster.EnderInfestedZombie;
-import fuzs.enderzoology.world.entity.monster.Enderminy;
+import fuzs.enderzoology.world.entity.monster.*;
 import fuzs.enderzoology.world.entity.projectile.ThrownOwlEgg;
 import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
@@ -40,7 +37,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
@@ -107,6 +103,7 @@ public class EnderZoology implements ModConstructor {
         context.registerEntityAttributes(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), EnderInfestedZombie.createAttributes());
         context.registerEntityAttributes(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), Enderminy.createAttributes());
         context.registerEntityAttributes(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolf.createAttributes());
+        context.registerEntityAttributes(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), FallenMount.createAttributes());
     }
 
     @Override
@@ -115,6 +112,7 @@ public class EnderZoology implements ModConstructor {
         context.registerSpawnPlacement(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
         context.registerSpawnPlacement(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
         context.registerSpawnPlacement(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkDireWolfSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkMonsterSpawnRules);
     }
 
     @Override

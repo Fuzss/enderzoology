@@ -2,6 +2,7 @@ package fuzs.enderzoology;
 
 import fuzs.enderzoology.capability.SoulboundCapability;
 import fuzs.enderzoology.data.*;
+import fuzs.enderzoology.handler.MobHuntingHandler;
 import fuzs.enderzoology.handler.HuntingBowHandler;
 import fuzs.enderzoology.handler.SoulboundRespawnHandler;
 import fuzs.enderzoology.init.ModRegistry;
@@ -11,11 +12,13 @@ import fuzs.puzzleslib.capability.ForgeCapabilityController;
 import fuzs.puzzleslib.core.CommonFactories;
 import fuzs.puzzleslib.core.ContentRegistrationFlags;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -56,6 +59,9 @@ public class EnderZoologyForge {
         });
         MinecraftForge.EVENT_BUS.addListener((final LivingEntityUseItemEvent.Tick evt) -> {
             HuntingBowHandler.onItemUseTick(evt.getEntity(), evt.getItem(), evt.getDuration()).ifPresent(evt::setDuration);
+        });
+        MinecraftForge.EVENT_BUS.addListener((final EntityJoinLevelEvent evt) -> {
+            if (evt.getLevel() instanceof ServerLevel level) MobHuntingHandler.onEntityJoinServerLevel(evt.getEntity(), level);
         });
     }
 

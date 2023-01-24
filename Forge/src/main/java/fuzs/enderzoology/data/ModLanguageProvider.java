@@ -26,11 +26,13 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get(), "Ender-Infested Zombie Spawn Egg");
         this.add(ModRegistry.ENDERMINY_SPAWN_EGG_ITEM.get(), "Enderminy Spawn Egg");
         this.add(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get(), "Dire Wolf Spawn Egg");
+        this.add(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get(), "Fallen Mount Spawn Egg");
         this.add(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), "Thrown Owl Egg");
         this.add(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), "Concussion Creeper");
         this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Ender-Infested Zombie");
         this.add(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), "Enderminy");
         this.add(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), "Dire Wolf");
+        this.add(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), "Fallen Mount");
         this.add(ModRegistry.DECAY_ENCHANTMENT.get(), "Decay");
         this.add(ModRegistry.REPELLENT_ENCHANTMENT.get(), "Repellent");
         this.add(ModRegistry.SOULBOUND_ENCHANTMENT.get(), "Soulbound");

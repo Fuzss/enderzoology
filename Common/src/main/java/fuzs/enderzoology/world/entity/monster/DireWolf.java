@@ -2,6 +2,7 @@ package fuzs.enderzoology.world.entity.monster;
 
 import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -26,23 +27,26 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 
-import java.util.EnumSet;
 import java.util.List;
 
-public class DireWolf extends Wolf {
+public class DireWolf extends Wolf implements Enemy {
     private int howlingTime;
 
     public DireWolf(EntityType<? extends Wolf> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = Enemy.XP_REWARD_LARGE;
+        this.xpReward = XP_REWARD_LARGE;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.5).add(Attributes.FOLLOW_RANGE, 40.0).add(Attributes.MAX_HEALTH, 20.0).add(Attributes.ATTACK_DAMAGE, 5.0);
+        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.32).add(Attributes.FOLLOW_RANGE, 40.0).add(Attributes.MAX_HEALTH, 20.0).add(Attributes.ATTACK_DAMAGE, 5.0);
     }
 
     public static boolean checkDireWolfSpawnRules(EntityType<? extends Mob> entity, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        return level.getBlockState(pos.below()).is(BlockTags.WOLVES_SPAWNABLE_ON) && level.getDifficulty() != Difficulty.PEACEFUL && Monster.isDarkEnoughToSpawn(level, pos, random) && checkMobSpawnRules(entity, level, spawnType, pos, random);
+        return level.getBlockState(pos.below()).is(BlockTags.WOLVES_SPAWNABLE_ON) && checkMonsterSpawnRules(entity, level, spawnType, pos, random);
+    }
+
+    public static boolean checkMonsterSpawnRules(EntityType<? extends Mob> entity, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        return level.getDifficulty() != Difficulty.PEACEFUL && Monster.isDarkEnoughToSpawn(level, pos, random) && checkMobSpawnRules(entity, level, spawnType, pos, random);
     }
 
     @Override
@@ -55,13 +59,18 @@ public class DireWolf extends Wolf {
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Wolf.class, true, false));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Wolf.class, 10, true, false, entity -> entity.getClass() != this.getClass()));
         this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, true));
     }
 
     @Override
     public int getExperienceReward() {
         return this.xpReward;
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
     }
 
     @Override
@@ -145,6 +154,11 @@ public class DireWolf extends Wolf {
     @Override
     public void setCollarColor(DyeColor collarColor) {
 
+    }
+
+    @Override
+    public Wolf getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
+        return null;
     }
 
     static class HowlingGoal extends Goal {

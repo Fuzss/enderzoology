@@ -16,6 +16,7 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), EnderInfestedZombieRenderer::new);
         context.registerEntityRenderer(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), EnderminyRenderer::new);
         context.registerEntityRenderer(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolfRenderer::new);
+        context.registerEntityRenderer(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), FallenMountRenderer::new);
     }
 
     @Override

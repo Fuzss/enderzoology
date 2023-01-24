@@ -1,5 +1,6 @@
-// 1.19.2	2023-01-24T00:21:54.287666	LootTables
+// 1.19.2	2023-01-24T13:02:06.001116	LootTables
 08d465c1e0ff42ab92375c5265a3aeb88f92dad8 data/enderzoology/loot_tables/entities/concussion_creeper.json
 ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data/enderzoology/loot_tables/entities/dire_wolf.json
 b223e06c743ae5ae01a0cb9c1640b5d932ce893e data/enderzoology/loot_tables/entities/ender_infested_zombie.json
 17db5087c363e53a32c9998d7e057796fe1cc19b data/enderzoology/loot_tables/entities/enderminy.json
+4247663ba7a61e4bccbd3d4919a9f9b35c80fc14 data/enderzoology/loot_tables/entities/fallen_mount.json

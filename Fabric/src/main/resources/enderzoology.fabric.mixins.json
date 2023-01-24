@@ -6,9 +6,12 @@
   "refmap": "enderzoology.refmap.json",
   "mixins": [
     "BowItemFabricMixin",
+    "EnchantmentCategoryMixin",
     "ExplosionFabricMixin",
     "LevelFabricMixin",
-    "ServerLevelFabricMixin"
+    "LivingEntityFabricMixin",
+    "ServerLevelFabricMixin",
+    "accessor.MobFabricAccessor"
   ],
   "client": [
     "client.AbstractClientPlayerFabricMixin"

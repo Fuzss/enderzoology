@@ -33,6 +33,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         this.spawnEgg(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.ENDERMINY_SPAWN_EGG_ITEM.get());
+        this.spawnEgg(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get());
+        this.spawnEgg(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get());
     }
 
     private void cubeBottomTopBlock(Block block) {

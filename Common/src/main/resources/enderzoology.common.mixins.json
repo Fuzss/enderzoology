@@ -6,6 +6,7 @@
   "refmap": "enderzoology.refmap.json",
   "mixins": [
     "PlayerMixin",
+    "ProjectileUtilMixin",
     "VillagerHostilesSensorMixin",
     "accessor.CreeperAccessor"
   ],
