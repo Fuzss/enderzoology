@@ -1,5 +1,6 @@
 package fuzs.enderzoology.client.renderer.entity;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.enderzoology.EnderZoology;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.WolfRenderer;
@@ -11,6 +12,11 @@ public class DireWolfRenderer extends WolfRenderer {
 
     public DireWolfRenderer(EntityRendererProvider.Context context) {
         super(context);
+    }
+
+    @Override
+    protected void scale(Wolf livingEntity, PoseStack matrixStack, float partialTickTime) {
+        matrixStack.scale(1.2F, 1.2F, 1.2F);
     }
 
     @Override
