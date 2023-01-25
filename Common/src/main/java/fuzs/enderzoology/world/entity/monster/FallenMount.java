@@ -27,8 +27,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.animal.horse.Llama;
-import net.minecraft.world.entity.animal.horse.ZombieHorse;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HorseArmorItem;
@@ -87,18 +85,8 @@ public class FallenMount extends AbstractHorse implements Enemy {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractHorse.class, false, FallenMount::canAttackHorse));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractHorse.class, false, entity -> entity.getType().is(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-    }
-
-    public static boolean canAttackHorse(LivingEntity entity) {
-        if (entity instanceof AbstractHorse) {
-            if (entity instanceof FallenMount) {
-                return false;
-            }
-            return !(entity instanceof Llama);
-        }
-        return false;
     }
 
     @Override
@@ -273,7 +261,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.isConverting();
+        return !this.isConverting() && (this.horseData == null || !this.horseData.getBoolean("Tame"));
     }
 
     public boolean isConverting() {
@@ -300,7 +288,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     private void finishConversion() {
-        this.recreateHorseFromData(this.level, this).or(this::createFreshZombieHorse).ifPresent(entity -> {
+        this.recreateHorseFromData(this.level, this).or(this::createFreshHorse).ifPresent(entity -> {
             entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
             if (!this.isSilent()) {
                 this.level.levelEvent(null, 1027, this.blockPosition(), 0);
@@ -323,16 +311,20 @@ public class FallenMount extends AbstractHorse implements Enemy {
         return Optional.empty();
     }
 
-    private Optional<AbstractHorse> createFreshZombieHorse() {
-        ZombieHorse zombieHorse = this.convertTo(EntityType.ZOMBIE_HORSE, false);
-        zombieHorse.setTamed(true);
-
+    private Optional<AbstractHorse> createFreshHorse() {
+        EntityType<? extends AbstractHorse> entityType;
+        if (this.random.nextInt(6) == 0) {
+            entityType = EntityType.DONKEY;
+        } else {
+            entityType = EntityType.HORSE;
+        }
+        AbstractHorse horse = this.convertTo(entityType, false);
         for (int i = 0; i < EquipmentSlot.values().length; ++i) {
             EquipmentSlot equipmentSlot = EquipmentSlot.values()[i];
             ItemStack itemStack = this.getItemBySlot(equipmentSlot);
             if (!itemStack.isEmpty()) {
                 if (EnchantmentHelper.hasBindingCurse(itemStack)) {
-                    zombieHorse.getSlot(equipmentSlot.getIndex() + 300).set(itemStack);
+                    horse.getSlot(equipmentSlot.getIndex() + 300).set(itemStack);
                 } else {
                     double d = this.getEquipmentDropChance(equipmentSlot);
                     if (d > 1.0) {
@@ -342,8 +334,10 @@ public class FallenMount extends AbstractHorse implements Enemy {
             }
         }
 
-        zombieHorse.finalizeSpawn((ServerLevelAccessor) this.level, this.level.getCurrentDifficultyAt(zombieHorse.blockPosition()), MobSpawnType.CONVERSION, new AgeableMob.AgeableMobGroupData(0.0F), null);
-        return Optional.of(zombieHorse);
+        horse.finalizeSpawn((ServerLevelAccessor) this.level, this.level.getCurrentDifficultyAt(horse.blockPosition()), MobSpawnType.CONVERSION, new AgeableMob.AgeableMobGroupData(0.0F), null);
+        horse.setTamed(true);
+        horse.setBaby(false);
+        return Optional.of(horse);
     }
 
     @Override

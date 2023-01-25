@@ -24,6 +24,7 @@ import fuzs.puzzleslib.init.RegistryReference;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -91,6 +92,7 @@ public class ModRegistry {
     public static final RegistryReference<SoundEvent> DIRE_WOLF_HOWL_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.dire_wolf.howl");
     private static final CapabilityController CAPABILITIES = CommonFactories.INSTANCE.capabilities(EnderZoology.MOD_ID);
     public static final CapabilityKey<SoulboundCapability> SOULBOUND_CAPABILITY = CAPABILITIES.registerPlayerCapability("soulbound", SoulboundCapability.class, player -> new SoulboundCapabilityImpl(), PlayerRespawnStrategy.NEVER);
+    public static final TagKey<EntityType<?>> FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, EnderZoology.id("fallen_mount_targets"));
 
     public static void touch() {
 

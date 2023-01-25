@@ -26,26 +26,25 @@ public class FallenMountArmorLayer extends RenderLayer<FallenMount, HorseModel<F
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, FallenMount livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         ItemStack itemStack = livingEntity.getArmor();
-        if (itemStack.getItem() instanceof HorseArmorItem) {
-            HorseArmorItem horseArmorItem = (HorseArmorItem)itemStack.getItem();
-            ((HorseModel) this.getParentModel()).copyPropertiesTo(this.model);
+        if (itemStack.getItem() instanceof HorseArmorItem item) {
+            this.getParentModel().copyPropertiesTo(this.model);
             this.model.prepareMobModel(livingEntity, limbSwing, limbSwingAmount, partialTicks);
             this.model.setupAnim(livingEntity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
             float f;
             float g;
             float h;
-            if (horseArmorItem instanceof DyeableHorseArmorItem) {
-                int i = ((DyeableHorseArmorItem)horseArmorItem).getColor(itemStack);
-                f = (float)(i >> 16 & 255) / 255.0F;
-                g = (float)(i >> 8 & 255) / 255.0F;
-                h = (float)(i & 255) / 255.0F;
+            if (item instanceof DyeableHorseArmorItem) {
+                int i = ((DyeableHorseArmorItem) item).getColor(itemStack);
+                f = (float) (i >> 16 & 255) / 255.0F;
+                g = (float) (i >> 8 & 255) / 255.0F;
+                h = (float) (i & 255) / 255.0F;
             } else {
                 f = 1.0F;
                 g = 1.0F;
                 h = 1.0F;
             }
 
-            VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(horseArmorItem.getTexture()));
+            VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(item.getTexture()));
             this.model.renderToBuffer(matrixStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, f, g, h, 1.0F);
         }
     }

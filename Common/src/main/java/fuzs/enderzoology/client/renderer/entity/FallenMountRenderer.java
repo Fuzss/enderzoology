@@ -12,7 +12,7 @@ public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, Hors
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/entity/horse/horse_zombie.png");
 
     public FallenMountRenderer(EntityRendererProvider.Context context) {
-        super(context, new HorseModel<>(context.bakeLayer(ModelLayers.ZOMBIE_HORSE)), 1.1F);
+        super(context, new HorseModel<>(context.bakeLayer(ModelLayers.ZOMBIE_HORSE)), 1.0F);
         this.addLayer(new FallenMountArmorLayer(this, context.getModelSet()));
     }
 

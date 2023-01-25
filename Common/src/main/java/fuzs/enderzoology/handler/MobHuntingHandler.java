@@ -1,6 +1,7 @@
 package fuzs.enderzoology.handler;
 
 import fuzs.enderzoology.core.CommonAbstractions;
+import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.monster.DireWolf;
 import fuzs.enderzoology.world.entity.monster.FallenMount;
 import net.minecraft.server.level.ServerLevel;
@@ -16,7 +17,7 @@ public class MobHuntingHandler {
             if (mob.getType() == EntityType.WOLF) {
                 CommonAbstractions.INSTANCE.getGoalSelector(mob).addGoal(3, new AvoidEntityGoal<>(mob, DireWolf.class, 16.0F, 1.0, 1.2));
             }
-            if (FallenMount.canAttackHorse(mob)) {
+            if (mob.getType().is(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)) {
                 CommonAbstractions.INSTANCE.getGoalSelector(mob).addGoal(3, new AvoidEntityGoal<>(mob, FallenMount.class, 16.0F, 1.5, 1.8));
             }
         }
