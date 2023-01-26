@@ -104,6 +104,7 @@ public class EnderZoology implements ModConstructor {
         context.registerEntityAttributes(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), Enderminy.createAttributes());
         context.registerEntityAttributes(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolf.createAttributes());
         context.registerEntityAttributes(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), FallenMount.createAttributes());
+        context.registerEntityAttributes(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), WitherCat.createAttributes());
     }
 
     @Override
@@ -113,6 +114,7 @@ public class EnderZoology implements ModConstructor {
         context.registerSpawnPlacement(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
         context.registerSpawnPlacement(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkDireWolfSpawnRules);
         context.registerSpawnPlacement(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkMonsterSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkMonsterSpawnRules);
     }
 
     @Override

@@ -17,11 +17,13 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), EnderminyRenderer::new);
         context.registerEntityRenderer(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolfRenderer::new);
         context.registerEntityRenderer(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), FallenMountRenderer::new);
+        context.registerEntityRenderer(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), WitherCatRenderer::new);
     }
 
     @Override
     public void onRegisterEntitySpectatorShaders(EntitySpectatorShaderContext context) {
         context.registerSpectatorShader(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), new ResourceLocation("shaders/post/creeper.json"));
+        context.registerSpectatorShader(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), new ResourceLocation("shaders/post/invert.json"));
     }
 
     @Override
