@@ -1,7 +1,7 @@
 package fuzs.enderzoology.world.level;
 
 import fuzs.enderzoology.core.CommonAbstractions;
-import fuzs.enderzoology.world.entity.monster.EnderEnemy;
+import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -35,22 +37,24 @@ public class EnderExplosion extends Explosion {
     private final float radius;
     private final Vec3 position;
     private final EntityInteraction entityInteraction;
+    private final boolean lingeringCloud;
 
-    public EnderExplosion(Level level, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, EntityInteraction entityInteraction) {
+    public EnderExplosion(Level level, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, EntityInteraction entityInteraction, boolean lingeringCloud) {
         super(level, entity, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction);
         this.level = level;
         if (radius <= 0.0F) throw new IllegalArgumentException("Explosion radius must be positive!");
         this.radius = radius;
         this.position = new Vec3(x, y, z);
         this.entityInteraction = entityInteraction;
+        this.lingeringCloud = lingeringCloud;
     }
 
-    public static Explosion explode(Level level, @Nullable Entity exploder, double x, double y, double z, float size, Explosion.BlockInteraction mode, EntityInteraction entityInteraction) {
-        return explode(level, exploder, null, null, x, y, z, size, false, mode, entityInteraction);
+    public static Explosion explode(Level level, @Nullable Entity exploder, double x, double y, double z, float size, Explosion.BlockInteraction mode, EntityInteraction entityInteraction, boolean lingeringCloud) {
+        return explode(level, exploder, null, null, x, y, z, size, false, mode, entityInteraction, lingeringCloud);
     }
 
-    public static Explosion explode(Level level, @Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Explosion.BlockInteraction mode, EntityInteraction entityInteraction) {
-        Explosion explosion = new EnderExplosion(level, exploder, damageSource, context, x, y, z, size, causesFire, mode, entityInteraction);
+    public static Explosion explode(Level level, @Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Explosion.BlockInteraction mode, EntityInteraction entityInteraction, boolean lingeringCloud) {
+        Explosion explosion = new EnderExplosion(level, exploder, damageSource, context, x, y, z, size, causesFire, mode, entityInteraction, lingeringCloud);
         if (CommonAbstractions.INSTANCE.onExplosionStart(level, explosion)) return explosion;
         explosion.explode();
         explosion.finalizeExplosion(level.isClientSide);
@@ -71,7 +75,7 @@ public class EnderExplosion extends Explosion {
         if (!(explosion instanceof EnderExplosion enderExplosion)) return;
         if (!level.isClientSide) {
             for (Entity entity : entities) {
-                if (entity instanceof LivingEntity livingEntity && entity.isAlive() && !(entity instanceof EnderEnemy)) {
+                if (entity instanceof LivingEntity livingEntity && entity.isAlive() && !entity.getType().is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) {
                     if (!(entity instanceof Player player) || !player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
                         Vec3 originalPosition = livingEntity.position();
                         boolean applyConfusion = enderExplosion.entityInteraction.confusion;
@@ -140,12 +144,24 @@ public class EnderExplosion extends Explosion {
         // don't destroy blocks, but activate other explosives
         this.getToBlow().removeIf(pos -> this.level.getBlockState(pos).getBlock().dropFromExplosion(this));
         super.finalizeExplosion(spawnParticles);
+        if (this.lingeringCloud) {
+            this.spawnLingeringCloud(this.entityInteraction.createEffects((int) this.radius));
+        }
+    }
+
+    private void spawnLingeringCloud(List<MobEffectInstance> effects) {
+        AreaEffectCloud areaEffectCloud = new AreaEffectCloud(this.level, this.position.x, this.position.y, this.position.z);
+        areaEffectCloud.setRadius(2.5F);
+        areaEffectCloud.setRadiusOnUse(-0.5F);
+        areaEffectCloud.setWaitTime(10);
+        areaEffectCloud.setDuration(areaEffectCloud.getDuration() / 2);
+        areaEffectCloud.setRadiusPerTick(-areaEffectCloud.getRadius() / (float) areaEffectCloud.getDuration());
+        effects.forEach(areaEffectCloud::addEffect);
+        this.level.addFreshEntity(areaEffectCloud);
     }
 
     public enum EntityInteraction {
-        ENDER(true, false),
-        CONFUSION(false, true),
-        CONCUSSION(true, true);
+        ENDER(true, false), CONFUSION(false, true), CONCUSSION(true, true);
 
         public final boolean teleport;
         public final boolean confusion;
@@ -153,6 +169,14 @@ public class EnderExplosion extends Explosion {
         EntityInteraction(boolean teleport, boolean confusion) {
             this.teleport = teleport;
             this.confusion = confusion;
+        }
+
+        public List<MobEffectInstance> createEffects(int strength) {
+            List<MobEffectInstance> effects = Lists.newArrayList();
+            if (this.teleport)
+                effects.add(new MobEffectInstance(ModRegistry.DISPLACEMENT_MOB_EFFECT.get(), 1, strength));
+            if (this.confusion) effects.add(new MobEffectInstance(MobEffects.CONFUSION, 100));
+            return effects;
         }
     }
 }

@@ -3,6 +3,7 @@ package fuzs.enderzoology.data;
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class ModLanguageProvider extends LanguageProvider {
@@ -28,6 +29,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get(), "Dire Wolf Spawn Egg");
         this.add(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get(), "Fallen Mount Spawn Egg");
         this.add(ModRegistry.WITHER_CAT_SPAWN_EGG_ITEM.get(), "Wither Cat Spawn Egg");
+        this.add(ModRegistry.WITHER_WITCH_SPAWN_EGG_ITEM.get(), "Wither Witch Spawn Egg");
         this.add(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), "Thrown Owl Egg");
         this.add(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), "Concussion Creeper");
         this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Ender-Infested Zombie");
@@ -35,6 +37,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), "Dire Wolf");
         this.add(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), "Fallen Mount");
         this.add(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), "Wither Cat");
+        this.add(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), "Wither Witch");
         this.add(ModRegistry.DECAY_ENCHANTMENT.get(), "Decay");
         this.add(ModRegistry.REPELLENT_ENCHANTMENT.get(), "Repellent");
         this.add(ModRegistry.SOULBOUND_ENCHANTMENT.get(), "Soulbound");
@@ -43,18 +46,11 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add("enchantment.enderzoology.repellent.desc", "Randomly teleports enemies when they attack you.");
         this.add("enchantment.enderzoology.soulbound.desc", "On death an item will be kept in the inventory and the level may randomly decrease.");
         this.add("enchantment.enderzoology.withering.desc", "Applies the Wither effect to enemies hit by arrows.");
-        this.add("item.minecraft.tipped_arrow.effect.decay", "Arrow of Decay");
-        this.add("item.minecraft.tipped_arrow.effect.confusion", "Arrow of Confusion");
-        this.add("item.minecraft.tipped_arrow.effect.rising", "Arrow of Rising");
-        this.add("item.minecraft.potion.effect.decay", "Potion of Decay");
-        this.add("item.minecraft.potion.effect.confusion", "Potion of Confusion");
-        this.add("item.minecraft.potion.effect.rising", "Potion of Rising");
-        this.add("item.minecraft.splash_potion.effect.decay", "Splash Potion of Decay");
-        this.add("item.minecraft.splash_potion.effect.confusion", "Splash Potion of Confusion");
-        this.add("item.minecraft.splash_potion.effect.rising", "Splash Potion of Rising");
-        this.add("item.minecraft.lingering_potion.effect.decay", "Lingering Potion of Decay");
-        this.add("item.minecraft.lingering_potion.effect.confusion", "Lingering Potion of Confusion");
-        this.add("item.minecraft.lingering_potion.effect.rising", "Lingering Potion of Rising");
+        this.add(ModRegistry.DISPLACEMENT_MOB_EFFECT.get(), "Displacement");
+        this.add(ModRegistry.DISPLACEMENT_POTION.get(), "Displacement");
+        this.add(ModRegistry.DECAY_POTION.get(), "Decay");
+        this.add(ModRegistry.CONFUSION_POTION.get(), "Confusion");
+        this.add(ModRegistry.RISING_POTION.get(), "Rising");
         this.add("subtitles.entity.dire_wolf.hurt", "Dire Wolf hurts");
         this.add("subtitles.entity.dire_wolf.death", "Dire Wolf dies");
         this.add("subtitles.entity.dire_wolf.growl", "Dire Wolf growls");
@@ -62,5 +58,13 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add("subtitles.entity.owl.hoot_double", "Owl hoots");
         this.add("subtitles.entity.owl.hoot_single", "Owl hoots");
         this.add("subtitles.entity.owl.hurt", "Owl hurts");
+    }
+
+    private void add(Potion potion, String name) {
+        String potionName = potion.getName("");
+        this.add("item.minecraft.tipped_arrow.effect." + potionName, "Arrow of " + name);
+        this.add("item.minecraft.potion.effect." + potionName, "Potion of " + name);
+        this.add("item.minecraft.splash_potion.effect." + potionName, "Splash Potion of " + name);
+        this.add("item.minecraft.lingering_potion.effect." + potionName, "Lingering Potion of " + name);
     }
 }

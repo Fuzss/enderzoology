@@ -16,7 +16,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -40,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class Enderminy extends Monster implements NeutralMob, EnderEnemy {
+public class Enderminy extends Monster implements NeutralMob {
     private static final UUID SPEED_MODIFIER_ATTACKING_UUID = UUID.fromString("51560D00-9B48-11ED-A8FC-0242AC120002");
     private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.15F, AttributeModifier.Operation.ADDITION);
     private static final int MIN_DEAGGRESSION_TIME = 600;
@@ -58,10 +57,6 @@ public class Enderminy extends Monster implements NeutralMob, EnderEnemy {
         super(entityType, level);
         this.maxUpStep = 1.0F;
         this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0).add(Attributes.MOVEMENT_SPEED, 0.30000001192092896).add(Attributes.ATTACK_DAMAGE, 5.0).add(Attributes.FOLLOW_RANGE, 48.0);
     }
 
     @Override

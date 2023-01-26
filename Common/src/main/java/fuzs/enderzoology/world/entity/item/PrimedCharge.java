@@ -42,7 +42,7 @@ public class PrimedCharge extends PrimedTnt {
         if (this.getFuse() - 1 <= 0) {
             this.discard();
             if (!this.level.isClientSide) {
-                EnderExplosion.explode(this.level, this, this.getX(), this.getY(0.0625), this.getZ(), 4.0F, Explosion.BlockInteraction.BREAK, this.entityInteraction);
+                EnderExplosion.explode(this.level, this, this.getX(), this.getY(0.0625), this.getZ(), 4.0F, Explosion.BlockInteraction.BREAK, this.entityInteraction, true);
             }
         } else {
             super.tick();

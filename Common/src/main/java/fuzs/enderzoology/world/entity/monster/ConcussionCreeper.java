@@ -6,26 +6,19 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 
-public class ConcussionCreeper extends Creeper implements EnderEnemy {
+public class ConcussionCreeper extends Creeper {
 
     public ConcussionCreeper(EntityType<? extends ConcussionCreeper> entityType, Level level) {
         super(entityType, level);
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.25);
     }
 
     @Override
@@ -80,7 +73,7 @@ public class ConcussionCreeper extends Creeper implements EnderEnemy {
             Explosion.BlockInteraction blockInteraction = this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
             float poweredMultiplier = this.isPowered() ? 2.0F : 1.0F;
             float explosionRadius = ((CreeperAccessor) this).enderzoology$getExplosionRadius() * poweredMultiplier;
-            EnderExplosion.explode(this.level, this, this.getX(), this.getY(), this.getZ(), explosionRadius, blockInteraction, EnderExplosion.EntityInteraction.CONCUSSION);
+            EnderExplosion.explode(this.level, this, this.getX(), this.getY(), this.getZ(), explosionRadius, blockInteraction, EnderExplosion.EntityInteraction.CONCUSSION, false);
             this.discard();
         }
     }

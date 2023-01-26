@@ -1,8 +1,9 @@
 package fuzs.enderzoology;
 
 import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.world.entity.EntityAttributeProviders;
+import fuzs.enderzoology.world.entity.SpawnPlacementRules;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
-import fuzs.enderzoology.world.entity.monster.*;
 import fuzs.enderzoology.world.entity.projectile.ThrownOwlEgg;
 import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -70,6 +70,8 @@ public class EnderZoology implements ModConstructor {
         registerChargeBehavior(ModRegistry.ENDER_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.ENDER);
         registerChargeBehavior(ModRegistry.CONFUSING_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.CONFUSION);
         registerChargeBehavior(ModRegistry.CONCUSSION_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.CONCUSSION);
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.ENDER_FRAGMENT_ITEM.get(), ModRegistry.DISPLACEMENT_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DISPLACEMENT_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_DISPLACEMENT_POTION.get());
         PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.WITHERING_DUST_ITEM.get(), ModRegistry.DECAY_POTION.get());
         PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.REDSTONE, ModRegistry.LONG_DECAY_POTION.get());
         PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_DECAY_POTION.get());
@@ -99,22 +101,24 @@ public class EnderZoology implements ModConstructor {
 
     @Override
     public void onEntityAttributeCreation(EntityAttributesCreateContext context) {
-        context.registerEntityAttributes(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), ConcussionCreeper.createAttributes());
-        context.registerEntityAttributes(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), EnderInfestedZombie.createAttributes());
-        context.registerEntityAttributes(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), Enderminy.createAttributes());
-        context.registerEntityAttributes(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolf.createAttributes());
-        context.registerEntityAttributes(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), FallenMount.createAttributes());
-        context.registerEntityAttributes(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), WitherCat.createAttributes());
+        context.registerEntityAttributes(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), EntityAttributeProviders.createConcussionCreeperAttributes());
+        context.registerEntityAttributes(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), EntityAttributeProviders.createEnderInfestedZombieAttributes());
+        context.registerEntityAttributes(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), EntityAttributeProviders.createEnderminyAttributes());
+        context.registerEntityAttributes(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), EntityAttributeProviders.createDireWolfAttributes());
+        context.registerEntityAttributes(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), EntityAttributeProviders.createFallenMountAttributes());
+        context.registerEntityAttributes(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), EntityAttributeProviders.createWitherCatAttributes());
+        context.registerEntityAttributes(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), EntityAttributeProviders.createWitherWitchAttributes());
     }
 
     @Override
     public void onRegisterSpawnPlacements(SpawnPlacementsContext context) {
-        context.registerSpawnPlacement(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        context.registerSpawnPlacement(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
-        context.registerSpawnPlacement(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EnderInfestedZombie::checkSurfaceSpawnRules);
-        context.registerSpawnPlacement(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkDireWolfSpawnRules);
-        context.registerSpawnPlacement(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkMonsterSpawnRules);
-        context.registerSpawnPlacement(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DireWolf::checkMonsterSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkMonsterSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkDireWolfSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkMonsterSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkMonsterSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
     }
 
     @Override
@@ -131,6 +135,7 @@ public class EnderZoology implements ModConstructor {
                     settings.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 2, 6));
                 });
             }
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.WITCH, data -> new MobSpawnSettings.SpawnerData(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), data.getWeight(), data.minCount, data.maxCount));
         });
     }
 

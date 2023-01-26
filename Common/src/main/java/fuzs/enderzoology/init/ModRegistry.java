@@ -3,6 +3,7 @@ package fuzs.enderzoology.init;
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.capability.SoulboundCapability;
 import fuzs.enderzoology.capability.SoulboundCapabilityImpl;
+import fuzs.enderzoology.world.effect.DisplacementMobEffect;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.entity.monster.*;
 import fuzs.enderzoology.world.entity.projectile.ThrownOwlEgg;
@@ -25,6 +26,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -70,16 +73,21 @@ public class ModRegistry {
     public static final RegistryReference<EntityType<DireWolf>> DIRE_WOLF_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("dire_wolf", () -> EntityType.Builder.of(DireWolf::new, MobCategory.MONSTER).sized(0.6F, 0.85F).clientTrackingRange(10));
     public static final RegistryReference<EntityType<FallenMount>> FALLEN_MOUNT_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("fallen_mount", () -> EntityType.Builder.of(FallenMount::new, MobCategory.MONSTER).sized(1.3964844F, 1.6F).clientTrackingRange(10));
     public static final RegistryReference<EntityType<WitherCat>> WITHER_CAT_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("wither_cat", () -> EntityType.Builder.of(WitherCat::new, MobCategory.MONSTER).sized(0.6F, 0.7F).clientTrackingRange(8));
+    public static final RegistryReference<EntityType<WitherWitch>> WITHER_WITCH_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("wither_witch", () -> EntityType.Builder.of(WitherWitch::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(8));
     public static final RegistryReference<Item> CONCUSSION_CREEPER_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("concussion_creeper_spawn_egg", () -> new SpawnEggItem(CONCUSSION_CREEPER_ENTITY_TYPE.get(), 0x56FF8E, 0xFF0A22, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("ender_infested_zombie_spawn_egg", () -> new SpawnEggItem(ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), 0x132F55, 0x2B2D1C, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> ENDERMINY_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("enderminy_spawn_egg", () -> new SpawnEggItem(ENDERMINY_ENTITY_TYPE.get(), 0x27624D, 0x212121, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> DIRE_WOLF_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("dire_wolf_spawn_egg", () -> new SpawnEggItem(DIRE_WOLF_ENTITY_TYPE.get(), 0x606060, 0xA0A0A0, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> FALLEN_MOUNT_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("fallen_mount_spawn_egg", () -> new SpawnEggItem(FALLEN_MOUNT_ENTITY_TYPE.get(), 0x365A25, 0xA0A0A0, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> WITHER_CAT_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("wither_cat_spawn_egg", () -> new SpawnEggItem(WITHER_CAT_ENTITY_TYPE.get(), 0x303030, 0xFFFFFF, new Item.Properties().tab(CREATIVE_MODE_TAB)));
+    public static final RegistryReference<Item> WITHER_WITCH_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("wither_witch_spawn_egg", () -> new SpawnEggItem(WITHER_WITCH_ENTITY_TYPE.get(), 0x26520D, 0x905E43, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Enchantment> DECAY_ENCHANTMENT = REGISTRY.registerEnchantment("decay", () -> new DecayEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
     public static final RegistryReference<Enchantment> REPELLENT_ENCHANTMENT = REGISTRY.registerEnchantment("repellent", () -> new RepellentEnchantment(Enchantment.Rarity.VERY_RARE, ARMOR_SLOTS));
     public static final RegistryReference<Enchantment> SOULBOUND_ENCHANTMENT = REGISTRY.registerEnchantment("soulbound", () -> new SoulboundEnchantment(Enchantment.Rarity.VERY_RARE, EquipmentSlot.values()));
     public static final RegistryReference<Enchantment> WITHERING_ENCHANTMENT = REGISTRY.registerEnchantment("withering", () -> new WitheringEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
+    public static final RegistryReference<MobEffect> DISPLACEMENT_MOB_EFFECT = REGISTRY.registerMobEffect("displacement", () -> new DisplacementMobEffect(MobEffectCategory.HARMFUL, 0x551D4A));
+    public static final RegistryReference<Potion> DISPLACEMENT_POTION = REGISTRY.registerPotion("displacement", () -> new Potion(new MobEffectInstance(DISPLACEMENT_MOB_EFFECT.get(), 1)));
+    public static final RegistryReference<Potion> STRONG_DISPLACEMENT_POTION = REGISTRY.registerPotion("strong_displacement", () -> new Potion("displacement", new MobEffectInstance(DISPLACEMENT_MOB_EFFECT.get(), 1, 1)));
     public static final RegistryReference<Potion> DECAY_POTION = REGISTRY.registerPotion("decay", () -> new Potion(new MobEffectInstance(MobEffects.WITHER, 900)));
     public static final RegistryReference<Potion> LONG_DECAY_POTION = REGISTRY.registerPotion("long_decay", () -> new Potion("decay", new MobEffectInstance(MobEffects.WITHER, 1800)));
     public static final RegistryReference<Potion> STRONG_DECAY_POTION = REGISTRY.registerPotion("strong_decay", () -> new Potion("decay", new MobEffectInstance(MobEffects.WITHER, 450, 1)));
@@ -92,9 +100,13 @@ public class ModRegistry {
     public static final RegistryReference<SoundEvent> DIRE_WOLF_DEATH_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.dire_wolf.death");
     public static final RegistryReference<SoundEvent> DIRE_WOLF_GROWL_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.dire_wolf.growl");
     public static final RegistryReference<SoundEvent> DIRE_WOLF_HOWL_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.dire_wolf.howl");
+    public static final RegistryReference<SoundEvent> OWL_HOOT_DOUBLE_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.owl.hoot_double");
+    public static final RegistryReference<SoundEvent> OWL_HOOT_SINGLE_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.owl.hoot_single");
+    public static final RegistryReference<SoundEvent> OWL_HURT_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.owl.hurt");
     private static final CapabilityController CAPABILITIES = CommonFactories.INSTANCE.capabilities(EnderZoology.MOD_ID);
     public static final CapabilityKey<SoulboundCapability> SOULBOUND_CAPABILITY = CAPABILITIES.registerPlayerCapability("soulbound", SoulboundCapability.class, player -> new SoulboundCapabilityImpl(), PlayerRespawnStrategy.NEVER);
     public static final TagKey<EntityType<?>> FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, EnderZoology.id("fallen_mount_targets"));
+    public static final TagKey<EntityType<?>> CONCUSSION_IMMUNE_ENTITY_TYPE_TAG = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, EnderZoology.id("concussion_immune"));
 
     public static void touch() {
 

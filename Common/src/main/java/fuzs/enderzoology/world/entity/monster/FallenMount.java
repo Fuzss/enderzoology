@@ -20,7 +20,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -54,10 +53,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
     public FallenMount(EntityType<? extends AbstractHorse> entityType, Level level) {
         super(entityType, level);
         this.xpReward = XP_REWARD_MEDIUM;
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return createBaseHorseAttributes().add(Attributes.MAX_HEALTH, 30.0).add(Attributes.MOVEMENT_SPEED, 0.26).add(Attributes.ATTACK_DAMAGE, 5.0).add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
     protected static String getEncodeId(Entity entity) {

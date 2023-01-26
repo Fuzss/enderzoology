@@ -8,7 +8,8 @@
     "PlayerMixin",
     "ProjectileUtilMixin",
     "VillagerHostilesSensorMixin",
-    "accessor.CreeperAccessor"
+    "accessor.CreeperAccessor",
+    "accessor.WitchAccessor"
   ],
   "client": [
   ],

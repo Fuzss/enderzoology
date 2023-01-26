@@ -7,16 +7,14 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -26,6 +24,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -41,18 +40,16 @@ public class WitherCat extends Monster {
     private static final UUID HEALTH_MODIFIER_ATTACKING_UUID = UUID.fromString("B9662B29-9467-3302-1D1A-2ED2B276D846");
     private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.15, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier HEALTH_MODIFIER_ATTACKING = new AttributeModifier(HEALTH_MODIFIER_ATTACKING_UUID, "Attacking health boost", 20.0, AttributeModifier.Operation.ADDITION);
+    private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(4, 6);;
 
     private int targetLostTime = -MIN_DEAGGRESSION_TIME;
+    private int ticksUntilNextAlert;
     private float scaleO;
 
     public WitherCat(EntityType<? extends WitherCat> entityType, Level level) {
         super(entityType, level);
         // they get stuck on things like snow layers without this (maybe pathfinding breaks for tall/wide mobs?)
         this.maxUpStep = 1.0F;
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return createMonsterAttributes().add(Attributes.MAX_HEALTH, 10.0).add(Attributes.MOVEMENT_SPEED, 0.25).add(Attributes.ATTACK_DAMAGE, 7.0);
     }
 
     @Override
@@ -64,7 +61,7 @@ public class WitherCat extends Monster {
         this.goalSelector.addGoal(6, new FollowMobOwnerGoal(this, Witch.class, 1.25));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Witch.class).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
@@ -73,31 +70,91 @@ public class WitherCat extends Monster {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_SCALE_ID, NORMAL_SCALE);
+        this.scaleO = NORMAL_SCALE;
     }
 
     @Override
     public void setTarget(@Nullable LivingEntity target) {
-        if (target instanceof Witch) return;
         super.setTarget(target);
-        AttributeInstance movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        AttributeInstance maxHealthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
+
         if (target == null) {
-            movementSpeedAttribute.removeModifier(SPEED_MODIFIER_ATTACKING);
-            maxHealthAttribute.removeModifier(HEALTH_MODIFIER_ATTACKING);
             this.targetLostTime = this.tickCount;
         } else {
+            this.targetLostTime = -MIN_DEAGGRESSION_TIME;
+            this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
+        }
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        AttributeInstance movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        AttributeInstance maxHealthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
+        if (this.isAngry()) {
             if (!movementSpeedAttribute.hasModifier(SPEED_MODIFIER_ATTACKING)) {
                 movementSpeedAttribute.addTransientModifier(SPEED_MODIFIER_ATTACKING);
             }
             if (!maxHealthAttribute.hasModifier(HEALTH_MODIFIER_ATTACKING)) {
                 maxHealthAttribute.addTransientModifier(HEALTH_MODIFIER_ATTACKING);
-                if (!this.isStillAngry()) {
-                    // heals exactly all 20 new hearts up in 6 seconds
-                    this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 3));
-                }
+                // heals exactly all 20 new hearts up in 6 seconds
+                this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 3));
             }
-            this.targetLostTime = -MIN_DEAGGRESSION_TIME;
+        } else {
+            if (movementSpeedAttribute.hasModifier(SPEED_MODIFIER_ATTACKING)) {
+                movementSpeedAttribute.removeModifier(SPEED_MODIFIER_ATTACKING);
+            }
+            if (maxHealthAttribute.hasModifier(HEALTH_MODIFIER_ATTACKING)) {
+                maxHealthAttribute.removeModifier(HEALTH_MODIFIER_ATTACKING);
+            }
         }
+
+        if (this.getTarget() != null) {
+            this.maybeAlertWitches();
+        }
+
+        if (this.isAngry()) {
+            if (this.getScale() < ANGRY_SCALE) {
+                this.setScale(Math.min(ANGRY_SCALE, this.getScale() + SCALE_INCREMENTS));
+            }
+        } else {
+            if (this.getScale() > NORMAL_SCALE) {
+                this.setScale(Math.max(NORMAL_SCALE, this.getScale() - SCALE_INCREMENTS));
+            }
+        }
+
+        super.customServerAiStep();
+    }
+
+    private void maybeAlertWitches() {
+        if (this.getTarget() != null) {
+            if (this.ticksUntilNextAlert > 0) {
+                --this.ticksUntilNextAlert;
+            } else {
+                if (this.getSensing().hasLineOfSight(this.getTarget())) {
+                    this.alertWitches();
+                }
+
+                this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
+            }
+        }
+    }
+
+    private void alertWitches() {
+        double followRange = this.getAttributeValue(Attributes.FOLLOW_RANGE);
+        AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(followRange, 10.0, followRange);
+        for (Witch witch : this.level.getEntitiesOfClass(Witch.class, aabb, EntitySelector.NO_SPECTATORS)) {
+            if (witch.getTarget() == null && !witch.isAlliedTo(this.getTarget())) {
+                witch.setTarget(this.getTarget());
+            }
+        }
+    }
+
+    @Override
+    public void refreshDimensions() {
+        double d = this.getX();
+        double e = this.getY();
+        double f = this.getZ();
+        super.refreshDimensions();
+        this.setPos(d, e, f);
     }
 
     @Override
@@ -127,11 +184,18 @@ public class WitherCat extends Monster {
     }
 
     private boolean isAngry() {
-        return this.getTarget() != null || this.isStillAngry();
+        return this.getTarget() != null || this.tickCount < this.targetLostTime + MIN_DEAGGRESSION_TIME;
     }
 
-    private boolean isStillAngry() {
-        return this.tickCount < this.targetLostTime + MIN_DEAGGRESSION_TIME;
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        return super.isInvulnerableTo(source) || source.getEntity() instanceof Witch;
+    }
+
+    @Override
+    public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
+        if (!effectInstance.getEffect().isBeneficial() && entity instanceof Witch) return false;
+        return super.addEffect(effectInstance, entity);
     }
 
     @Override
@@ -146,21 +210,9 @@ public class WitherCat extends Monster {
     }
 
     @Override
-    protected void customServerAiStep() {
-        if (this.isAngry() && this.getScale() < ANGRY_SCALE) {
-            this.setScale(Math.min(ANGRY_SCALE, this.getScale() + SCALE_INCREMENTS));
-        }
-        if (!this.isAngry() && this.getScale() > NORMAL_SCALE) {
-            this.setScale(Math.max(NORMAL_SCALE, this.getScale() - SCALE_INCREMENTS));
-        }
-
-        super.customServerAiStep();
-    }
-
-    @Override
     @Nullable
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.CAT_HISS;
+        return this.isAngry() ? SoundEvents.CAT_HISS : SoundEvents.CAT_STRAY_AMBIENT;
     }
 
     @Override
