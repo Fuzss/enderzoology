@@ -76,16 +76,14 @@ public class EnderExplosion extends Explosion {
         if (!level.isClientSide) {
             for (Entity entity : entities) {
                 if (entity instanceof LivingEntity livingEntity && entity.isAlive() && !entity.getType().is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) {
-                    if (!(entity instanceof Player player) || !player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
-                        Vec3 originalPosition = livingEntity.position();
-                        boolean applyConfusion = enderExplosion.entityInteraction.confusion;
-                        if (enderExplosion.entityInteraction.teleport) {
-                            applyConfusion &= teleportEntity((ServerLevel) level, livingEntity, 48, true);
-                        }
-                        // only confuse after teleport when it actually happened
-                        if (applyConfusion) {
-                            applyConfusionPotion(enderExplosion.position, originalPosition, livingEntity, enderExplosion.radius);
-                        }
+                    Vec3 originalPosition = livingEntity.position();
+                    boolean applyConfusion = enderExplosion.entityInteraction.confusion;
+                    if (enderExplosion.entityInteraction.teleport) {
+                        applyConfusion &= teleportEntity((ServerLevel) level, livingEntity, 48, true);
+                    }
+                    // only confuse after teleport when it actually happened
+                    if (applyConfusion) {
+                        applyConfusionPotion(enderExplosion.position, originalPosition, livingEntity, enderExplosion.radius);
                     }
                 }
             }

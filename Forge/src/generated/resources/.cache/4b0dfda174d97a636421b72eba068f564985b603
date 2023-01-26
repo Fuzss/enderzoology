@@ -1,4 +1,4 @@
-// 1.19.2	2023-01-26T17:14:06.083406	Block States: enderzoology
+// 1.19.2	2023-01-26T22:47:18.00246	Block States: enderzoology
 a0105056914ede00cb2fe7f9f97f3caa76ba273e assets/enderzoology/blockstates/concussion_charge.json
 213469536489bbb589da1b9dd6758ed2f97e3cdb assets/enderzoology/blockstates/confusing_charge.json
 963395d63142cf316fcbfdbda4139391c4e7bbb6 assets/enderzoology/blockstates/ender_charge.json
@@ -17,4 +17,5 @@ f3916c910116a00f935a9ddabd0a5729b60477c8 assets/enderzoology/models/item/ender_f
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/fallen_mount_spawn_egg.json
 21ef7605113584f6b28f9744517f4318e180fb0b assets/enderzoology/models/item/owl_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/wither_cat_spawn_egg.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/wither_witch_spawn_egg.json
 aef318ffe3200fc6d5f48fb120457b47d8d7eaee assets/enderzoology/models/item/withering_dust.json

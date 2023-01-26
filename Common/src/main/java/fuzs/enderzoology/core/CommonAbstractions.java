@@ -1,7 +1,6 @@
 package fuzs.enderzoology.core;
 
 import fuzs.puzzleslib.util.PuzzlesUtil;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;

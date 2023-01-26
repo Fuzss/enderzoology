@@ -36,6 +36,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         this.spawnEgg(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.WITHER_CAT_SPAWN_EGG_ITEM.get());
+        this.spawnEgg(ModRegistry.WITHER_WITCH_SPAWN_EGG_ITEM.get());
     }
 
     private void cubeBottomTopBlock(Block block) {

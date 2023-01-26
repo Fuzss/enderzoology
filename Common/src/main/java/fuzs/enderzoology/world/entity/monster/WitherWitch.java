@@ -29,8 +29,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-public class WitherWitch extends Witch {
+public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     private NearestHealableRaiderTargetGoal<WitherCat> healCatsGoal;
+    private int ticksUntilNextAlert;
 
     public WitherWitch(EntityType<? extends WitherWitch> entityType, Level level) {
         super(entityType, level);
@@ -39,7 +40,24 @@ public class WitherWitch extends Witch {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.healCatsGoal = new NearestHealableRaiderTargetGoal<>(this, WitherCat.class, true, mob -> true);
+        this.healCatsGoal = new NearestHealableRaiderTargetGoal<>(this, WitherCat.class, true, mob -> mob.getHealth() < mob.getMaxHealth()) {
+
+            @Override
+            public boolean canUse() {
+                if (this.getCooldown() <= 0 && this.mob.getRandom().nextBoolean()) {
+                    this.findTarget();
+                    if (this.target != null) {
+                        if (this.target.level.getNearestPlayer(this.target.getX(), this.target.getY(), this.target.getZ(), 12.0, true) != null) {
+                            this.target = null;
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        };
         this.targetSelector.addGoal(2, this.healCatsGoal);
     }
 
@@ -57,6 +75,9 @@ public class WitherWitch extends Witch {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         if (level instanceof ServerLevel && reason == MobSpawnType.NATURAL) {
             this.trySpawnCompanion((ServerLevel) level, this.blockPosition(), 4);
+            if (this.random.nextInt(4) == 0) {
+                this.trySpawnCompanion((ServerLevel) level, this.blockPosition(), 4);
+            }
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
     }
@@ -66,6 +87,21 @@ public class WitherWitch extends Witch {
         if (blockPos != null) {
             ModRegistry.WITHER_CAT_ENTITY_TYPE.get().spawn(serverLevel, null, null, null, blockPos, MobSpawnType.EVENT, false, false);
         }
+    }
+
+    @Override
+    public int getTicksUntilNextAlert() {
+        return this.ticksUntilNextAlert;
+    }
+
+    @Override
+    public void setTicksUntilNextAlert(int ticksUntilNextAlert) {
+        this.ticksUntilNextAlert = ticksUntilNextAlert;
+    }
+
+    @Override
+    public Class<WitherCat> getCompanionType() {
+        return WitherCat.class;
     }
 
     @Nullable
@@ -94,9 +130,9 @@ public class WitherWitch extends Witch {
             double e = target.getEyeY() - 1.1 - this.getY();
             double f = target.getZ() + vec3.z - this.getZ();
             double g = Math.sqrt(d * d + f * f);
-            Potion potion = Potions.HARMING;
+            Potion potion = target.isInvertedHealAndHarm() ? Potions.HEALING : Potions.HARMING;
             if (target instanceof Raider || target instanceof WitherCat) {
-                if (target.getHealth() <= 4.0F) {
+                if (this.random.nextInt(4) != 0 || target.getHealth() <= 4.0F) {
                     potion = Potions.HEALING;
                 } else {
                     potion = Potions.REGENERATION;

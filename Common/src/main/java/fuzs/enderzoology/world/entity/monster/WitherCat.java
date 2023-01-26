@@ -7,8 +7,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
-import net.minecraft.util.TimeUtil;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -23,14 +21,14 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-public class WitherCat extends Monster {
+public class WitherCat extends Monster implements CompanionMob<Witch> {
     private static final float NORMAL_SCALE = 1.0F;
     private static final float ANGRY_SCALE = 2.0F;
     private static final float SCALE_INCREMENTS = 0.05F;
@@ -40,7 +38,6 @@ public class WitherCat extends Monster {
     private static final UUID HEALTH_MODIFIER_ATTACKING_UUID = UUID.fromString("B9662B29-9467-3302-1D1A-2ED2B276D846");
     private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.15, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier HEALTH_MODIFIER_ATTACKING = new AttributeModifier(HEALTH_MODIFIER_ATTACKING_UUID, "Attacking health boost", 20.0, AttributeModifier.Operation.ADDITION);
-    private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(4, 6);;
 
     private int targetLostTime = -MIN_DEAGGRESSION_TIME;
     private int ticksUntilNextAlert;
@@ -61,7 +58,7 @@ public class WitherCat extends Monster {
         this.goalSelector.addGoal(6, new FollowMobOwnerGoal(this, Witch.class, 1.25));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Witch.class).setAlertOthers());
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Raider.class).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
@@ -75,14 +72,16 @@ public class WitherCat extends Monster {
 
     @Override
     public void setTarget(@Nullable LivingEntity target) {
-        super.setTarget(target);
-
         if (target == null) {
             this.targetLostTime = this.tickCount;
         } else {
             this.targetLostTime = -MIN_DEAGGRESSION_TIME;
-            this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
+            if (this.getTarget() == null) {
+                this.resetTicksUntilNextAlert();
+            }
         }
+
+        super.setTarget(target);
     }
 
     @Override
@@ -107,9 +106,7 @@ public class WitherCat extends Monster {
             }
         }
 
-        if (this.getTarget() != null) {
-            this.maybeAlertWitches();
-        }
+        this.maybeAlertCompanions();
 
         if (this.isAngry()) {
             if (this.getScale() < ANGRY_SCALE) {
@@ -124,28 +121,19 @@ public class WitherCat extends Monster {
         super.customServerAiStep();
     }
 
-    private void maybeAlertWitches() {
-        if (this.getTarget() != null) {
-            if (this.ticksUntilNextAlert > 0) {
-                --this.ticksUntilNextAlert;
-            } else {
-                if (this.getSensing().hasLineOfSight(this.getTarget())) {
-                    this.alertWitches();
-                }
-
-                this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
-            }
-        }
+    @Override
+    public int getTicksUntilNextAlert() {
+        return this.ticksUntilNextAlert;
     }
 
-    private void alertWitches() {
-        double followRange = this.getAttributeValue(Attributes.FOLLOW_RANGE);
-        AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(followRange, 10.0, followRange);
-        for (Witch witch : this.level.getEntitiesOfClass(Witch.class, aabb, EntitySelector.NO_SPECTATORS)) {
-            if (witch.getTarget() == null && !witch.isAlliedTo(this.getTarget())) {
-                witch.setTarget(this.getTarget());
-            }
-        }
+    @Override
+    public void setTicksUntilNextAlert(int ticksUntilNextAlert) {
+        this.ticksUntilNextAlert = ticksUntilNextAlert;
+    }
+
+    @Override
+    public Class<Witch> getCompanionType() {
+        return Witch.class;
     }
 
     @Override
