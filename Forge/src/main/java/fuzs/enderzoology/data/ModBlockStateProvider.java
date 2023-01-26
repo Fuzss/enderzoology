@@ -70,6 +70,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     public ItemModelBuilder spawnEgg(ResourceLocation item) {
-        return this.itemModels().getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile("minecraft:item/template_spawn_egg"));
+        return this.itemModels().getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile("enderzoology:item/template_spawn_egg"));
     }
 }
