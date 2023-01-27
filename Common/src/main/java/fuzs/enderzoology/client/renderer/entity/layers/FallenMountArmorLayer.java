@@ -2,6 +2,7 @@ package fuzs.enderzoology.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import fuzs.enderzoology.client.init.ClientModRegistry;
 import fuzs.enderzoology.world.entity.monster.FallenMount;
 import net.minecraft.client.model.HorseModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -20,7 +21,7 @@ public class FallenMountArmorLayer extends RenderLayer<FallenMount, HorseModel<F
 
     public FallenMountArmorLayer(RenderLayerParent<FallenMount, HorseModel<FallenMount>> renderLayerParent, EntityModelSet entityModelSet) {
         super(renderLayerParent);
-        this.model = new HorseModel<>(entityModelSet.bakeLayer(ModelLayers.HORSE_ARMOR));
+        this.model = new HorseModel<>(entityModelSet.bakeLayer(ClientModRegistry.FALLEN_MOUNT_ARMOR));
     }
 
     @Override

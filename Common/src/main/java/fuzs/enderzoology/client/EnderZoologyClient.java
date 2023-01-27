@@ -5,8 +5,7 @@ import fuzs.enderzoology.client.model.OwlModel;
 import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.puzzleslib.client.core.ClientModConstructor;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.SkeletonModel;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -55,5 +54,14 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerLayerDefinition(ClientModRegistry.FALLEN_KNIGHT, SkeletonModel::createBodyLayer);
         context.registerLayerDefinition(ClientModRegistry.FALLEN_KNIGHT_INNER_ARMOR, () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32));
         context.registerLayerDefinition(ClientModRegistry.FALLEN_KNIGHT_OUTER_ARMOR, () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.0F), 0.0F), 64, 32));
+        context.registerLayerDefinition(ClientModRegistry.ENDER_INFESTED_ZOMBIE, () -> LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64));
+        context.registerLayerDefinition(ClientModRegistry.ENDERMINY, EndermanModel::createBodyLayer);
+        context.registerLayerDefinition(ClientModRegistry.FALLEN_MOUNT, () -> LayerDefinition.create(HorseModel.createBodyMesh(CubeDeformation.NONE), 64, 64));
+        context.registerLayerDefinition(ClientModRegistry.FALLEN_MOUNT_ARMOR, () -> LayerDefinition.create(HorseModel.createBodyMesh(new CubeDeformation(0.1F)), 64, 64));
+        context.registerLayerDefinition(ClientModRegistry.WITHER_CAT, () -> LayerDefinition.create(OcelotModel.createBodyMesh(CubeDeformation.NONE), 64, 32));
+        context.registerLayerDefinition(ClientModRegistry.WITHER_WITCH, WitchModel::createBodyLayer);
+        context.registerLayerDefinition(ClientModRegistry.DIRE_WOLF, WolfModel::createBodyLayer);
+        context.registerLayerDefinition(ClientModRegistry.CONCUSSION_CREEPER, () -> CreeperModel.createBodyLayer(CubeDeformation.NONE));
+        context.registerLayerDefinition(ClientModRegistry.CONCUSSION_CREEPER_ARMOR, () -> CreeperModel.createBodyLayer(new CubeDeformation(2.0F)));
     }
 }
