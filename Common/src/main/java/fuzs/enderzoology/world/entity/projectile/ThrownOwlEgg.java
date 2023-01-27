@@ -1,13 +1,13 @@
 package fuzs.enderzoology.world.entity.projectile;
 
 import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.world.entity.animal.Owl;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.item.Item;
@@ -52,11 +52,10 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
         super.onHit(result);
         if (!this.level.isClientSide) {
             if (this.random.nextInt(8) == 0) {
-                // TODO replace with owl when implemented
-                Chicken chicken = EntityType.CHICKEN.create(this.level);
-                chicken.setAge(-24000);
-                chicken.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-                this.level.addFreshEntity(chicken);
+                Owl owl = ModRegistry.OWL_ENTITY_TYPE.get().create(this.level);
+                owl.setAge(-24000);
+                owl.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                this.level.addFreshEntity(owl);
             }
             this.level.broadcastEntityEvent(this, EntityEvent.DEATH);
             this.discard();

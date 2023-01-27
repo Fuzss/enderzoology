@@ -1,5 +1,7 @@
 package fuzs.enderzoology.client;
 
+import fuzs.enderzoology.client.init.ClientModRegistry;
+import fuzs.enderzoology.client.model.OwlModel;
 import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.puzzleslib.client.core.ClientModConstructor;
@@ -19,6 +21,7 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), FallenMountRenderer::new);
         context.registerEntityRenderer(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), WitherCatRenderer::new);
         context.registerEntityRenderer(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), WitherWitchRenderer::new);
+        context.registerEntityRenderer(ModRegistry.OWL_ENTITY_TYPE.get(), OwlRenderer::new);
     }
 
     @Override
@@ -39,5 +42,10 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerItem(ModRegistry.HUNTING_BOW.get(), new ResourceLocation("pulling"), (stack, level, entity, data) -> {
             return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
         });
+    }
+
+    @Override
+    public void onRegisterLayerDefinitions(LayerDefinitionsContext context) {
+        context.registerLayerDefinition(ClientModRegistry.OWL, OwlModel::createBodyLayer);
     }
 }

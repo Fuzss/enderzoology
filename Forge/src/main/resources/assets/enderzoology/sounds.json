@@ -25,22 +25,23 @@
     ],
     "subtitle": "subtitles.entity.dire_wolf.howl"
   },
-  "entity.owl.hoot_double": {
+  "entity.owl.hoot": {
     "sounds": [
-      "enderzoology:mob/owl/hoot_double"
+      "enderzoology:mob/owl/hoot1",
+      "enderzoology:mob/owl/hoot2"
     ],
-    "subtitle": "subtitles.entity.owl.hoot_double"
-  },
-  "entity.owl.hoot_single": {
-    "sounds": [
-      "enderzoology:mob/owl/hoot_single"
-    ],
-    "subtitle": "subtitles.entity.owl.hoot_single"
+    "subtitle": "subtitles.entity.owl.hoot"
   },
   "entity.owl.hurt": {
     "sounds": [
       "enderzoology:mob/owl/hurt"
     ],
     "subtitle": "subtitles.entity.owl.hurt"
+  },
+  "entity.owl.death": {
+    "sounds": [
+      "enderzoology:mob/owl/hurt"
+    ],
+    "subtitle": "subtitles.entity.owl.death"
   }
 }

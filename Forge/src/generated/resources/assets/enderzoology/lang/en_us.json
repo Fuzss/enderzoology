@@ -16,6 +16,7 @@
   "entity.enderzoology.ender_infested_zombie": "Ender-Infested Zombie",
   "entity.enderzoology.enderminy": "Enderminy",
   "entity.enderzoology.fallen_mount": "Fallen Mount",
+  "entity.enderzoology.owl": "Owl",
   "entity.enderzoology.owl_egg": "Thrown Owl Egg",
   "entity.enderzoology.wither_cat": "Wither Cat",
   "entity.enderzoology.wither_witch": "Wither Witch",
@@ -28,6 +29,7 @@
   "item.enderzoology.fallen_mount_spawn_egg": "Fallen Mount Spawn Egg",
   "item.enderzoology.hunting_bow": "Hunting Bow",
   "item.enderzoology.owl_egg": "Owl Egg",
+  "item.enderzoology.owl_spawn_egg": "Owl Spawn Egg",
   "item.enderzoology.wither_cat_spawn_egg": "Wither Cat Spawn Egg",
   "item.enderzoology.wither_witch_spawn_egg": "Wither Witch Spawn Egg",
   "item.enderzoology.withering_dust": "Withering Dust",
@@ -52,7 +54,7 @@
   "subtitles.entity.dire_wolf.growl": "Dire Wolf growls",
   "subtitles.entity.dire_wolf.howl": "Dire Wolf howls",
   "subtitles.entity.dire_wolf.hurt": "Dire Wolf hurts",
-  "subtitles.entity.owl.hoot_double": "Owl hoots",
-  "subtitles.entity.owl.hoot_single": "Owl hoots",
+  "subtitles.entity.owl.death": "Owl dies",
+  "subtitles.entity.owl.hoot": "Owl hoots",
   "subtitles.entity.owl.hurt": "Owl hurts"
 }

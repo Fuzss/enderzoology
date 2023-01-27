@@ -3,6 +3,7 @@ package fuzs.enderzoology.data;
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -30,6 +31,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get(), "Fallen Mount Spawn Egg");
         this.add(ModRegistry.WITHER_CAT_SPAWN_EGG_ITEM.get(), "Wither Cat Spawn Egg");
         this.add(ModRegistry.WITHER_WITCH_SPAWN_EGG_ITEM.get(), "Wither Witch Spawn Egg");
+        this.add(ModRegistry.OWL_SPAWN_EGG_ITEM.get(), "Owl Spawn Egg");
         this.add(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), "Thrown Owl Egg");
         this.add(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), "Concussion Creeper");
         this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Ender-Infested Zombie");
@@ -38,6 +40,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), "Fallen Mount");
         this.add(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), "Wither Cat");
         this.add(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), "Wither Witch");
+        this.add(ModRegistry.OWL_ENTITY_TYPE.get(), "Owl");
         this.add(ModRegistry.DECAY_ENCHANTMENT.get(), "Decay");
         this.add(ModRegistry.REPELLENT_ENCHANTMENT.get(), "Repellent");
         this.add(ModRegistry.SOULBOUND_ENCHANTMENT.get(), "Soulbound");
@@ -51,20 +54,24 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.DECAY_POTION.get(), "Decay");
         this.add(ModRegistry.CONFUSION_POTION.get(), "Confusion");
         this.add(ModRegistry.RISING_POTION.get(), "Rising");
-        this.add("subtitles.entity.dire_wolf.hurt", "Dire Wolf hurts");
-        this.add("subtitles.entity.dire_wolf.death", "Dire Wolf dies");
-        this.add("subtitles.entity.dire_wolf.growl", "Dire Wolf growls");
-        this.add("subtitles.entity.dire_wolf.howl", "Dire Wolf howls");
-        this.add("subtitles.entity.owl.hoot_double", "Owl hoots");
-        this.add("subtitles.entity.owl.hoot_single", "Owl hoots");
-        this.add("subtitles.entity.owl.hurt", "Owl hurts");
+        this.add(ModRegistry.DIRE_WOLF_HURT_SOUND_EVENT.get(), "Dire Wolf hurts");
+        this.add(ModRegistry.DIRE_WOLF_DEATH_SOUND_EVENT.get(), "Dire Wolf dies");
+        this.add(ModRegistry.DIRE_WOLF_GROWL_SOUND_EVENT.get(), "Dire Wolf growls");
+        this.add(ModRegistry.DIRE_WOLF_HOWL_SOUND_EVENT.get(), "Dire Wolf howls");
+        this.add(ModRegistry.OWL_HOOT_SOUND_EVENT.get(), "Owl hoots");
+        this.add(ModRegistry.OWL_HURT_SOUND_EVENT.get(), "Owl hurts");
+        this.add(ModRegistry.OWL_DEATH_SOUND_EVENT.get(), "Owl dies");
     }
 
-    private void add(Potion potion, String name) {
+    public void add(Potion potion, String name) {
         String potionName = potion.getName("");
         this.add("item.minecraft.tipped_arrow.effect." + potionName, "Arrow of " + name);
         this.add("item.minecraft.potion.effect." + potionName, "Potion of " + name);
         this.add("item.minecraft.splash_potion.effect." + potionName, "Splash Potion of " + name);
         this.add("item.minecraft.lingering_potion.effect." + potionName, "Lingering Potion of " + name);
+    }
+
+    public void add(SoundEvent soundEvent, String name) {
+        this.add("subtitles." + soundEvent.getLocation().getPath(), name);
     }
 }

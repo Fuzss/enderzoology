@@ -18,7 +18,7 @@ public class EntityAttributeProviders {
     }
 
     public static AttributeSupplier.Builder createEnderminyAttributes() {
-        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0).add(Attributes.MOVEMENT_SPEED, 0.30000001192092896).add(Attributes.ATTACK_DAMAGE, 5.0).add(Attributes.FOLLOW_RANGE, 48.0);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0).add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.ATTACK_DAMAGE, 5.0).add(Attributes.FOLLOW_RANGE, 48.0);
     }
 
     public static AttributeSupplier.Builder createDireWolfAttributes() {
@@ -35,5 +35,9 @@ public class EntityAttributeProviders {
 
     public static AttributeSupplier.Builder createWitherWitchAttributes() {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 36.0).add(Attributes.MOVEMENT_SPEED, 0.25);
+    }
+
+    public static AttributeSupplier.Builder createOwlAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0).add(Attributes.FLYING_SPEED, 0.4).add(Attributes.MOVEMENT_SPEED, 0.2);
     }
 }

@@ -108,6 +108,7 @@ public class EnderZoology implements ModConstructor {
         context.registerEntityAttributes(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), EntityAttributeProviders.createFallenMountAttributes());
         context.registerEntityAttributes(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), EntityAttributeProviders.createWitherCatAttributes());
         context.registerEntityAttributes(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), EntityAttributeProviders.createWitherWitchAttributes());
+        context.registerEntityAttributes(ModRegistry.OWL_ENTITY_TYPE.get(), EntityAttributeProviders.createOwlAttributes());
     }
 
     @Override
@@ -119,6 +120,7 @@ public class EnderZoology implements ModConstructor {
         context.registerSpawnPlacement(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkMonsterSpawnRules);
         context.registerSpawnPlacement(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkMonsterSpawnRules);
         context.registerSpawnPlacement(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModRegistry.OWL_ENTITY_TYPE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, SpawnPlacementRules::checkOwlSpawnRules);
     }
 
     @Override
