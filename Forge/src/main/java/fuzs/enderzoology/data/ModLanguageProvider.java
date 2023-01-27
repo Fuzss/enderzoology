@@ -3,7 +3,9 @@ package fuzs.enderzoology.data;
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -15,7 +17,7 @@ public class ModLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        this.add("itemGroup.enderzoology.main", EnderZoology.MOD_NAME);
+        this.add(ModRegistry.CREATIVE_MODE_TAB, EnderZoology.MOD_NAME);
         this.add(ModRegistry.ENDER_CHARGE_BLOCK.get(), "Ender Charge");
         this.add(ModRegistry.CONFUSING_CHARGE_BLOCK.get(), "Confusing Charge");
         this.add(ModRegistry.CONCUSSION_CHARGE_BLOCK.get(), "Concussion Charge");
@@ -32,6 +34,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.WITHER_CAT_SPAWN_EGG_ITEM.get(), "Wither Cat Spawn Egg");
         this.add(ModRegistry.WITHER_WITCH_SPAWN_EGG_ITEM.get(), "Wither Witch Spawn Egg");
         this.add(ModRegistry.OWL_SPAWN_EGG_ITEM.get(), "Owl Spawn Egg");
+        this.add(ModRegistry.FALLEN_KNIGHT_SPAWN_EGG_ITEM.get(), "Fallen Knight Spawn Egg");
         this.add(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), "Thrown Owl Egg");
         this.add(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), "Concussion Creeper");
         this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Ender-Infested Zombie");
@@ -41,6 +44,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), "Wither Cat");
         this.add(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), "Wither Witch");
         this.add(ModRegistry.OWL_ENTITY_TYPE.get(), "Owl");
+        this.add(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.get(), "Fallen Knight");
         this.add(ModRegistry.DECAY_ENCHANTMENT.get(), "Decay");
         this.add(ModRegistry.REPELLENT_ENCHANTMENT.get(), "Repellent");
         this.add(ModRegistry.SOULBOUND_ENCHANTMENT.get(), "Soulbound");
@@ -61,6 +65,10 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.OWL_HOOT_SOUND_EVENT.get(), "Owl hoots");
         this.add(ModRegistry.OWL_HURT_SOUND_EVENT.get(), "Owl hurts");
         this.add(ModRegistry.OWL_DEATH_SOUND_EVENT.get(), "Owl dies");
+    }
+
+    public void add(CreativeModeTab tab, String name) {
+        this.add(((TranslatableContents) tab.getDisplayName().getContents()).getKey(), name);
     }
 
     public void add(Potion potion, String name) {

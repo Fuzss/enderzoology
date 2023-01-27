@@ -1,8 +1,8 @@
 package fuzs.enderzoology.world.entity.animal;
 
 import fuzs.enderzoology.init.ModRegistry;
-import fuzs.enderzoology.world.entity.ai.goal.FlyingWanderGoal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.animal.Rabbit;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -70,7 +72,7 @@ public class Owl extends Animal implements FlyingAnimal {
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0, false));
-        this.goalSelector.addGoal(6, new FlyingWanderGoal(this, 1.0));
+        this.goalSelector.addGoal(6, new OwlWanderGoal(this, 1.0));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Rabbit.class, false));
@@ -162,6 +164,11 @@ public class Owl extends Animal implements FlyingAnimal {
     }
 
     @Override
+    public int getAmbientSoundInterval() {
+        return 120;
+    }
+
+    @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
         this.playSound(SoundEvents.CHICKEN_STEP, 0.15F, 1.0F);
     }
@@ -196,5 +203,46 @@ public class Owl extends Animal implements FlyingAnimal {
     @Override
     public Vec3 getLeashOffset() {
         return new Vec3(0.0, 0.5F * this.getEyeHeight(), this.getBbWidth() * 0.4F);
+    }
+
+    static class OwlWanderGoal extends WaterAvoidingRandomFlyingGoal {
+
+        public OwlWanderGoal(PathfinderMob pathfinderMob, double d) {
+            super(pathfinderMob, d);
+        }
+
+        @Override
+        @Nullable
+        protected Vec3 getPosition() {
+            Vec3 vec3 = null;
+            if (this.mob.isInWater()) {
+                vec3 = LandRandomPos.getPos(this.mob, 15, 15);
+            }
+
+            if (this.mob.getRandom().nextFloat() >= this.probability) {
+                vec3 = this.getTreePos();
+            }
+
+            return vec3 == null ? super.getPosition() : vec3;
+        }
+
+        @Nullable
+        private Vec3 getTreePos() {
+            BlockPos blockpos = this.mob.blockPosition();
+            BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos blockpos$mutableblockpos1 = new BlockPos.MutableBlockPos();
+
+            for (BlockPos blockpos1 : BlockPos.betweenClosed(Mth.floor(this.mob.getX() - 3.0D), Mth.floor(this.mob.getY() - 6.0D), Mth.floor(this.mob.getZ() - 3.0D), Mth.floor(this.mob.getX() + 3.0D), Mth.floor(this.mob.getY() + 6.0D), Mth.floor(this.mob.getZ() + 3.0D))) {
+                if (!blockpos.equals(blockpos1)) {
+                    BlockState blockstate = this.mob.level.getBlockState(blockpos$mutableblockpos1.setWithOffset(blockpos1, Direction.DOWN));
+                    boolean flag = blockstate.getBlock() instanceof LeavesBlock || blockstate.is(BlockTags.LOGS);
+                    if (flag && this.mob.level.isEmptyBlock(blockpos1) && this.mob.level.isEmptyBlock(blockpos$mutableblockpos.setWithOffset(blockpos1, Direction.UP))) {
+                        return Vec3.atBottomCenterOf(blockpos1);
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

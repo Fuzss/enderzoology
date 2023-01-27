@@ -50,7 +50,7 @@ public class EnderInfestedZombie extends Zombie {
         if (!super.doHurtTarget(entity)) return false;
         // ranges from 0.0 to 6.75 according to Minecraft Wiki
         float localDifficulty = this.level.getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
-        if (entity instanceof LivingEntity && (!(entity instanceof Player player) || !player.getAbilities().invulnerable) && this.random.nextFloat() < localDifficulty / 10.0F) {
+        if (this.isAlive() && entity instanceof LivingEntity && (!(entity instanceof Player player) || !player.getAbilities().invulnerable) && this.random.nextFloat() < localDifficulty / 10.0F) {
             EnderExplosion.teleportEntity((ServerLevel) this.level, (LivingEntity) entity, 8, false);
         }
         return true;
@@ -59,8 +59,8 @@ public class EnderInfestedZombie extends Zombie {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (!super.hurt(source, amount)) return false;
-        if (this.getHealth() < this.getMaxHealth() * 0.5 && this.random.nextInt(4) == 0) {
-            EnderExplosion.teleportEntity((ServerLevel) this.level, this, 8, false);
+        if (this.isAlive() && this.getHealth() < this.getMaxHealth() * 0.5 && this.random.nextInt(4) == 0) {
+            EnderExplosion.teleportEntity((ServerLevel) this.level, this, 8, false, true);
         }
         return true;
     }

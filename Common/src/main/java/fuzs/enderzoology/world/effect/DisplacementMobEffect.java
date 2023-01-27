@@ -15,7 +15,7 @@ public class DisplacementMobEffect extends InstantenousMobEffect {
     @Override
     public void applyEffectTick(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.level.isClientSide) {
-            EnderExplosion.teleportEntity((ServerLevel) livingEntity.level, livingEntity, amplifier * 8, true);
+            EnderExplosion.teleportEntity((ServerLevel) livingEntity.level, livingEntity, ++amplifier * 8, true);
         }
     }
 }

@@ -61,20 +61,17 @@ public class FallenMount extends AbstractHorse implements Enemy {
         return entityType.canSerialize() && resourceLocation != null ? resourceLocation.toString() : null;
     }
 
-    public static Item getHorseArmorWithChance(int chance) {
-        return switch (chance) {
-            default -> Items.IRON_HORSE_ARMOR;
-            case 1 -> Items.GOLDEN_HORSE_ARMOR;
-            case 2 -> Items.DIAMOND_HORSE_ARMOR;
-            case 3 -> Items.LEATHER_HORSE_ARMOR;
-        };
-    }
-
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(2, new MountRestrictSunGoal(this));
         this.goalSelector.addGoal(3, new MountFleeSunGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2F, false));
+        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2F, false) {
+
+            @Override
+            public boolean canUse() {
+                return !this.mob.isVehicle() && super.canUse();
+            }
+        });
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0, 0.0F));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -128,6 +125,33 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
+    public void positionRider(Entity passenger) {
+        super.positionRider(passenger);
+        if (passenger instanceof LivingEntity living) {
+            living.yBodyRot = this.yBodyRot;
+            living.yHeadRot = this.yHeadRot;
+            living.setYRot(this.getYRot());
+            living.setXRot(this.getXRot());
+        }
+    }
+
+    @Override
+    @Nullable
+    public LivingEntity getControllingPassenger() {
+        return null;
+    }
+
+    @Override
+    public boolean isPushable() {
+        return this.isAlive() && !this.isSpectator() && !this.onClimbable();
+    }
+
+    @Override
+    protected boolean isImmobile() {
+        return this.isDeadOrDying();
+    }
+
+    @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (itemStack.is(Items.GOLDEN_CARROT)) {
@@ -160,30 +184,24 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
-        if (random.nextFloat() < 0.5F + difficulty.getSpecialMultiplier()) {
-            int i = -1;
-            i += random.nextInt(2);
-            if (random.nextFloat() < 0.095F) {
-                ++i;
-            }
-
-            if (random.nextFloat() < 0.095F) {
-                ++i;
-            }
-
-            if (random.nextFloat() < 0.095F) {
-                ++i;
-            }
-
-
-            if (this.getArmor().isEmpty()) {
-                Item item = getHorseArmorWithChance(i);
-                if (item != null) {
-                    this.setArmor(new ItemStack(item));
-                }
-            }
+        Item item;
+        float selector = random.nextFloat();
+        if (selector < 0.015F) {
+            item = Items.DIAMOND_HORSE_ARMOR;
+        } else if (selector < 0.05F) {
+            item = Items.GOLDEN_HORSE_ARMOR;
+        } else if (selector < 0.2F) {
+            item = Items.LEATHER_HORSE_ARMOR;
+        } else {
+            item = Items.IRON_HORSE_ARMOR;
         }
 
+        this.setArmor(new ItemStack(item));
+    }
+
+    @Override
+    public boolean isSaddled() {
+        return true;
     }
 
     @Override
@@ -370,20 +388,13 @@ public class FallenMount extends AbstractHorse implements Enemy {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         SpawnGroupData spawnGroupData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
-        if (spawnData == null) {
-            this.populateDefaultEquipmentSlots(level.getRandom(), difficulty);
-        }
+        this.populateDefaultEquipmentSlots(level.getRandom(), difficulty);
         return spawnGroupData;
     }
 
     @Override
     public MobType getMobType() {
         return MobType.UNDEAD;
-    }
-
-    @Override
-    public double getPassengersRidingOffset() {
-        return super.getPassengersRidingOffset() - 0.1875;
     }
 
     @Override

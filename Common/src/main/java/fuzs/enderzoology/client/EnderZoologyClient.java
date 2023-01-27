@@ -5,6 +5,10 @@ import fuzs.enderzoology.client.model.OwlModel;
 import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.puzzleslib.client.core.ClientModConstructor;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.SkeletonModel;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 
@@ -22,6 +26,7 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), WitherCatRenderer::new);
         context.registerEntityRenderer(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), WitherWitchRenderer::new);
         context.registerEntityRenderer(ModRegistry.OWL_ENTITY_TYPE.get(), OwlRenderer::new);
+        context.registerEntityRenderer(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.get(), FallenKnightRenderer::new);
     }
 
     @Override
@@ -47,5 +52,8 @@ public class EnderZoologyClient implements ClientModConstructor {
     @Override
     public void onRegisterLayerDefinitions(LayerDefinitionsContext context) {
         context.registerLayerDefinition(ClientModRegistry.OWL, OwlModel::createBodyLayer);
+        context.registerLayerDefinition(ClientModRegistry.FALLEN_KNIGHT, SkeletonModel::createBodyLayer);
+        context.registerLayerDefinition(ClientModRegistry.FALLEN_KNIGHT_INNER_ARMOR, () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32));
+        context.registerLayerDefinition(ClientModRegistry.FALLEN_KNIGHT_OUTER_ARMOR, () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.0F), 0.0F), 64, 32));
     }
 }

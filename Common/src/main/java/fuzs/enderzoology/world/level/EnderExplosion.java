@@ -20,7 +20,6 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Shulker;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.GameRules;
@@ -77,12 +76,10 @@ public class EnderExplosion extends Explosion {
             for (Entity entity : entities) {
                 if (entity instanceof LivingEntity livingEntity && entity.isAlive() && !entity.getType().is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) {
                     Vec3 originalPosition = livingEntity.position();
-                    boolean applyConfusion = enderExplosion.entityInteraction.confusion;
                     if (enderExplosion.entityInteraction.teleport) {
-                        applyConfusion &= teleportEntity((ServerLevel) level, livingEntity, 48, true);
+                        teleportEntity((ServerLevel) level, livingEntity, 48, true);
                     }
-                    // only confuse after teleport when it actually happened
-                    if (applyConfusion) {
+                    if (enderExplosion.entityInteraction.confusion) {
                         applyConfusionPotion(enderExplosion.position, originalPosition, livingEntity, enderExplosion.radius);
                     }
                 }
@@ -91,7 +88,12 @@ public class EnderExplosion extends Explosion {
         entities.removeIf(entity -> !(entity instanceof PrimedTnt));
     }
 
-    public static boolean teleportEntity(ServerLevel level, LivingEntity entity, int teleportRange, boolean endermiteChance) {
+    public static void teleportEntity(ServerLevel level, LivingEntity entity, int teleportRange, boolean endermiteChance) {
+        teleportEntity(level, entity, teleportRange, endermiteChance, false);
+    }
+
+    public static void teleportEntity(ServerLevel level, LivingEntity entity, int teleportRange, boolean endermiteChance, boolean forceTeleport) {
+        if (!forceTeleport && entity.getType().is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) return;
         for (int i = 0; i < 16; ++i) {
             double randomX = entity.getX() + (entity.getRandom().nextDouble() - 0.5) * teleportRange * 2;
             double randomY = Mth.clamp(entity.getY() + (entity.getRandom().nextInt(teleportRange * 2) - teleportRange), level.getMinBuildHeight(), level.getMinBuildHeight() + level.getLogicalHeight() - 1);
@@ -108,10 +110,9 @@ public class EnderExplosion extends Explosion {
                     endermite.moveTo(vec3.x, vec3.y, vec3.z, entity.getYRot(), entity.getXRot());
                     level.addFreshEntity(endermite);
                 }
-                return true;
+                return;
             }
         }
-        return false;
     }
 
     private static SoundEvent getEntityTeleportSound(Entity entity) {

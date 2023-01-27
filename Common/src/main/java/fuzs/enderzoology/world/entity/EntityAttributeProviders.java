@@ -40,4 +40,8 @@ public class EntityAttributeProviders {
     public static AttributeSupplier.Builder createOwlAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0).add(Attributes.FLYING_SPEED, 0.4).add(Attributes.MOVEMENT_SPEED, 0.2);
     }
+
+    public static AttributeSupplier.Builder createFallenKnightAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.25D);
+    }
 }

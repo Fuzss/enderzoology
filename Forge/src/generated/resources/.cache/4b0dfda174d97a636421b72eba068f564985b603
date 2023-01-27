@@ -1,4 +1,4 @@
-// 1.19.2	2023-01-27T01:10:08.573332	Block States: enderzoology
+// 1.19.2	2023-01-27T16:16:42.722566	Block States: enderzoology
 a0105056914ede00cb2fe7f9f97f3caa76ba273e assets/enderzoology/blockstates/concussion_charge.json
 213469536489bbb589da1b9dd6758ed2f97e3cdb assets/enderzoology/blockstates/confusing_charge.json
 963395d63142cf316fcbfdbda4139391c4e7bbb6 assets/enderzoology/blockstates/ender_charge.json
@@ -14,6 +14,7 @@ b58a1e4fd3e4453ff74f51bed4d57756b9d050f1 assets/enderzoology/models/item/confusi
 f3916c910116a00f935a9ddabd0a5729b60477c8 assets/enderzoology/models/item/ender_fragment.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/ender_infested_zombie_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/enderminy_spawn_egg.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/fallen_knight_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/fallen_mount_spawn_egg.json
 21ef7605113584f6b28f9744517f4318e180fb0b assets/enderzoology/models/item/owl_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/enderzoology/models/item/owl_spawn_egg.json

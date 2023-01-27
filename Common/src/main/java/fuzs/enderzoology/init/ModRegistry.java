@@ -36,26 +36,13 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.function.Consumer;
-
 public class ModRegistry {
-    static final CreativeModeTab CREATIVE_MODE_TAB = CommonAbstractions.INSTANCE.creativeModeTabBuilder(EnderZoology.MOD_ID).setIcon(() -> new ItemStack(ModRegistry.ENDER_FRAGMENT_ITEM.get()))
-            .appendItemsV2((NonNullList<ItemStack> itemStacks, CreativeModeTab creativeModeTab) -> {
-                for (Item item : Registry.ITEM) {
-                    item.fillItemCategory(creativeModeTab, itemStacks);
-                }
-                addAllEnchantments(EnderZoology.MOD_ID, itemStacks::add);
-                addAllPotions(EnderZoology.MOD_ID, itemStacks::add);
-            }).build();
+    public static final CreativeModeTab CREATIVE_MODE_TAB = CommonAbstractions.INSTANCE.creativeModeTabBuilder(EnderZoology.MOD_ID).setIcon(() -> new ItemStack(ModRegistry.ENDER_FRAGMENT_ITEM.get())).appendAllEnchantments().appendAllPotions().build();
     private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private static final RegistryManager REGISTRY = CommonFactories.INSTANCE.registration(EnderZoology.MOD_ID);
     public static final RegistryReference<Block> CONCUSSION_CHARGE_BLOCK = REGISTRY.whenNotOn(ModLoader.FORGE).registerBlockWithItem("concussion_charge", () -> new ChargeBlock(BlockBehaviour.Properties.copy(Blocks.TNT), EnderExplosion.EntityInteraction.CONCUSSION), CREATIVE_MODE_TAB);
@@ -76,6 +63,7 @@ public class ModRegistry {
     public static final RegistryReference<EntityType<WitherCat>> WITHER_CAT_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("wither_cat", () -> EntityType.Builder.of(WitherCat::new, MobCategory.MONSTER).sized(0.6F, 0.7F).clientTrackingRange(8));
     public static final RegistryReference<EntityType<WitherWitch>> WITHER_WITCH_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("wither_witch", () -> EntityType.Builder.of(WitherWitch::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(8));
     public static final RegistryReference<EntityType<Owl>> OWL_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("owl", () -> EntityType.Builder.of(Owl::new, MobCategory.CREATURE).sized(0.4F, 0.85F).clientTrackingRange(8));
+    public static final RegistryReference<EntityType<FallenKnight>> FALLEN_KNIGHT_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("fallen_knight", () -> EntityType.Builder.of(FallenKnight::new, MobCategory.MONSTER).sized(0.6F, 1.99F).clientTrackingRange(8));
     public static final RegistryReference<Item> CONCUSSION_CREEPER_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("concussion_creeper_spawn_egg", () -> new SpawnEggItem(CONCUSSION_CREEPER_ENTITY_TYPE.get(), 0x56FF8E, 0xFF0A22, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("ender_infested_zombie_spawn_egg", () -> new SpawnEggItem(ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), 0x132F55, 0x2B2D1C, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> ENDERMINY_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("enderminy_spawn_egg", () -> new SpawnEggItem(ENDERMINY_ENTITY_TYPE.get(), 0x27624D, 0x212121, new Item.Properties().tab(CREATIVE_MODE_TAB)));
@@ -84,6 +72,7 @@ public class ModRegistry {
     public static final RegistryReference<Item> WITHER_CAT_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("wither_cat_spawn_egg", () -> new SpawnEggItem(WITHER_CAT_ENTITY_TYPE.get(), 0x303030, 0xFFFFFF, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> WITHER_WITCH_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("wither_witch_spawn_egg", () -> new SpawnEggItem(WITHER_WITCH_ENTITY_TYPE.get(), 0x26520D, 0x905E43, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> OWL_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("owl_spawn_egg", () -> new SpawnEggItem(OWL_ENTITY_TYPE.get(), 0xC17949, 0xFFDDC6, new Item.Properties().tab(CREATIVE_MODE_TAB)));
+    public static final RegistryReference<Item> FALLEN_KNIGHT_SPAWN_EGG_ITEM = REGISTRY.whenNotOn(ModLoader.FORGE).registerItem("fallen_knight_spawn_egg", () -> new SpawnEggItem(FALLEN_KNIGHT_ENTITY_TYPE.get(), 0x365A25, 0xA0A0A0, new Item.Properties().tab(CREATIVE_MODE_TAB)));
     public static final RegistryReference<Enchantment> DECAY_ENCHANTMENT = REGISTRY.registerEnchantment("decay", () -> new DecayEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
     public static final RegistryReference<Enchantment> REPELLENT_ENCHANTMENT = REGISTRY.registerEnchantment("repellent", () -> new RepellentEnchantment(Enchantment.Rarity.VERY_RARE, ARMOR_SLOTS));
     public static final RegistryReference<Enchantment> SOULBOUND_ENCHANTMENT = REGISTRY.registerEnchantment("soulbound", () -> new SoulboundEnchantment(Enchantment.Rarity.VERY_RARE, EquipmentSlot.values()));
@@ -113,22 +102,5 @@ public class ModRegistry {
 
     public static void touch() {
 
-    }
-
-    private static void addAllEnchantments(String modId, Consumer<ItemStack> itemStacks) {
-        Enchantment[] enchantments = Registry.ENCHANTMENT.entrySet().stream().filter(entry -> entry.getKey().location().getNamespace().equals(modId)).sorted(Comparator.comparing(entry -> entry.getKey().location().getPath())).map(Map.Entry::getValue).toArray(Enchantment[]::new);
-        for (Enchantment enchantment : enchantments) {
-            itemStacks.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantment, enchantment.getMaxLevel())));
-        }
-    }
-
-    private static void addAllPotions(String modId, Consumer<ItemStack> itemStacks) {
-        Potion[] potions = Registry.POTION.entrySet().stream().filter(entry -> entry.getKey().location().getNamespace().equals(modId)).map(Map.Entry::getValue).filter(t -> !t.getEffects().isEmpty()).sorted(Comparator.<Potion, String>comparing(t -> Registry.MOB_EFFECT.getKey(t.getEffects().get(0).getEffect()).getPath()).thenComparingInt(t -> t.getEffects().get(0).getAmplifier()).thenComparingInt(t -> t.getEffects().get(0).getDuration())).toArray(Potion[]::new);
-        Item[] items = new Item[]{Items.POTION, Items.SPLASH_POTION, Items.LINGERING_POTION, Items.TIPPED_ARROW};
-        for (Item item : items) {
-            for (Potion potion : potions) {
-                itemStacks.accept(PotionUtils.setPotion(new ItemStack(item), potion));
-            }
-        }
     }
 }

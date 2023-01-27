@@ -27,6 +27,7 @@ public class ModRegistryForge {
     public static final RegistryReference<Item> WITHER_CAT_SPAWN_EGG_ITEM = REGISTRY.registerItem("wither_cat_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.WITHER_CAT_ENTITY_TYPE::get, 0x303030, 0xFFFFFF, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> WITHER_WITCH_SPAWN_EGG_ITEM = REGISTRY.registerItem("wither_witch_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.WITHER_WITCH_ENTITY_TYPE::get, 0x26520D, 0x905E43, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
     public static final RegistryReference<Item> OWL_SPAWN_EGG_ITEM = REGISTRY.registerItem("owl_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.OWL_ENTITY_TYPE::get, 0xC17949, 0xFFDDC6, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
+    public static final RegistryReference<Item> FALLEN_KNIGHT_SPAWN_EGG_ITEM = REGISTRY.registerItem("fallen_knight_spawn_egg", () -> new ForgeSpawnEggItem(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE::get, 0x365A25, 0xA0A0A0, new Item.Properties().tab(ModRegistry.CREATIVE_MODE_TAB)));
 
     public static void touch() {
 

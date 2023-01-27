@@ -15,8 +15,6 @@ public interface CommonAbstractions {
 
     boolean onExplosionStart(Level level, Explosion explosion);
 
-    GoalSelector getGoalSelector(Mob mob);
-
     boolean canLivingConvert(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer);
 
     void onLivingConvert(LivingEntity entity, LivingEntity outcome);

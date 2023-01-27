@@ -40,7 +40,7 @@ public class DireWolf extends Wolf implements Enemy {
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Wolf.class, 10, true, false, entity -> entity.getClass() != this.getClass()));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Wolf.class, 10, true, false, entity -> entity.getType() == EntityType.WOLF));
         this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, true));
     }
 
