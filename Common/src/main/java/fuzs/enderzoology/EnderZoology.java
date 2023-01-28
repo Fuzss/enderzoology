@@ -145,29 +145,29 @@ public class EnderZoology implements ModConstructor {
             return loadingContext.canGenerateIn(LevelStem.OVERWORLD);
         }, modificationContext -> {
             MobSpawnSettingsContext settings = modificationContext.mobSpawnSettings();
-            if (CONFIG.get(CommonConfig.class).concussionCreeper.spawning) {
+            if (CONFIG.get(CommonConfig.class).concussionCreeper) {
                 registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), data.minCount, data.maxCount));
             }
-            if (CONFIG.get(CommonConfig.class).infestedZombie.spawning) {
+            if (CONFIG.get(CommonConfig.class).infestedZombie) {
                 registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.INFESTED_ZOMBIE_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 1, data.maxCount));
             }
-            if (CONFIG.get(CommonConfig.class).fallenKnight.spawning) {
+            if (CONFIG.get(CommonConfig.class).fallenKnight) {
                 registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 4, 6));
             }
-            if (CONFIG.get(CommonConfig.class).enderminy.spawning) {
+            if (CONFIG.get(CommonConfig.class).enderminy) {
                 registerSpawnData(settings, MobCategory.MONSTER, EntityType.ENDERMAN, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), data.getWeight().asInt() * 3, Math.min(data.maxCount, data.minCount * 4), data.maxCount));
             }
-            if (CONFIG.get(CommonConfig.class).direWolf.spawning) {
+            if (CONFIG.get(CommonConfig.class).direWolf) {
                 if (modificationContext.climateSettings().getPrecipitation() == Biome.Precipitation.SNOW) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {
                         settings.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 3, 8));
                     });
                 }
             }
-            if (CONFIG.get(CommonConfig.class).witherWitch.spawning) {
+            if (CONFIG.get(CommonConfig.class).witherWitch) {
                 registerSpawnData(settings, MobCategory.MONSTER, EntityType.WITCH, data -> new MobSpawnSettings.SpawnerData(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), data.getWeight(), data.minCount, data.maxCount));
             }
-            if (CONFIG.get(CommonConfig.class).owl.spawning) {
+            if (CONFIG.get(CommonConfig.class).owl) {
                 if (modificationContext.climateSettings().getPrecipitation() != Biome.Precipitation.NONE) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.RABBIT).ifPresent(data -> {
                         settings.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModRegistry.OWL_ENTITY_TYPE.get(), data.getWeight(), data.minCount, data.maxCount));
