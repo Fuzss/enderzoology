@@ -11,9 +11,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
@@ -42,6 +40,13 @@ public class FallenKnight extends AbstractSkeleton {
 
     public FallenKnight(EntityType<? extends AbstractSkeleton> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        // don't flee from wolves
+        this.goalSelector.getAvailableGoals().stream().map(WrappedGoal::getGoal).filter(goal -> goal instanceof AvoidEntityGoal).limit(1).toList().forEach(this.goalSelector::removeGoal);
     }
 
     @Override
@@ -199,11 +204,6 @@ public class FallenKnight extends AbstractSkeleton {
             };
         }
         return this.meleeGoal;
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return SoundEvents.ZOMBIE_AMBIENT;
     }
 
     @Override

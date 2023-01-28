@@ -23,7 +23,6 @@ import fuzs.puzzleslib.core.CommonFactories;
 import fuzs.puzzleslib.core.ModLoader;
 import fuzs.puzzleslib.init.RegistryManager;
 import fuzs.puzzleslib.init.RegistryReference;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
@@ -58,7 +57,7 @@ public class ModRegistry {
     public static final RegistryReference<EntityType<ConcussionCreeper>> CONCUSSION_CREEPER_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("concussion_creeper", () -> EntityType.Builder.of(ConcussionCreeper::new, MobCategory.MONSTER).sized(0.6F, 1.7F).clientTrackingRange(8));
     public static final RegistryReference<EntityType<EnderInfestedZombie>> ENDER_INFESTED_ZOMBIE_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("ender_infested_zombie", () -> EntityType.Builder.of(EnderInfestedZombie::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(8));
     public static final RegistryReference<EntityType<Enderminy>> ENDERMINY_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("enderminy", () -> EntityType.Builder.of(Enderminy::new, MobCategory.MONSTER).sized(0.3F, 0.725F).clientTrackingRange(8));
-    public static final RegistryReference<EntityType<DireWolf>> DIRE_WOLF_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("dire_wolf", () -> EntityType.Builder.of(DireWolf::new, MobCategory.MONSTER).sized(0.6F, 0.85F).clientTrackingRange(10));
+    public static final RegistryReference<EntityType<DireWolf>> DIRE_WOLF_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("dire_wolf", () -> EntityType.Builder.of(DireWolf::new, MobCategory.MONSTER).sized(0.7F, 1.0F).clientTrackingRange(10));
     public static final RegistryReference<EntityType<FallenMount>> FALLEN_MOUNT_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("fallen_mount", () -> EntityType.Builder.of(FallenMount::new, MobCategory.MONSTER).sized(1.3964844F, 1.6F).clientTrackingRange(10));
     public static final RegistryReference<EntityType<WitherCat>> WITHER_CAT_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("wither_cat", () -> EntityType.Builder.of(WitherCat::new, MobCategory.MONSTER).sized(0.6F, 0.7F).clientTrackingRange(8));
     public static final RegistryReference<EntityType<WitherWitch>> WITHER_WITCH_ENTITY_TYPE = REGISTRY.registerEntityTypeBuilder("wither_witch", () -> EntityType.Builder.of(WitherWitch::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(8));

@@ -141,7 +141,7 @@ public class EnderZoology implements ModConstructor {
             MobSpawnSettingsContext settings = modificationContext.mobSpawnSettings();
             registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), data.minCount, data.maxCount));
             registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 1, data.maxCount));
-            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), data.minCount, data.maxCount));
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 4, 6));
             registerSpawnData(settings, MobCategory.MONSTER, EntityType.ENDERMAN, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), data.getWeight().asInt() * 3, Math.min(data.maxCount, data.minCount * 4), data.maxCount));
             if (modificationContext.climateSettings().getPrecipitation() == Biome.Precipitation.SNOW) {
                 findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {
@@ -149,6 +149,11 @@ public class EnderZoology implements ModConstructor {
                 });
             }
             registerSpawnData(settings, MobCategory.MONSTER, EntityType.WITCH, data -> new MobSpawnSettings.SpawnerData(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), data.getWeight(), data.minCount, data.maxCount));
+            if (modificationContext.climateSettings().getPrecipitation() != Biome.Precipitation.NONE) {
+                findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.RABBIT).ifPresent(data -> {
+                    settings.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModRegistry.OWL_ENTITY_TYPE.get(), data.getWeight(), data.minCount, data.maxCount));
+                });
+            }
         });
     }
 
