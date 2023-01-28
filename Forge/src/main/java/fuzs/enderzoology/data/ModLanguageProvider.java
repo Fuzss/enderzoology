@@ -65,6 +65,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.OWL_HOOT_SOUND_EVENT.get(), "Owl hoots");
         this.add(ModRegistry.OWL_HURT_SOUND_EVENT.get(), "Owl hurts");
         this.add(ModRegistry.OWL_DEATH_SOUND_EVENT.get(), "Owl dies");
+        this.add(ModRegistry.OWL_EGG_THROW_SOUND_EVENT.get(), "Owl Egg flies");
     }
 
     public void add(CreativeModeTab tab, String name) {

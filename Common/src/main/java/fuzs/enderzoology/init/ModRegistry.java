@@ -95,6 +95,7 @@ public class ModRegistry {
     public static final RegistryReference<SoundEvent> OWL_HOOT_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.owl.hoot");
     public static final RegistryReference<SoundEvent> OWL_HURT_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.owl.hurt");
     public static final RegistryReference<SoundEvent> OWL_DEATH_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.owl.death");
+    public static final RegistryReference<SoundEvent> OWL_EGG_THROW_SOUND_EVENT = REGISTRY.registerRawSoundEvent("entity.owl_egg.throw");
     private static final CapabilityController CAPABILITIES = CommonFactories.INSTANCE.capabilities(EnderZoology.MOD_ID);
     public static final CapabilityKey<SoulboundCapability> SOULBOUND_CAPABILITY = CAPABILITIES.registerPlayerCapability("soulbound", SoulboundCapability.class, player -> new SoulboundCapabilityImpl(), PlayerRespawnStrategy.NEVER);
     public static final TagKey<EntityType<?>> FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, EnderZoology.id("fallen_mount_targets"));

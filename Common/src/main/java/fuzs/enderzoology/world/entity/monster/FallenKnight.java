@@ -9,6 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -201,6 +202,26 @@ public class FallenKnight extends AbstractSkeleton {
     }
 
     @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.ZOMBIE_AMBIENT;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return SoundEvents.ZOMBIE_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.ZOMBIE_DEATH;
+    }
+
+    @Override
+    protected SoundEvent getStepSound() {
+        return SoundEvents.ZOMBIE_STEP;
+    }
+
+    @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("CanBreakDoors", this.canBreakDoors());
@@ -210,10 +231,5 @@ public class FallenKnight extends AbstractSkeleton {
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setCanBreakDoors(compound.getBoolean("CanBreakDoors"));
-    }
-
-    @Override
-    protected SoundEvent getStepSound() {
-        return SoundEvents.ZOMBIE_STEP;
     }
 }

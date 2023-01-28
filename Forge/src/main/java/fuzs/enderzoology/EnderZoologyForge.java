@@ -75,5 +75,6 @@ public class EnderZoologyForge {
         dataGenerator.addProvider(true, new ModLanguageProvider(dataGenerator, EnderZoology.MOD_ID));
         dataGenerator.addProvider(true, new ModLootTableProvider(dataGenerator, EnderZoology.MOD_ID));
         dataGenerator.addProvider(true, new ModRecipeProvider(dataGenerator, EnderZoology.MOD_ID));
+        dataGenerator.addProvider(true, new ModSoundDefinitionsProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
     }
 }

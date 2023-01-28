@@ -58,6 +58,11 @@ public class EnderZoology implements ModConstructor {
 
     @Override
     public void onCommonSetup() {
+        registerDispenseBehaviors();
+        registerBrewingRecipes();
+    }
+
+    private static void registerDispenseBehaviors() {
         DispenserBlock.registerBehavior(ModRegistry.OWL_EGG_ITEM.get(), new AbstractProjectileDispenseBehavior() {
 
             @Override
@@ -70,16 +75,6 @@ public class EnderZoology implements ModConstructor {
         registerChargeBehavior(ModRegistry.ENDER_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.ENDER);
         registerChargeBehavior(ModRegistry.CONFUSING_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.CONFUSION);
         registerChargeBehavior(ModRegistry.CONCUSSION_CHARGE_BLOCK.get(), EnderExplosion.EntityInteraction.CONCUSSION);
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.ENDER_FRAGMENT_ITEM.get(), ModRegistry.DISPLACEMENT_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DISPLACEMENT_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_DISPLACEMENT_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.WITHERING_DUST_ITEM.get(), ModRegistry.DECAY_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.REDSTONE, ModRegistry.LONG_DECAY_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_DECAY_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.CONFUSING_POWDER_ITEM.get(), ModRegistry.CONFUSION_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.CONFUSION_POTION.get(), Items.REDSTONE, ModRegistry.LONG_CONFUSION_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.CONFUSION_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_CONFUSION_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.OWL_EGG_ITEM.get(), ModRegistry.RISING_POTION.get());
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.RISING_POTION.get(), Items.REDSTONE, ModRegistry.LONG_RISING_POTION.get());
     }
 
     private static void registerChargeBehavior(Block block, EnderExplosion.EntityInteraction entityInteraction) {
@@ -97,6 +92,19 @@ public class EnderZoology implements ModConstructor {
                 return stack;
             }
         });
+    }
+
+    private static void registerBrewingRecipes() {
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.ENDER_FRAGMENT_ITEM.get(), ModRegistry.DISPLACEMENT_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DISPLACEMENT_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_DISPLACEMENT_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.WITHERING_DUST_ITEM.get(), ModRegistry.DECAY_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.REDSTONE, ModRegistry.LONG_DECAY_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.DECAY_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_DECAY_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.CONFUSING_POWDER_ITEM.get(), ModRegistry.CONFUSION_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.CONFUSION_POTION.get(), Items.REDSTONE, ModRegistry.LONG_CONFUSION_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.CONFUSION_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_CONFUSION_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.OWL_EGG_ITEM.get(), ModRegistry.RISING_POTION.get());
+        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.RISING_POTION.get(), Items.REDSTONE, ModRegistry.LONG_RISING_POTION.get());
     }
 
     @Override
@@ -131,8 +139,9 @@ public class EnderZoology implements ModConstructor {
             return loadingContext.canGenerateIn(LevelStem.OVERWORLD);
         }, modificationContext -> {
             MobSpawnSettingsContext settings = modificationContext.mobSpawnSettings();
-            registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), Math.max(1, data.minCount / 4), data.maxCount));
-            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), Math.max(1, data.minCount / 4), data.maxCount));
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), data.minCount, data.maxCount));
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 1, data.maxCount));
+            registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), data.minCount, data.maxCount));
             registerSpawnData(settings, MobCategory.MONSTER, EntityType.ENDERMAN, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), data.getWeight().asInt() * 3, Math.min(data.maxCount, data.minCount * 4), data.maxCount));
             if (modificationContext.climateSettings().getPrecipitation() == Biome.Precipitation.SNOW) {
                 findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {

@@ -58,5 +58,6 @@
   "subtitles.entity.dire_wolf.hurt": "Dire Wolf hurts",
   "subtitles.entity.owl.death": "Owl dies",
   "subtitles.entity.owl.hoot": "Owl hoots",
-  "subtitles.entity.owl.hurt": "Owl hurts"
+  "subtitles.entity.owl.hurt": "Owl hurts",
+  "subtitles.entity.owl_egg.throw": "Owl Egg flies"
 }
