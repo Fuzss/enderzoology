@@ -31,7 +31,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         this.itemModels().basicItem(ModRegistry.OWL_EGG_ITEM.get());
         this.itemModels().basicItem(ModRegistry.WITHERING_DUST_ITEM.get());
         this.spawnEgg(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get());
-        this.spawnEgg(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get());
+        this.spawnEgg(ModRegistry.INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.ENDERMINY_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get());
         this.spawnEgg(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get());

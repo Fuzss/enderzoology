@@ -1,10 +1,10 @@
-// 1.19.2	2023-01-27T16:16:42.72241	LootTables
+// 1.19.2	2023-01-28T18:35:41.670255	LootTables
 08d465c1e0ff42ab92375c5265a3aeb88f92dad8 data/enderzoology/loot_tables/entities/concussion_creeper.json
 ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data/enderzoology/loot_tables/entities/dire_wolf.json
-b223e06c743ae5ae01a0cb9c1640b5d932ce893e data/enderzoology/loot_tables/entities/ender_infested_zombie.json
 17db5087c363e53a32c9998d7e057796fe1cc19b data/enderzoology/loot_tables/entities/enderminy.json
 349cd831f684dd8af35ed7eea06d71a535807a64 data/enderzoology/loot_tables/entities/fallen_knight.json
 4247663ba7a61e4bccbd3d4919a9f9b35c80fc14 data/enderzoology/loot_tables/entities/fallen_mount.json
+b223e06c743ae5ae01a0cb9c1640b5d932ce893e data/enderzoology/loot_tables/entities/infested_zombie.json
 3bb6738bc72852864276455ff558580bd9196c8c data/enderzoology/loot_tables/entities/owl.json
 3b588570432a0a584ae3e8a62189913fb677a9fe data/enderzoology/loot_tables/entities/wither_cat.json
 f6c9987319b5a276b217f31b6b9e6fb167436270 data/enderzoology/loot_tables/entities/wither_witch.json

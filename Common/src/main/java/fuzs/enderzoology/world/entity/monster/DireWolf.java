@@ -296,8 +296,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        if (this.isFollower()) return this.wolfPackLeader.getAmbientSound();
-        return ModRegistry.DIRE_WOLF_GROWL_SOUND_EVENT.get();
+        return this.random.nextFloat() < 0.1F ? ModRegistry.DIRE_WOLF_HOWL_SOUND_EVENT.get() : ModRegistry.DIRE_WOLF_GROWL_SOUND_EVENT.get();
     }
 
     @Override

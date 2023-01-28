@@ -12,6 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -186,7 +187,7 @@ public class Owl extends Animal implements FlyingAnimal {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        return target.hurt(DamageSource.mobAttack(this), 3.0F);
+        return target.hurt(DamageSource.mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
     }
 
     @Nullable

@@ -14,9 +14,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class EnderInfestedZombie extends Zombie {
+public class InfestedZombie extends Zombie {
 
-    public EnderInfestedZombie(EntityType<? extends EnderInfestedZombie> entityType, Level level) {
+    public InfestedZombie(EntityType<? extends InfestedZombie> entityType, Level level) {
         super(entityType, level);
     }
 

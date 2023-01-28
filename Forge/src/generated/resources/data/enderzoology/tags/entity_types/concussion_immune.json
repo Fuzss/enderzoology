@@ -5,7 +5,7 @@
     "minecraft:shulker",
     "enderzoology:concussion_creeper",
     "enderzoology:enderminy",
-    "enderzoology:ender_infested_zombie",
+    "enderzoology:infested_zombie",
     {
       "id": "#c:bosses",
       "required": false

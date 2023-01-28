@@ -27,7 +27,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.OWL_EGG_ITEM.get(), "Owl Egg");
         this.add(ModRegistry.WITHERING_DUST_ITEM.get(), "Withering Dust");
         this.add(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get(), "Concussion Creeper Spawn Egg");
-        this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get(), "Ender-Infested Zombie Spawn Egg");
+        this.add(ModRegistry.INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get(), "Infested Zombie Spawn Egg");
         this.add(ModRegistry.ENDERMINY_SPAWN_EGG_ITEM.get(), "Enderminy Spawn Egg");
         this.add(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get(), "Dire Wolf Spawn Egg");
         this.add(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get(), "Fallen Mount Spawn Egg");
@@ -37,7 +37,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.FALLEN_KNIGHT_SPAWN_EGG_ITEM.get(), "Fallen Knight Spawn Egg");
         this.add(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), "Thrown Owl Egg");
         this.add(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), "Concussion Creeper");
-        this.add(ModRegistry.ENDER_INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Ender-Infested Zombie");
+        this.add(ModRegistry.INFESTED_ZOMBIE_ENTITY_TYPE.get(), "Infested Zombie");
         this.add(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), "Enderminy");
         this.add(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), "Dire Wolf");
         this.add(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), "Fallen Mount");
