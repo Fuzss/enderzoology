@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.data.loot.EntityLoot;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +14,8 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -24,6 +28,7 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemKilledByPlayerCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithLootingCondition;
@@ -39,7 +44,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ModLootTableProvider extends LootTableProvider {
-    private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> subProviders = ImmutableList.of(Pair.of(ModBlockLoot::new, LootContextParamSets.ENTITY));
+    private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> subProviders = ImmutableList.of(Pair.of(ModBlockLoot::new, LootContextParamSets.BLOCK), Pair.of(ModEntityLoot::new, LootContextParamSets.ENTITY));
     private final String modId;
 
     public ModLootTableProvider(DataGenerator dataGenerator, String modId) {
@@ -57,7 +62,29 @@ public class ModLootTableProvider extends LootTableProvider {
 
     }
 
-    private class ModBlockLoot extends EntityLoot {
+    private class ModBlockLoot extends BlockLoot {
+
+        @Override
+        protected void addTables() {
+            this.dropExplosive(ModRegistry.ENDER_CHARGE_BLOCK.get());
+            this.dropExplosive(ModRegistry.CONFUSING_CHARGE_BLOCK.get());
+            this.dropExplosive(ModRegistry.CONCUSSION_CHARGE_BLOCK.get());
+        }
+        
+        private void dropExplosive(Block block) {
+            this.add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(block).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TntBlock.UNSTABLE, false)))))));
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return ForgeRegistries.BLOCKS.getEntries().stream()
+                    .filter(e -> e.getKey().location().getNamespace().equals(ModLootTableProvider.this.modId))
+                    .map(Map.Entry::getValue)
+                    .collect(Collectors.toSet());
+        }
+    }
+
+    private class ModEntityLoot extends EntityLoot {
 
         @Override
         protected void addTables() {

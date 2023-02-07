@@ -50,6 +50,7 @@ public class EnderZoology implements ModConstructor {
     public static final String MOD_NAME = "Ender Zoology";
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
+    @SuppressWarnings("Convert2MethodRef")
     public static final ConfigHolder CONFIG = CommonFactories.INSTANCE.commonConfig(CommonConfig.class, () -> new CommonConfig());
 
     public static ResourceLocation id(String path) {
@@ -111,6 +112,11 @@ public class EnderZoology implements ModConstructor {
         PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.CONFUSION_POTION.get(), Items.GLOWSTONE_DUST, ModRegistry.STRONG_CONFUSION_POTION.get());
         PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.AWKWARD, ModRegistry.OWL_EGG_ITEM.get(), ModRegistry.RISING_POTION.get());
         PotionBrewingRegistry.INSTANCE.registerPotionRecipe(ModRegistry.RISING_POTION.get(), Items.REDSTONE, ModRegistry.LONG_RISING_POTION.get());
+    }
+
+    @Override
+    public void onRegisterFlammableBlocks(FlammableBlocksContext context) {
+        context.registerFlammable(15, 100, ModRegistry.ENDER_CHARGE_BLOCK.get(), ModRegistry.CONFUSING_CHARGE_BLOCK.get(), ModRegistry.CONCUSSION_CHARGE_BLOCK.get());
     }
 
     @Override

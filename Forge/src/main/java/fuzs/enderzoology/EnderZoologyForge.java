@@ -70,11 +70,12 @@ public class EnderZoologyForge {
         DataGenerator dataGenerator = evt.getGenerator();
         ExistingFileHelper fileHelper = evt.getExistingFileHelper();
         dataGenerator.addProvider(true, new ModBlockStateProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
+        dataGenerator.addProvider(true, new ModBlockTagsProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
         dataGenerator.addProvider(true, new ModEntityTypeTagsProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
         dataGenerator.addProvider(true, new ModItemTagsProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
         dataGenerator.addProvider(true, new ModLanguageProvider(dataGenerator, EnderZoology.MOD_ID));
         dataGenerator.addProvider(true, new ModLootTableProvider(dataGenerator, EnderZoology.MOD_ID));
-        dataGenerator.addProvider(true, new ModRecipeProvider(dataGenerator, EnderZoology.MOD_ID));
+        dataGenerator.addProvider(true, new ModRecipeProvider(dataGenerator));
         dataGenerator.addProvider(true, new ModSoundDefinitionsProvider(dataGenerator, EnderZoology.MOD_ID, fileHelper));
     }
 }

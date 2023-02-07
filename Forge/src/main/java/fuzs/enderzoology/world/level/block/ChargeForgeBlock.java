@@ -8,7 +8,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.TntBlock;
@@ -42,15 +41,5 @@ public class ChargeForgeBlock extends TntBlock {
             primedtnt.setFuse((short)(level.random.nextInt(fuse / 4) + fuse / 8));
             level.addFreshEntity(primedtnt);
         }
-    }
-
-    @Override
-    public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return 100;
-    }
-
-    @Override
-    public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return 15;
     }
 }

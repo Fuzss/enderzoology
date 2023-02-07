@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "enderzoology:concussion_charge",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "unstable": "false"
+              }
+            }
+          ],
+          "name": "enderzoology:concussion_charge"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

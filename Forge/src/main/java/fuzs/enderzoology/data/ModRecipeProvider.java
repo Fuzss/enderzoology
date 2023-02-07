@@ -12,11 +12,9 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.function.Consumer;
 
 public class ModRecipeProvider extends RecipeProvider {
-    private final String modId;
 
-    public ModRecipeProvider(DataGenerator dataGenerator, String modId) {
+    public ModRecipeProvider(DataGenerator dataGenerator) {
         super(dataGenerator);
-        this.modId = modId;
     }
 
     @Override
