@@ -17,35 +17,49 @@ import org.jetbrains.annotations.Nullable;
 public interface CompanionMob<T extends Mob> {
     UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(4, 6);
 
+    Mob getCompanionMob();
+
     @Nullable
-    LivingEntity getTarget();
+    default LivingEntity getCompanionTarget() {
+        return this.getCompanionMob().getTarget();
+    }
 
     int getTicksUntilNextAlert();
 
     void setTicksUntilNextAlert(int ticksUntilNextAlert);
 
     default void resetTicksUntilNextAlert() {
-        this.setTicksUntilNextAlert(ALERT_INTERVAL.sample(this.getRandom()));
+        this.setTicksUntilNextAlert(ALERT_INTERVAL.sample(this.getCompanionRandom()));
     }
 
-    Level getLevel();
+    default Level getCompanionLevel() {
+        return this.getCompanionMob().getLevel();
+    }
 
     Class<T> getCompanionType();
 
-    Sensing getSensing();
+    default Sensing getCompanionSensing() {
+        return this.getCompanionMob().getSensing();
+    }
 
-    RandomSource getRandom();
+    default RandomSource getCompanionRandom() {
+        return this.getCompanionMob().getRandom();
+    }
 
-    Vec3 position();
+    default Vec3 getCompanionPosition() {
+        return this.getCompanionMob().position();
+    }
 
-    double getAttributeValue(Attribute attribute);
+    default double getCompanionAttributeValue(Attribute attribute) {
+        return this.getCompanionMob().getAttributeValue(attribute);
+    }
 
     default void maybeAlertCompanions() {
-        if (this.getTarget() != null) {
+        if (this.getCompanionTarget() != null) {
             if (this.getTicksUntilNextAlert() > 0) {
                 this.setTicksUntilNextAlert(this.getTicksUntilNextAlert() - 1);
             } else {
-                if (this.getSensing().hasLineOfSight(this.getTarget())) {
+                if (this.getCompanionSensing().hasLineOfSight(this.getCompanionTarget())) {
                     this.alertCompanions();
                 }
 
@@ -55,11 +69,11 @@ public interface CompanionMob<T extends Mob> {
     }
 
     private void alertCompanions() {
-        double followRange = this.getAttributeValue(Attributes.FOLLOW_RANGE);
-        AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(followRange, 10.0, followRange);
-        for (T companion : this.getLevel().getEntitiesOfClass(this.getCompanionType(), aabb, EntitySelector.NO_SPECTATORS)) {
-            if (companion.getTarget() == null && !companion.isAlliedTo(this.getTarget())) {
-                companion.setTarget(this.getTarget());
+        double followRange = this.getCompanionAttributeValue(Attributes.FOLLOW_RANGE);
+        AABB aabb = AABB.unitCubeFromLowerCorner(this.getCompanionPosition()).inflate(followRange, 10.0, followRange);
+        for (T companion : this.getCompanionLevel().getEntitiesOfClass(this.getCompanionType(), aabb, EntitySelector.NO_SPECTATORS)) {
+            if (companion.getTarget() == null && !companion.isAlliedTo(this.getCompanionTarget())) {
+                companion.setTarget(this.getCompanionTarget());
             }
         }
     }

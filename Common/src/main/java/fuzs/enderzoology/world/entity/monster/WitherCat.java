@@ -122,6 +122,11 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
     }
 
     @Override
+    public Mob getCompanionMob() {
+        return this;
+    }
+
+    @Override
     public int getTicksUntilNextAlert() {
         return this.ticksUntilNextAlert;
     }

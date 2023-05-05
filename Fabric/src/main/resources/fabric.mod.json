@@ -46,6 +46,9 @@
   "custom": {
     "cardinal-components": [
       "${modId}:soulbound"
-    ]
+    ],
+    "lithium:options": {
+      "mixin.ai.nearby_entity_tracking.goals": false
+    }
   }
 }

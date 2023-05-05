@@ -90,6 +90,11 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     }
 
     @Override
+    public Mob getCompanionMob() {
+        return this;
+    }
+
+    @Override
     public int getTicksUntilNextAlert() {
         return this.ticksUntilNextAlert;
     }

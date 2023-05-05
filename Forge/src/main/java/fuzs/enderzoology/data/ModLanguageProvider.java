@@ -49,7 +49,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.REPELLENT_ENCHANTMENT.get(), "Repellent");
         this.add(ModRegistry.SOULBOUND_ENCHANTMENT.get(), "Soulbound");
         this.add(ModRegistry.WITHERING_ENCHANTMENT.get(), "Withering");
-        this.add("enchantment.enderzoology.decay.desc", "Applies the Wither effect to attacked enemies");
+        this.add("enchantment.enderzoology.decay.desc", "Applies the Wither effect to attacked enemies.");
         this.add("enchantment.enderzoology.repellent.desc", "Randomly teleports enemies when they attack you.");
         this.add("enchantment.enderzoology.soulbound.desc", "On death an item will be kept in the inventory and the level may randomly decrease.");
         this.add("enchantment.enderzoology.withering.desc", "Applies the Wither effect to enemies hit by arrows.");
