@@ -169,14 +169,13 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     @Override
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
         if (pSpawnData == null) {
             pSpawnData = new PackSpawnGroupData(this);
-        } else {
-            this.startFollowing(((PackSpawnGroupData) pSpawnData).leader);
+        } else if (pSpawnData instanceof PackSpawnGroupData packSpawnData) {
+            this.startFollowing(packSpawnData.leader);
         }
 
-        return pSpawnData;
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
     @Override
@@ -354,10 +353,11 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         return null;
     }
 
-    public static class PackSpawnGroupData implements SpawnGroupData {
+    public static class PackSpawnGroupData extends AgeableMobGroupData {
         public final PackMob leader;
 
         public PackSpawnGroupData(PackMob leader) {
+            super(false);
             this.leader = leader;
         }
     }
