@@ -23,9 +23,9 @@ import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class WitherCat extends Monster implements CompanionMob<Witch> {
@@ -192,7 +192,7 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
     }
 
     @Override
-    public boolean canBeAffected(@Nonnull MobEffectInstance potion) {
+    public boolean canBeAffected(@NotNull MobEffectInstance potion) {
         return potion.getEffect() != MobEffects.WITHER && super.canBeAffected(potion);
     }
 

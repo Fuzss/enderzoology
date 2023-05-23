@@ -1,7 +1,7 @@
 package fuzs.enderzoology.config;
 
-import fuzs.puzzleslib.config.ConfigCore;
-import fuzs.puzzleslib.config.annotation.Config;
+import fuzs.puzzleslib.api.config.v3.Config;
+import fuzs.puzzleslib.api.config.v3.ConfigCore;
 
 public class CommonConfig implements ConfigCore {
     @Config(description = "Should concussion creepers spawn anywhere where creepers can spawn in the overworld.")

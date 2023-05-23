@@ -8,14 +8,8 @@
   "mixins": [
     "BowItemFabricMixin",
     "EnchantmentCategoryFabricMixin",
-    "ExplosionFabricMixin",
-    "LevelFabricMixin",
-    "LivingEntityFabricMixin",
-    "ServerLevelFabricMixin",
-    "accessor.MobFabricAccessor"
   ],
   "client": [
-    "client.AbstractClientPlayerFabricMixin"
   ],
   "injectors": {
     "defaultRequire": 1

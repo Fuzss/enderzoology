@@ -1,9 +1,9 @@
-// 1.19.2	2023-01-23T14:50:50.055949	Recipes
-4d5a2e915239200814b597f0028b7e78962164ed data/enderzoology/advancements/recipes/enderzoology.main/concussion_charge.json
-bc2d0bd6651639212a3bf1b312082a85a8a1ddf5 data/enderzoology/advancements/recipes/enderzoology.main/confusing_charge.json
-f28f52dc2ac97b1ae8e5bc955df006ea64d585a6 data/enderzoology/advancements/recipes/enderzoology.main/ender_charge.json
-b2cd33f0ab7c5f1f87afcb2331b7b7a93dfdf438 data/enderzoology/recipes/concussion_charge.json
-d81d7bb73158b52758f143530710e912c18d1f14 data/enderzoology/recipes/confusing_charge.json
-7b1e2590b6cce3db525c2e6db4ce1adf7cc291df data/enderzoology/recipes/ender_charge.json
+// 1.19.3	2023-05-23T22:30:17.468309	Recipes
+4d5a2e915239200814b597f0028b7e78962164ed data/enderzoology/advancements/recipes/redstone/concussion_charge.json
+bc2d0bd6651639212a3bf1b312082a85a8a1ddf5 data/enderzoology/advancements/recipes/redstone/confusing_charge.json
+f28f52dc2ac97b1ae8e5bc955df006ea64d585a6 data/enderzoology/advancements/recipes/redstone/ender_charge.json
+a06331580ff73364aebf4e03f3e64c429ea26dd3 data/enderzoology/recipes/concussion_charge.json
+baeb5b7e4975610fd9406a14e51f8433bc608abf data/enderzoology/recipes/confusing_charge.json
+8168fbf28cdecd33f7baeed12595b634e60f36d0 data/enderzoology/recipes/ender_charge.json
 a0d94dd1ac49504d5fc8f33adc7a7e1ad5e0f428 data/minecraft/advancements/recipes/misc/ender_pearl.json
-571a48d1c244d7c9242296bf3052164d6e160163 data/minecraft/recipes/ender_pearl.json
+26c216706f6b3b4602d98b3ccb3f62f437583ee3 data/minecraft/recipes/ender_pearl.json

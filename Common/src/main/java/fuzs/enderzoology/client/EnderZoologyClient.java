@@ -1,10 +1,16 @@
 package fuzs.enderzoology.client;
 
+import fuzs.enderzoology.client.handler.FovModifierHandler;
 import fuzs.enderzoology.client.init.ClientModRegistry;
 import fuzs.enderzoology.client.model.OwlModel;
 import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModRegistry;
-import fuzs.puzzleslib.client.core.ClientModConstructor;
+import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
+import fuzs.puzzleslib.api.client.core.v1.context.EntityRenderersContext;
+import fuzs.puzzleslib.api.client.core.v1.context.EntitySpectatorShaderContext;
+import fuzs.puzzleslib.api.client.core.v1.context.ItemModelPropertiesContext;
+import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
+import fuzs.puzzleslib.api.client.event.v1.ComputeFovModifierCallback;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -12,6 +18,15 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class EnderZoologyClient implements ClientModConstructor {
+
+    @Override
+    public void onConstructMod() {
+        registerHandlers();
+    }
+
+    private static void registerHandlers() {
+        ComputeFovModifierCallback.EVENT.register(FovModifierHandler::onComputeFovModifier);
+    }
 
     @Override
     public void onRegisterEntityRenderers(EntityRenderersContext context) {
@@ -30,22 +45,22 @@ public class EnderZoologyClient implements ClientModConstructor {
 
     @Override
     public void onRegisterEntitySpectatorShaders(EntitySpectatorShaderContext context) {
-        context.registerSpectatorShader(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), new ResourceLocation("shaders/post/creeper.json"));
-        context.registerSpectatorShader(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), new ResourceLocation("shaders/post/invert.json"));
+        context.registerSpectatorShader(new ResourceLocation("shaders/post/creeper.json"), ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get());
+        context.registerSpectatorShader(new ResourceLocation("shaders/post/invert.json"), ModRegistry.ENDERMINY_ENTITY_TYPE.get());
     }
 
     @Override
     public void onRegisterItemModelProperties(ItemModelPropertiesContext context) {
-        context.registerItem(ModRegistry.HUNTING_BOW.get(), new ResourceLocation("pull"), (stack, level, entity, data) -> {
+        context.registerItemProperty(new ResourceLocation("pull"), (stack, level, entity, data) -> {
             if (entity == null) {
                 return 0.0F;
             } else {
                 return entity.getUseItem() != stack ? 0.0F : (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
             }
-        });
-        context.registerItem(ModRegistry.HUNTING_BOW.get(), new ResourceLocation("pulling"), (stack, level, entity, data) -> {
+        }, ModRegistry.HUNTING_BOW.get());
+        context.registerItemProperty(new ResourceLocation("pulling"), (stack, level, entity, data) -> {
             return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
-        });
+        }, ModRegistry.HUNTING_BOW.get());
     }
 
     @Override

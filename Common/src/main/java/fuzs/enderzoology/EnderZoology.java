@@ -1,6 +1,8 @@
 package fuzs.enderzoology;
 
 import fuzs.enderzoology.config.CommonConfig;
+import fuzs.enderzoology.handler.HuntingBowHandler;
+import fuzs.enderzoology.handler.MobHuntingHandler;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.EntityAttributeProviders;
 import fuzs.enderzoology.world.entity.SpawnPlacementRules;
@@ -9,10 +11,15 @@ import fuzs.enderzoology.world.entity.projectile.ThrownOwlEgg;
 import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
 import fuzs.puzzleslib.api.biome.v1.MobSpawnSettingsContext;
-import fuzs.puzzleslib.config.ConfigHolder;
-import fuzs.puzzleslib.core.CommonFactories;
-import fuzs.puzzleslib.core.ModConstructor;
-import fuzs.puzzleslib.init.PotionBrewingRegistry;
+import fuzs.puzzleslib.api.config.v3.ConfigHolder;
+import fuzs.puzzleslib.api.core.v1.ModConstructor;
+import fuzs.puzzleslib.api.core.v1.context.*;
+import fuzs.puzzleslib.api.event.v1.entity.EntityLevelEvents;
+import fuzs.puzzleslib.api.event.v1.entity.living.UseItemEvents;
+import fuzs.puzzleslib.api.event.v1.entity.player.ArrowLooseCallback;
+import fuzs.puzzleslib.api.event.v1.level.ExplosionEvents;
+import fuzs.puzzleslib.api.init.v2.PotionBrewingRegistry;
+import fuzs.puzzleslib.api.item.v2.CreativeModeTabConfigurator;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
@@ -50,8 +57,7 @@ public class EnderZoology implements ModConstructor {
     public static final String MOD_NAME = "Ender Zoology";
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
-    @SuppressWarnings("Convert2MethodRef")
-    public static final ConfigHolder CONFIG = CommonFactories.INSTANCE.commonConfig(CommonConfig.class, () -> new CommonConfig());
+    public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID).common(CommonConfig.class);
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -59,12 +65,19 @@ public class EnderZoology implements ModConstructor {
 
     @Override
     public void onConstructMod() {
-        CONFIG.bakeConfigs(MOD_ID);
         ModRegistry.touch();
+        registerHandlers();
+    }
+
+    private static void registerHandlers() {
+        ExplosionEvents.DETONATE.register(EnderExplosion::onExplosionDetonate);
+        ArrowLooseCallback.EVENT.register(HuntingBowHandler::onArrowLoose);
+        UseItemEvents.TICK.register(HuntingBowHandler::onUseItemTick);
+        EntityLevelEvents.LOAD.register(MobHuntingHandler::onLoad);
     }
 
     @Override
-    public void onCommonSetup() {
+    public void onCommonSetup(ModLifecycleContext context) {
         registerDispenseBehaviors();
         registerBrewingRecipes();
     }
@@ -194,5 +207,28 @@ public class EnderZoology implements ModConstructor {
     private static void registerSpawnCost(MobSpawnSettingsContext spawnSettings, EntityType<?> vanillaEntityType, EntityType<?> modEntityType, DoubleUnaryOperator chargeConverter, DoubleUnaryOperator energyBudgetConverter) {
         Optional<MobSpawnSettings.MobSpawnCost> optionalMobSpawnCost = Optional.ofNullable(spawnSettings.getSpawnCost(vanillaEntityType));
         optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType, chargeConverter.applyAsDouble(cost.getCharge()), energyBudgetConverter.applyAsDouble(cost.getEnergyBudget())));
+    }
+
+    @Override
+    public void onRegisterCreativeModeTabs(CreativeModeTabContext context) {
+        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID).icon(() -> new ItemStack(ModRegistry.ENDER_FRAGMENT_ITEM.get())).appendEnchantmentsAndPotions().displayItems((featureFlagSet, output, bl) -> {
+            output.accept(ModRegistry.CONCUSSION_CHARGE_ITEM.get());
+            output.accept(ModRegistry.CONFUSING_CHARGE_ITEM.get());
+            output.accept(ModRegistry.ENDER_CHARGE_ITEM.get());
+            output.accept(ModRegistry.CONFUSING_POWDER_ITEM.get());
+            output.accept(ModRegistry.ENDER_FRAGMENT_ITEM.get());
+            output.accept(ModRegistry.HUNTING_BOW.get());
+            output.accept(ModRegistry.OWL_EGG_ITEM.get());
+            output.accept(ModRegistry.WITHERING_DUST_ITEM.get());
+            output.accept(ModRegistry.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.INFESTED_ZOMBIE_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.ENDERMINY_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.DIRE_WOLF_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.FALLEN_MOUNT_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.WITHER_CAT_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.WITHER_WITCH_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.OWL_SPAWN_EGG_ITEM.get());
+            output.accept(ModRegistry.FALLEN_KNIGHT_SPAWN_EGG_ITEM.get());
+        }));
     }
 }

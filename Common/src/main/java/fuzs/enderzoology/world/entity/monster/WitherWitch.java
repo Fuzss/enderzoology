@@ -25,9 +25,8 @@ import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
 
 public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     private NearestHealableRaiderTargetGoal<WitherCat> healCatsGoal;
@@ -85,7 +84,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     private void trySpawnCompanion(ServerLevel serverLevel, BlockPos pos, int maxDistance) {
         BlockPos blockPos = this.findSpawnPositionNear(serverLevel, pos, maxDistance);
         if (blockPos != null) {
-            ModRegistry.WITHER_CAT_ENTITY_TYPE.get().spawn(serverLevel, null, null, null, blockPos, MobSpawnType.EVENT, false, false);
+            ModRegistry.WITHER_CAT_ENTITY_TYPE.get().spawn(serverLevel, blockPos, MobSpawnType.EVENT);
         }
     }
 
@@ -174,7 +173,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     }
 
     @Override
-    public boolean canBeAffected(@Nonnull MobEffectInstance potion) {
+    public boolean canBeAffected(@NotNull MobEffectInstance potion) {
         return potion.getEffect() != MobEffects.WITHER && super.canBeAffected(potion);
     }
 }

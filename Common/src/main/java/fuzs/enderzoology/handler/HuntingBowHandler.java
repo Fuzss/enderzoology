@@ -1,10 +1,11 @@
 package fuzs.enderzoology.handler;
 
 import fuzs.enderzoology.init.ModRegistry;
+import fuzs.puzzleslib.api.event.v1.core.EventResult;
+import fuzs.puzzleslib.api.event.v1.data.MutableInt;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,14 +20,11 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
-import java.util.Optional;
-import java.util.OptionalInt;
-
 public class HuntingBowHandler {
 
-    public static Optional<Unit> onArrowLoose(Player player, ItemStack stack, Level level, int charge, boolean hasAmmo) {
+    public static EventResult onArrowLoose(Player player, ItemStack stack, Level level, MutableInt charge, boolean hasAmmo) {
         if (hasAmmo && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack) > 0) {
-            float velocity = BowItem.getPowerForTime(charge);
+            float velocity = BowItem.getPowerForTime(charge.getAsInt());
             if (!level.isClientSide && velocity >= 0.1F) {
                 ItemStack itemstack = player.getProjectile(stack);
                 ArrowItem arrowitem = (ArrowItem) (itemstack.getItem() instanceof ArrowItem ? itemstack.getItem() : Items.ARROW);
@@ -45,7 +43,7 @@ public class HuntingBowHandler {
                 }
             }
         }
-        return Optional.empty();
+        return EventResult.PASS;
     }
 
     private static float[] getShotPitches(RandomSource random, float velocity) {
@@ -58,12 +56,12 @@ public class HuntingBowHandler {
         return 1.0F / (random.nextFloat() * 0.5F + 1.8F) + f * velocity;
     }
 
-    public static OptionalInt onItemUseTick(LivingEntity entity, ItemStack stack, int duration) {
-        if (stack.getItem() instanceof BowItem && stack.getUseDuration() - duration < 20) {
-            int quickChargeLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
-            return OptionalInt.of(duration - quickChargeLevel);
+    public static EventResult onUseItemTick(LivingEntity entity, ItemStack useItem, MutableInt useItemRemaining) {
+        if (useItem.getItem() instanceof BowItem && useItem.getUseDuration() - useItemRemaining.getAsInt() < 20) {
+            int quickChargeLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, useItem);
+            useItemRemaining.mapInt(duration -> duration - quickChargeLevel);
         }
-        return OptionalInt.empty();
+        return EventResult.PASS;
     }
 
     public static void applyPowerEnchantment(AbstractArrow arrow, ItemStack stack) {

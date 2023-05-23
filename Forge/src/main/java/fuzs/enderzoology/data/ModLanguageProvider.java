@@ -2,22 +2,18 @@ package fuzs.enderzoology.data;
 
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.init.ModRegistry;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraftforge.common.data.LanguageProvider;
+import fuzs.puzzleslib.api.data.v1.AbstractLanguageProvider;
+import net.minecraft.data.PackOutput;
 
-public class ModLanguageProvider extends LanguageProvider {
+public class ModLanguageProvider extends AbstractLanguageProvider {
 
-    public ModLanguageProvider(DataGenerator gen, String modId) {
-        super(gen, modId, "en_us");
+    public ModLanguageProvider(PackOutput packOutput, String modId) {
+        super(packOutput, modId);
     }
 
     @Override
     protected void addTranslations() {
-        this.add(ModRegistry.CREATIVE_MODE_TAB, EnderZoology.MOD_NAME);
+        this.addCreativeModeTab(EnderZoology.MOD_NAME);
         this.add(ModRegistry.ENDER_CHARGE_BLOCK.get(), "Ender Charge");
         this.add(ModRegistry.CONFUSING_CHARGE_BLOCK.get(), "Confusing Charge");
         this.add(ModRegistry.CONCUSSION_CHARGE_BLOCK.get(), "Concussion Charge");
@@ -66,21 +62,5 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModRegistry.OWL_HURT_SOUND_EVENT.get(), "Owl hurts");
         this.add(ModRegistry.OWL_DEATH_SOUND_EVENT.get(), "Owl dies");
         this.add(ModRegistry.OWL_EGG_THROW_SOUND_EVENT.get(), "Owl Egg flies");
-    }
-
-    public void add(CreativeModeTab tab, String name) {
-        this.add(((TranslatableContents) tab.getDisplayName().getContents()).getKey(), name);
-    }
-
-    public void add(Potion potion, String name) {
-        String potionName = potion.getName("");
-        this.add("item.minecraft.tipped_arrow.effect." + potionName, "Arrow of " + name);
-        this.add("item.minecraft.potion.effect." + potionName, "Potion of " + name);
-        this.add("item.minecraft.splash_potion.effect." + potionName, "Splash Potion of " + name);
-        this.add("item.minecraft.lingering_potion.effect." + potionName, "Lingering Potion of " + name);
-    }
-
-    public void add(SoundEvent soundEvent, String name) {
-        this.add("subtitles." + soundEvent.getLocation().getPath(), name);
     }
 }

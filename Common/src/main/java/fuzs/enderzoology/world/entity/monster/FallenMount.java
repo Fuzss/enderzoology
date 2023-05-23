@@ -147,7 +147,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    protected boolean isImmobile() {
+    public boolean isImmobile() {
         return this.isDeadOrDying();
     }
 

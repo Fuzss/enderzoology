@@ -4,7 +4,6 @@ import fuzs.enderzoology.world.level.EnderExplosion;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -28,11 +27,6 @@ public class InfestedZombie extends Zombie {
     @Override
     protected SoundEvent getAmbientSound() {
         return null;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-        return SoundEvents.ENDERMAN_HURT;
     }
 
     @Override

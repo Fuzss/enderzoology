@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import fuzs.enderzoology.client.model.DireWolfModel;
 import net.minecraft.client.model.WolfModel;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -33,12 +33,12 @@ public class WolfHeldItemLayer extends RenderLayer<Wolf, WolfModel<Wolf>> {
             DireWolfModel<Wolf> model = (DireWolfModel<Wolf>) this.getParentModel();
             matrixStack.translate(model.getHead().x / 16.0F, model.getHead().y / 16.0F, model.getHead().z / 16.0F);
             float headRollAngle = livingEntity.getHeadRollAngle(partialTicks);
-            matrixStack.mulPose(Vector3f.ZP.rotation(headRollAngle));
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(netHeadYaw));
-            matrixStack.mulPose(Vector3f.XP.rotationDegrees(headPitch));
+            matrixStack.mulPose(Axis.ZP.rotation(headRollAngle));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(netHeadYaw));
+            matrixStack.mulPose(Axis.XP.rotationDegrees(headPitch));
             matrixStack.translate(0.05, 0.1, -0.4);
 
-            matrixStack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
+            matrixStack.mulPose(Axis.XP.rotationDegrees(90.0F));
 
             ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.MAINHAND);
             this.itemInHandRenderer.renderItem(livingEntity, itemStack, ItemTransforms.TransformType.GROUND, false, matrixStack, buffer, packedLight);

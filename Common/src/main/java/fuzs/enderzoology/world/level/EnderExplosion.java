@@ -2,6 +2,7 @@ package fuzs.enderzoology.world.level;
 
 import fuzs.enderzoology.core.CommonAbstractions;
 import fuzs.enderzoology.init.ModRegistry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,17 +49,20 @@ public class EnderExplosion extends Explosion {
         this.lingeringCloud = lingeringCloud;
     }
 
-    public static Explosion explode(Level level, @Nullable Entity exploder, double x, double y, double z, float size, Explosion.BlockInteraction mode, EntityInteraction entityInteraction, boolean lingeringCloud) {
+    public static Explosion explode(Level level, @Nullable Entity exploder, double x, double y, double z, float size, Level.ExplosionInteraction mode, EntityInteraction entityInteraction, boolean lingeringCloud) {
+        // similar to ServerLevel#explode
         return explode(level, exploder, null, null, x, y, z, size, false, mode, entityInteraction, lingeringCloud);
     }
 
-    public static Explosion explode(Level level, @Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Explosion.BlockInteraction mode, EntityInteraction entityInteraction, boolean lingeringCloud) {
-        Explosion explosion = new EnderExplosion(level, exploder, damageSource, context, x, y, z, size, causesFire, mode, entityInteraction, lingeringCloud);
+    public static Explosion explode(Level level, @Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Level.ExplosionInteraction mode, EntityInteraction entityInteraction, boolean lingeringCloud) {
+        // similar to ServerLevel#explode
+        BlockInteraction interaction = getExplosionInteraction(level, exploder, mode);
+        Explosion explosion = new EnderExplosion(level, exploder, damageSource, context, x, y, z, size, causesFire, interaction, entityInteraction, lingeringCloud);
         if (CommonAbstractions.INSTANCE.onExplosionStart(level, explosion)) return explosion;
         explosion.explode();
         explosion.finalizeExplosion(level.isClientSide);
         if (!level.isClientSide) {
-            if (mode == BlockInteraction.NONE) {
+            if (!explosion.interactsWithBlocks()) {
                 explosion.clearToBlow();
             }
             for (ServerPlayer serverPlayer : ((ServerLevel) level).players()) {
@@ -70,10 +74,24 @@ public class EnderExplosion extends Explosion {
         return explosion;
     }
 
-    public static void onExplosionDetonate(Level level, Explosion explosion, List<Entity> entities) {
+    public static Explosion.BlockInteraction getExplosionInteraction(Level level, @Nullable Entity entity, Level.ExplosionInteraction interaction) {
+        return switch (interaction) {
+            case NONE -> BlockInteraction.KEEP;
+            case BLOCK -> getDestroyType(level, GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
+            case MOB ->
+                    CommonAbstractions.INSTANCE.getMobGriefingEvent(level, entity) ? getDestroyType(level, GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : BlockInteraction.KEEP;
+            case TNT -> getDestroyType(level, GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
+        };
+    }
+
+    private static Explosion.BlockInteraction getDestroyType(Level level, GameRules.Key<GameRules.BooleanValue> gameRule) {
+        return level.getGameRules().getBoolean(gameRule) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
+    }
+
+    public static void onExplosionDetonate(Level level, Explosion explosion, List<BlockPos> affectedBlocks, List<Entity> affectedEntities) {
         if (!(explosion instanceof EnderExplosion enderExplosion)) return;
         if (!level.isClientSide) {
-            for (Entity entity : entities) {
+            for (Entity entity : affectedEntities) {
                 if (entity instanceof LivingEntity livingEntity && entity.isAlive() && !entity.getType().is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) {
                     Vec3 originalPosition = livingEntity.position();
                     if (enderExplosion.entityInteraction.teleport) {
@@ -85,7 +103,7 @@ public class EnderExplosion extends Explosion {
                 }
             }
         }
-        entities.removeIf(entity -> !(entity instanceof PrimedTnt));
+        affectedEntities.removeIf(entity -> !(entity instanceof PrimedTnt));
     }
 
     public static void teleportEntity(ServerLevel level, LivingEntity entity, int teleportRange, boolean endermiteChance) {

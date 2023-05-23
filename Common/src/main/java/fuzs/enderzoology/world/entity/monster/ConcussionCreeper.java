@@ -11,8 +11,6 @@ import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 
 public class ConcussionCreeper extends Creeper {
@@ -70,10 +68,9 @@ public class ConcussionCreeper extends Creeper {
 
     private void explodeCreeper() {
         if (!this.level.isClientSide) {
-            Explosion.BlockInteraction blockInteraction = this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
             float poweredMultiplier = this.isPowered() ? 2.0F : 1.0F;
             float explosionRadius = ((CreeperAccessor) this).enderzoology$getExplosionRadius() * poweredMultiplier;
-            EnderExplosion.explode(this.level, this, this.getX(), this.getY(), this.getZ(), explosionRadius, blockInteraction, EnderExplosion.EntityInteraction.CONCUSSION, false);
+            EnderExplosion.explode(this.level, this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.MOB, EnderExplosion.EntityInteraction.CONCUSSION, false);
             this.discard();
         }
     }

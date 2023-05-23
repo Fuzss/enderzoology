@@ -4,11 +4,11 @@ import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.level.EnderExplosion;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +42,7 @@ public class PrimedCharge extends PrimedTnt {
         if (this.getFuse() - 1 <= 0) {
             this.discard();
             if (!this.level.isClientSide) {
-                EnderExplosion.explode(this.level, this, this.getX(), this.getY(0.0625), this.getZ(), 4.0F, Explosion.BlockInteraction.BREAK, this.entityInteraction, true);
+                EnderExplosion.explode(this.level, this, this.getX(), this.getY(0.0625), this.getZ(), 4.0F, Level.ExplosionInteraction.TNT, this.entityInteraction, true);
             }
         } else {
             super.tick();
@@ -72,7 +72,7 @@ public class PrimedCharge extends PrimedTnt {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this, this.entityInteraction.ordinal());
     }
 

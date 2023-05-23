@@ -47,7 +47,7 @@ public class ChargeBlock extends TntBlock {
     @Override
     public void wasExploded(Level level, BlockPos pos, Explosion explosion) {
         if (!level.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getSourceMob(), this.entityInteraction);
+            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getIndirectSourceEntity(), this.entityInteraction);
             int fuse = primedtnt.getFuse();
             primedtnt.setFuse((short)(level.random.nextInt(fuse / 4) + fuse / 8));
             level.addFreshEntity(primedtnt);

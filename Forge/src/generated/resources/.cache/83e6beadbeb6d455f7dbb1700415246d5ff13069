@@ -1,7 +1,4 @@
-// 1.19.2	2023-02-07T09:55:32.492125	LootTables
-2c54b7a8ada3ba61ae29ef5cbaf856caa39f8945 data/enderzoology/loot_tables/blocks/concussion_charge.json
-43c45278b4110013e3628be9eef6e5f99ea36e31 data/enderzoology/loot_tables/blocks/confusing_charge.json
-108ce5a19c73c9cd12103b2f60fd84ace2a02c3a data/enderzoology/loot_tables/blocks/ender_charge.json
+// 1.19.3	2023-05-23T22:30:17.468442	Entity Type Loot Tables
 08d465c1e0ff42ab92375c5265a3aeb88f92dad8 data/enderzoology/loot_tables/entities/concussion_creeper.json
 ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data/enderzoology/loot_tables/entities/dire_wolf.json
 17db5087c363e53a32c9998d7e057796fe1cc19b data/enderzoology/loot_tables/entities/enderminy.json

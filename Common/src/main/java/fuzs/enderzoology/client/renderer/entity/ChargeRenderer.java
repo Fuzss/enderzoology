@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.level.EnderExplosion;
@@ -38,9 +38,9 @@ public class ChargeRenderer extends EntityRenderer<PrimedCharge> {
             matrixStack.scale(g, g, g);
         }
 
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
         matrixStack.translate(-0.5, -0.5, 0.5);
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         TntMinecartRenderer.renderWhiteSolidBlock(this.blockRenderer, this.getEntityInteractionBlock(entity.getEntityInteraction()).defaultBlockState(), matrixStack, buffer, packedLight, i / 5 % 2 == 0);
         matrixStack.popPose();
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);

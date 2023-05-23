@@ -1,16 +1,13 @@
 package fuzs.enderzoology.client.handler;
 
 import fuzs.enderzoology.init.ModRegistry;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.Mth;
+import fuzs.puzzleslib.api.event.v1.data.DefaultedFloat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Optional;
-
 public class FovModifierHandler {
 
-    public static Optional<Float> onComputeFovModifier(Player player, float fovModifier, float newFovModifier) {
+    public static void onComputeFovModifier(Player player, DefaultedFloat fieldOfViewModifier) {
         if (player.isUsingItem()) {
             ItemStack itemStack = player.getUseItem();
             if (itemStack.is(ModRegistry.HUNTING_BOW.get())) {
@@ -21,10 +18,9 @@ public class FovModifierHandler {
                 } else {
                     g *= g;
                 }
-                fovModifier *= 1.0F - g * 0.15F;
-                return Optional.of(Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get().floatValue(), 1.0F, fovModifier));
+                float h = g;
+                fieldOfViewModifier.mapFloat(f -> f * (1.0F - h * 0.15F));
             }
         }
-        return Optional.empty();
     }
 }
