@@ -17,7 +17,7 @@ import fuzs.enderzoology.world.level.EnderExplosion;
 import fuzs.enderzoology.world.level.block.ChargeBlock;
 import fuzs.puzzleslib.api.capability.v2.CapabilityController;
 import fuzs.puzzleslib.api.capability.v2.data.CapabilityKey;
-import fuzs.puzzleslib.api.capability.v2.data.PlayerRespawnStrategy;
+import fuzs.puzzleslib.api.capability.v2.data.PlayerRespawnCopyStrategy;
 import fuzs.puzzleslib.api.core.v1.ModLoader;
 import fuzs.puzzleslib.api.init.v2.RegistryManager;
 import fuzs.puzzleslib.api.init.v2.RegistryReference;
@@ -29,7 +29,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
@@ -64,21 +63,20 @@ public class ModRegistry {
     public static final RegistryReference<EntityType<WitherWitch>> WITHER_WITCH_ENTITY_TYPE = REGISTRY.registerEntityType("wither_witch", () -> EntityType.Builder.of(WitherWitch::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(8));
     public static final RegistryReference<EntityType<Owl>> OWL_ENTITY_TYPE = REGISTRY.registerEntityType("owl", () -> EntityType.Builder.of(Owl::new, MobCategory.CREATURE).sized(0.4F, 0.85F).clientTrackingRange(8));
     public static final RegistryReference<EntityType<FallenKnight>> FALLEN_KNIGHT_ENTITY_TYPE = REGISTRY.registerEntityType("fallen_knight", () -> EntityType.Builder.of(FallenKnight::new, MobCategory.MONSTER).sized(0.6F, 1.99F).clientTrackingRange(8));
-    // TODO clean up this mess in 1.19.4
-    public static final RegistryReference<Item> CONCUSSION_CREEPER_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) CONCUSSION_CREEPER_ENTITY_TYPE, 0x56FF8E, 0xFF0A22);
-    public static final RegistryReference<Item> INFESTED_ZOMBIE_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) INFESTED_ZOMBIE_ENTITY_TYPE, 0x132F55, 0x2B2D1C);
-    public static final RegistryReference<Item> ENDERMINY_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) ENDERMINY_ENTITY_TYPE, 0x27624D, 0x212121);
-    public static final RegistryReference<Item> DIRE_WOLF_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) DIRE_WOLF_ENTITY_TYPE, 0x606060, 0xA0A0A0);
-    public static final RegistryReference<Item> FALLEN_MOUNT_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) FALLEN_MOUNT_ENTITY_TYPE, 0x365A25, 0xA0A0A0);
-    public static final RegistryReference<Item> WITHER_CAT_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) WITHER_CAT_ENTITY_TYPE, 0x303030, 0xFFFFFF);
-    public static final RegistryReference<Item> WITHER_WITCH_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) WITHER_WITCH_ENTITY_TYPE, 0x26520D, 0x905E43);
-    public static final RegistryReference<Item> OWL_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) OWL_ENTITY_TYPE, 0xC17949, 0xFFDDC6);
-    public static final RegistryReference<Item> FALLEN_KNIGHT_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem((RegistryReference<EntityType<? extends Mob>>) (RegistryReference<?>) FALLEN_KNIGHT_ENTITY_TYPE, 0x365A25, 0xA0A0A0);
+    public static final RegistryReference<Item> CONCUSSION_CREEPER_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(CONCUSSION_CREEPER_ENTITY_TYPE, 0x56FF8E, 0xFF0A22);
+    public static final RegistryReference<Item> INFESTED_ZOMBIE_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(INFESTED_ZOMBIE_ENTITY_TYPE, 0x132F55, 0x2B2D1C);
+    public static final RegistryReference<Item> ENDERMINY_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(ENDERMINY_ENTITY_TYPE, 0x27624D, 0x212121);
+    public static final RegistryReference<Item> DIRE_WOLF_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(DIRE_WOLF_ENTITY_TYPE, 0x606060, 0xA0A0A0);
+    public static final RegistryReference<Item> FALLEN_MOUNT_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(FALLEN_MOUNT_ENTITY_TYPE, 0x365A25, 0xA0A0A0);
+    public static final RegistryReference<Item> WITHER_CAT_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(WITHER_CAT_ENTITY_TYPE, 0x303030, 0xFFFFFF);
+    public static final RegistryReference<Item> WITHER_WITCH_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(WITHER_WITCH_ENTITY_TYPE, 0x26520D, 0x905E43);
+    public static final RegistryReference<Item> OWL_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(OWL_ENTITY_TYPE, 0xC17949, 0xFFDDC6);
+    public static final RegistryReference<Item> FALLEN_KNIGHT_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(FALLEN_KNIGHT_ENTITY_TYPE, 0x365A25, 0xA0A0A0);
     public static final RegistryReference<Enchantment> DECAY_ENCHANTMENT = REGISTRY.registerEnchantment("decay", () -> new DecayEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
     public static final RegistryReference<Enchantment> REPELLENT_ENCHANTMENT = REGISTRY.registerEnchantment("repellent", () -> new RepellentEnchantment(Enchantment.Rarity.VERY_RARE, ARMOR_SLOTS));
     public static final RegistryReference<Enchantment> SOULBOUND_ENCHANTMENT = REGISTRY.registerEnchantment("soulbound", () -> new SoulboundEnchantment(Enchantment.Rarity.VERY_RARE, EquipmentSlot.values()));
     public static final RegistryReference<Enchantment> WITHERING_ENCHANTMENT = REGISTRY.registerEnchantment("withering", () -> new WitheringEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
-    public static final RegistryReference<MobEffect> DISPLACEMENT_MOB_EFFECT = REGISTRY.registerMobEffect("displacement", () -> new DisplacementMobEffect(MobEffectCategory.HARMFUL, 0x551D4A));
+    public static final RegistryReference<MobEffect> DISPLACEMENT_MOB_EFFECT = REGISTRY.registerMobEffect("displacement", () -> new DisplacementMobEffect(MobEffectCategory.HARMFUL, 9643043));
     public static final RegistryReference<Potion> DISPLACEMENT_POTION = REGISTRY.registerPotion("displacement", () -> new Potion(new MobEffectInstance(DISPLACEMENT_MOB_EFFECT.get(), 1)));
     public static final RegistryReference<Potion> STRONG_DISPLACEMENT_POTION = REGISTRY.registerPotion("strong_displacement", () -> new Potion("displacement", new MobEffectInstance(DISPLACEMENT_MOB_EFFECT.get(), 1, 1)));
     public static final RegistryReference<Potion> DECAY_POTION = REGISTRY.registerPotion("decay", () -> new Potion(new MobEffectInstance(MobEffects.WITHER, 900)));
@@ -99,7 +97,7 @@ public class ModRegistry {
     public static final RegistryReference<SoundEvent> OWL_EGG_THROW_SOUND_EVENT = REGISTRY.registerSoundEvent("entity.owl_egg.throw");
 
     private static final CapabilityController CAPABILITIES = CapabilityController.from(EnderZoology.MOD_ID);
-    public static final CapabilityKey<SoulboundCapability> SOULBOUND_CAPABILITY = CAPABILITIES.registerPlayerCapability("soulbound", SoulboundCapability.class, player -> new SoulboundCapabilityImpl(), PlayerRespawnStrategy.NEVER);
+    public static final CapabilityKey<SoulboundCapability> SOULBOUND_CAPABILITY = CAPABILITIES.registerPlayerCapability("soulbound", SoulboundCapability.class, player -> new SoulboundCapabilityImpl(), PlayerRespawnCopyStrategy.NEVER);
 
     public static final TagKey<EntityType<?>> FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG = REGISTRY.createEntityTypeTag("fallen_mount_targets");
     public static final TagKey<EntityType<?>> CONCUSSION_IMMUNE_ENTITY_TYPE_TAG = REGISTRY.createEntityTypeTag("concussion_immune");

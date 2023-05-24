@@ -6,11 +6,11 @@ import fuzs.enderzoology.client.model.DireWolfModel;
 import net.minecraft.client.model.WolfModel;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class WolfHeldItemLayer extends RenderLayer<Wolf, WolfModel<Wolf>> {
@@ -41,7 +41,7 @@ public class WolfHeldItemLayer extends RenderLayer<Wolf, WolfModel<Wolf>> {
             matrixStack.mulPose(Axis.XP.rotationDegrees(90.0F));
 
             ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.MAINHAND);
-            this.itemInHandRenderer.renderItem(livingEntity, itemStack, ItemTransforms.TransformType.GROUND, false, matrixStack, buffer, packedLight);
+            this.itemInHandRenderer.renderItem(livingEntity, itemStack, ItemDisplayContext.GROUND, false, matrixStack, buffer, packedLight);
             matrixStack.popPose();
         }
     }

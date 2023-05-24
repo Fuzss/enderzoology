@@ -11,6 +11,7 @@ import fuzs.puzzleslib.api.client.core.v1.context.EntitySpectatorShaderContext;
 import fuzs.puzzleslib.api.client.core.v1.context.ItemModelPropertiesContext;
 import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
 import fuzs.puzzleslib.api.client.event.v1.ComputeFovModifierCallback;
+import fuzs.puzzleslib.api.client.event.v1.RenderHandCallback;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -26,6 +27,7 @@ public class EnderZoologyClient implements ClientModConstructor {
 
     private static void registerHandlers() {
         ComputeFovModifierCallback.EVENT.register(FovModifierHandler::onComputeFovModifier);
+        RenderHandCallback.EVENT.register(FovModifierHandler::onRenderHand);
     }
 
     @Override

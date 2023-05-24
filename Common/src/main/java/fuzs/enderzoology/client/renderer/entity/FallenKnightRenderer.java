@@ -15,7 +15,7 @@ public class FallenKnightRenderer extends HumanoidMobRenderer<AbstractSkeleton, 
 
     public FallenKnightRenderer(EntityRendererProvider.Context context) {
         super(context, new FallenKnightModel<>(context.bakeLayer(ClientModRegistry.FALLEN_KNIGHT)), 0.5F);
-        this.addLayer(new HumanoidArmorLayer<>(this, new FallenKnightModel<>(context.bakeLayer(ClientModRegistry.FALLEN_KNIGHT_INNER_ARMOR)), new FallenKnightModel<>(context.bakeLayer(ClientModRegistry.FALLEN_KNIGHT_OUTER_ARMOR))));
+        this.addLayer(new HumanoidArmorLayer<>(this, new FallenKnightModel<>(context.bakeLayer(ClientModRegistry.FALLEN_KNIGHT_INNER_ARMOR)), new FallenKnightModel<>(context.bakeLayer(ClientModRegistry.FALLEN_KNIGHT_OUTER_ARMOR)), context.getModelManager()));
     }
 
     @Override

@@ -86,7 +86,7 @@ public class SoulboundCapabilityImpl implements SoulboundCapability {
                 ItemEntity itementity = player.drop(itemstack, false);
                 if (itementity != null) {
                     itementity.setNoPickUpDelay();
-                    itementity.setOwner(player.getUUID());
+                    itementity.setTarget(player.getUUID());
                 }
             }
         }

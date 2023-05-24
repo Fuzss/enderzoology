@@ -3,6 +3,7 @@ package fuzs.enderzoology;
 import fuzs.enderzoology.config.CommonConfig;
 import fuzs.enderzoology.handler.HuntingBowHandler;
 import fuzs.enderzoology.handler.MobHuntingHandler;
+import fuzs.enderzoology.handler.SoulboundRespawnHandler;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.EntityAttributeProviders;
 import fuzs.enderzoology.world.entity.SpawnPlacementRules;
@@ -14,9 +15,10 @@ import fuzs.puzzleslib.api.biome.v1.MobSpawnSettingsContext;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.*;
-import fuzs.puzzleslib.api.event.v1.entity.EntityLevelEvents;
+import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.UseItemEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.ArrowLooseCallback;
+import fuzs.puzzleslib.api.event.v1.entity.player.PlayerEvents;
 import fuzs.puzzleslib.api.event.v1.level.ExplosionEvents;
 import fuzs.puzzleslib.api.init.v2.PotionBrewingRegistry;
 import fuzs.puzzleslib.api.item.v2.CreativeModeTabConfigurator;
@@ -38,7 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -73,7 +74,8 @@ public class EnderZoology implements ModConstructor {
         ExplosionEvents.DETONATE.register(EnderExplosion::onExplosionDetonate);
         ArrowLooseCallback.EVENT.register(HuntingBowHandler::onArrowLoose);
         UseItemEvents.TICK.register(HuntingBowHandler::onUseItemTick);
-        EntityLevelEvents.LOAD.register(MobHuntingHandler::onLoad);
+        ServerEntityLevelEvents.LOAD.register(MobHuntingHandler::onLoad);
+        PlayerEvents.COPY.register(SoulboundRespawnHandler::onPlayerClone);
     }
 
     @Override
@@ -177,7 +179,7 @@ public class EnderZoology implements ModConstructor {
                 registerSpawnData(settings, MobCategory.MONSTER, EntityType.ENDERMAN, data -> new MobSpawnSettings.SpawnerData(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), data.getWeight().asInt() * 3, Math.min(data.maxCount, data.minCount * 4), data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).direWolf) {
-                if (modificationContext.climateSettings().getPrecipitation() == Biome.Precipitation.SNOW) {
+                if (modificationContext.climateSettings().hasPrecipitation() && modificationContext.climateSettings().getTemperature() < 0.0F) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {
                         settings.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), Math.max(1, data.getWeight().asInt() / 4), 3, 8));
                     });
@@ -187,7 +189,7 @@ public class EnderZoology implements ModConstructor {
                 registerSpawnData(settings, MobCategory.MONSTER, EntityType.WITCH, data -> new MobSpawnSettings.SpawnerData(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), data.getWeight(), data.minCount, data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).owl) {
-                if (modificationContext.climateSettings().getPrecipitation() != Biome.Precipitation.NONE) {
+                if (modificationContext.climateSettings().hasPrecipitation()) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.RABBIT).ifPresent(data -> {
                         settings.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModRegistry.OWL_ENTITY_TYPE.get(), data.getWeight(), data.minCount, data.maxCount));
                     });
@@ -206,12 +208,12 @@ public class EnderZoology implements ModConstructor {
 
     private static void registerSpawnCost(MobSpawnSettingsContext spawnSettings, EntityType<?> vanillaEntityType, EntityType<?> modEntityType, DoubleUnaryOperator chargeConverter, DoubleUnaryOperator energyBudgetConverter) {
         Optional<MobSpawnSettings.MobSpawnCost> optionalMobSpawnCost = Optional.ofNullable(spawnSettings.getSpawnCost(vanillaEntityType));
-        optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType, chargeConverter.applyAsDouble(cost.getCharge()), energyBudgetConverter.applyAsDouble(cost.getEnergyBudget())));
+        optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType, chargeConverter.applyAsDouble(cost.charge()), energyBudgetConverter.applyAsDouble(cost.energyBudget())));
     }
 
     @Override
     public void onRegisterCreativeModeTabs(CreativeModeTabContext context) {
-        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID).icon(() -> new ItemStack(ModRegistry.ENDER_FRAGMENT_ITEM.get())).appendEnchantmentsAndPotions().displayItems((featureFlagSet, output, bl) -> {
+        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID).icon(() -> new ItemStack(ModRegistry.ENDER_FRAGMENT_ITEM.get())).appendEnchantmentsAndPotions().displayItems((itemDisplayParameters, output) -> {
             output.accept(ModRegistry.CONCUSSION_CHARGE_ITEM.get());
             output.accept(ModRegistry.CONFUSING_CHARGE_ITEM.get());
             output.accept(ModRegistry.ENDER_CHARGE_ITEM.get());

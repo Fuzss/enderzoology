@@ -187,7 +187,7 @@ public class Owl extends Animal implements FlyingAnimal {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        return target.hurt(DamageSource.mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        return target.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
     }
 
     @Nullable

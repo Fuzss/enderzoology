@@ -2,7 +2,6 @@ package fuzs.enderzoology;
 
 import fuzs.enderzoology.capability.SoulboundCapability;
 import fuzs.enderzoology.data.*;
-import fuzs.enderzoology.handler.SoulboundRespawnHandler;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.init.ModRegistryForge;
 import fuzs.puzzleslib.api.capability.v2.ForgeCapabilityHelper;
@@ -11,12 +10,9 @@ import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -29,24 +25,13 @@ public class EnderZoologyForge {
 
     @SubscribeEvent
     public static void onConstructMod(final FMLConstructModEvent evt) {
-        ModConstructor.construct(EnderZoology.MOD_ID, EnderZoology::new, ContentRegistrationFlags.BIOMES);
+        ModConstructor.construct(EnderZoology.MOD_ID, EnderZoology::new, ContentRegistrationFlags.BIOME_MODIFICATIONS);
         ModRegistryForge.touch();
         registerCapabilities();
-        registerHandlers();
     }
 
     private static void registerCapabilities() {
         ForgeCapabilityHelper.setCapabilityToken(ModRegistry.SOULBOUND_CAPABILITY, new CapabilityToken<SoulboundCapability>() {});
-    }
-
-    private static void registerHandlers() {
-        MinecraftForge.EVENT_BUS.addListener((final PlayerEvent.Clone evt) -> {
-            SoulboundRespawnHandler.onPlayerClone((ServerPlayer) evt.getOriginal(), (ServerPlayer) evt.getEntity(), !evt.isWasDeath(), action -> {
-                evt.getOriginal().reviveCaps();
-                action.run();
-                evt.getOriginal().invalidateCaps();
-            });
-        });
     }
 
     @SubscribeEvent

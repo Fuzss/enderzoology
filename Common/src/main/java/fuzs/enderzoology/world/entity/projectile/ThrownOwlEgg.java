@@ -4,7 +4,6 @@ import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.animal.Owl;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,7 +43,7 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        result.getEntity().hurt(DamageSource.thrown(this, this.getOwner()), 0.0F);
+        result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), 0.0F);
     }
 
     @Override

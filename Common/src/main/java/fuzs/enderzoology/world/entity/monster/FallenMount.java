@@ -99,7 +99,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     protected void randomizeAttributes(RandomSource randomSource) {
-        this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength(randomSource));
+        this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(generateJumpStrength(randomSource::nextDouble));
     }
 
     @Override
@@ -171,6 +171,11 @@ public class FallenMount extends AbstractHorse implements Enemy {
         } else {
             return super.mobInteract(player, hand);
         }
+    }
+
+    @Override
+    protected void doPlayerRide(Player player) {
+
     }
 
     @Override
@@ -419,11 +424,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
         } else {
             super.playSwimSound(Math.min(0.1F, volume * 25.0F));
         }
-    }
-
-    @Override
-    public boolean rideableUnderWater() {
-        return true;
     }
 
     @Override

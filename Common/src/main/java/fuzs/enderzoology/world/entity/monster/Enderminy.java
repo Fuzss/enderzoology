@@ -7,11 +7,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -55,7 +55,7 @@ public class Enderminy extends Monster implements NeutralMob {
 
     public Enderminy(EntityType<? extends Enderminy> entityType, Level level) {
         super(entityType, level);
-        this.maxUpStep = 1.0F;
+        this.setMaxUpStep(1.0F);
         this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
     }
 
@@ -275,7 +275,7 @@ public class Enderminy extends Monster implements NeutralMob {
     public boolean hurt(DamageSource source, float amount) {
         if (this.isInvulnerableTo(source)) {
             return false;
-        } else if (source instanceof IndirectEntityDamageSource) {
+        } else if (source.is(DamageTypeTags.IS_PROJECTILE)) {
             Entity entity = source.getDirectEntity();
             boolean bl;
             if (entity instanceof ThrownPotion) {
