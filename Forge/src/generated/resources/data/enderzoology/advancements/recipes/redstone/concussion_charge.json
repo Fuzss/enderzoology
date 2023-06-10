@@ -30,5 +30,6 @@
     "recipes": [
       "enderzoology:concussion_charge"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

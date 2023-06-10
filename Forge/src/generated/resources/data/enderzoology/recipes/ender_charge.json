@@ -24,5 +24,6 @@
   ],
   "result": {
     "item": "enderzoology:ender_charge"
-  }
+  },
+  "show_notification": true
 }

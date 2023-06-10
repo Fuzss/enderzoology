@@ -30,5 +30,6 @@
     "recipes": [
       "enderzoology:ender_charge"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

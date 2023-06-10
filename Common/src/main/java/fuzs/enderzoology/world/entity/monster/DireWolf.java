@@ -126,8 +126,8 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     @Override
     public void tick() {
         super.tick();
-        if (this.hasFollowers() && this.level.random.nextInt(200) == 1) {
-            List<? extends PackMob> list = this.level.getEntitiesOfClass(this.getClass(), this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D));
+        if (this.hasFollowers() && this.level().random.nextInt(200) == 1) {
+            List<? extends PackMob> list = this.level().getEntitiesOfClass(this.getClass(), this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D));
             if (list.size() <= 1) {
                 this.wolfPackSize = 1;
             }
@@ -180,7 +180,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     public void aiStep() {
-        if (!this.level.isClientSide && this.isAlive() && this.isEffectiveAi()) {
+        if (!this.level().isClientSide && this.isAlive() && this.isEffectiveAi()) {
             ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
             if (this.canEat(itemStack) && --this.ticksSinceEaten < 40 && this.random.nextFloat() < 0.1F && !this.isUsingItem()) {
                 this.startUsingItem(InteractionHand.MAIN_HAND);
@@ -197,7 +197,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         Item item = food.getItem();
         if (item.isEdible()) {
             this.heal(item.getFoodProperties().getNutrition() * (item.getFoodProperties().isMeat() ? 2.0F : 1.0F));
-            this.level.broadcastEntityEvent(this, EntityEvent.IN_LOVE_HEARTS);
+            this.level().broadcastEntityEvent(this, EntityEvent.IN_LOVE_HEARTS);
         }
         return super.eat(level, food);
     }
@@ -209,7 +209,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
                 double d = this.random.nextGaussian() * 0.02;
                 double e = this.random.nextGaussian() * 0.02;
                 double f = this.random.nextGaussian() * 0.02;
-                this.level.addParticle(ParticleTypes.HEART, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
+                this.level().addParticle(ParticleTypes.HEART, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
             }
         } else {
             super.handleEntityEvent(id);
@@ -222,7 +222,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     private boolean canEat(ItemStack stack) {
-        return stack.getItem().isEdible() && this.getTarget() == null && this.onGround && this.isHungry();
+        return stack.getItem().isEdible() && this.getTarget() == null && this.onGround() && this.isHungry();
     }
 
     @Override
@@ -248,18 +248,18 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     private void spitOutItem(ItemStack stack) {
-        if (!stack.isEmpty() && !this.level.isClientSide) {
-            ItemEntity itemEntity = new ItemEntity(this.level, this.getX() + this.getLookAngle().x, this.getY() + 1.0, this.getZ() + this.getLookAngle().z, stack);
+        if (!stack.isEmpty() && !this.level().isClientSide) {
+            ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0, this.getZ() + this.getLookAngle().z, stack);
             itemEntity.setPickUpDelay(40);
             itemEntity.setThrower(this.getUUID());
             this.playSound(SoundEvents.FOX_SPIT, 1.0F, 1.0F);
-            this.level.addFreshEntity(itemEntity);
+            this.level().addFreshEntity(itemEntity);
         }
     }
 
     private void dropItemStack(ItemStack stack) {
-        ItemEntity itemEntity = new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), stack);
-        this.level.addFreshEntity(itemEntity);
+        ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack);
+        this.level().addFreshEntity(itemEntity);
     }
 
     @Override
@@ -378,7 +378,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
                 if (this.mob.getRandom().nextInt(reducedTickDelay(10)) != 0) {
                     return false;
                 } else {
-                    List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
+                    List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
                     return !list.isEmpty() && this.mob.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
                 }
             } else {
@@ -388,7 +388,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
         @Override
         public void tick() {
-            List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
+            List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
             ItemStack itemStack = this.mob.getItemBySlot(EquipmentSlot.MAINHAND);
             if (itemStack.isEmpty() && !list.isEmpty()) {
                 this.mob.getNavigation().moveTo(list.get(0), 1.2);
@@ -398,7 +398,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
         @Override
         public void start() {
-            List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
+            List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
             if (!list.isEmpty()) {
                 this.mob.getNavigation().moveTo(list.get(0), 1.2);
             }

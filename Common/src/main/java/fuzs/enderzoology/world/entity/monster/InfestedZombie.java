@@ -31,9 +31,9 @@ public class InfestedZombie extends Zombie {
 
     @Override
     public void aiStep() {
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             for (int i = 0; i < 2; ++i) {
-                this.level.addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5D), this.getRandomY() - 0.25D, this.getRandomZ(0.5D), (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
+                this.level().addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5D), this.getRandomY() - 0.25D, this.getRandomZ(0.5D), (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
             }
         }
         super.aiStep();
@@ -43,9 +43,9 @@ public class InfestedZombie extends Zombie {
     public boolean doHurtTarget(Entity entity) {
         if (!super.doHurtTarget(entity)) return false;
         // ranges from 0.0 to 6.75 according to Minecraft Wiki
-        float localDifficulty = this.level.getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
+        float localDifficulty = this.level().getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
         if (this.isAlive() && entity instanceof LivingEntity && (!(entity instanceof Player player) || !player.getAbilities().invulnerable) && this.random.nextFloat() < localDifficulty / 10.0F) {
-            EnderExplosion.teleportEntity((ServerLevel) this.level, (LivingEntity) entity, 8, false);
+            EnderExplosion.teleportEntity((ServerLevel) this.level(), (LivingEntity) entity, 8, false);
         }
         return true;
     }
@@ -54,7 +54,7 @@ public class InfestedZombie extends Zombie {
     public boolean hurt(DamageSource source, float amount) {
         if (!super.hurt(source, amount)) return false;
         if (this.isAlive() && this.getHealth() < this.getMaxHealth() * 0.5 && this.random.nextInt(4) == 0) {
-            EnderExplosion.teleportEntity((ServerLevel) this.level, this, 8, false, true);
+            EnderExplosion.teleportEntity((ServerLevel) this.level(), this, 8, false, true);
         }
         return true;
     }

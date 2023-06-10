@@ -104,7 +104,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     public void tick() {
-        if (!this.level.isClientSide && this.isAlive() && this.isConverting()) {
+        if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
             this.conversionTime--;
             if (this.conversionTime <= 0) {
                 this.finishConversion();
@@ -125,8 +125,8 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    public void positionRider(Entity passenger) {
-        super.positionRider(passenger);
+    public void positionRider(Entity passenger, MoveFunction callback) {
+        super.positionRider(passenger, callback);
         if (passenger instanceof LivingEntity living) {
             living.yBodyRot = this.yBodyRot;
             living.yHeadRot = this.yHeadRot;
@@ -160,7 +160,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
                     itemStack.shrink(1);
                 }
 
-                if (!this.level.isClientSide) {
+                if (!this.level().isClientSide) {
                     this.startConverting(this.random.nextInt(2401) + 3600);
                 }
 
@@ -256,7 +256,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     protected void updateContainerEquipment() {
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             super.updateContainerEquipment();
             this.setArmorEquipment(this.inventory.getItem(1));
             this.setDropChance(EquipmentSlot.CHEST, 0.0F);
@@ -265,7 +265,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     private void setArmorEquipment(ItemStack stack) {
         this.setArmor(stack);
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             this.getAttribute(Attributes.ARMOR).removeModifier(ARMOR_MODIFIER_UUID);
             if (this.isArmor(stack)) {
                 int i = ((HorseArmorItem) stack.getItem()).getProtection();
@@ -290,15 +290,15 @@ public class FallenMount extends AbstractHorse implements Enemy {
         this.conversionTime = villagerConversionTime;
         this.getEntityData().set(DATA_CONVERTING_ID, true);
         this.removeEffect(MobEffects.WEAKNESS);
-        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, villagerConversionTime, Math.min(this.level.getDifficulty().getId() - 1, 0)));
-        this.level.broadcastEntityEvent(this, EntityEvent.ZOMBIE_CONVERTING);
+        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, villagerConversionTime, Math.min(this.level().getDifficulty().getId() - 1, 0)));
+        this.level().broadcastEntityEvent(this, EntityEvent.ZOMBIE_CONVERTING);
     }
 
     @Override
     public void handleEntityEvent(byte id) {
         if (id == EntityEvent.ZOMBIE_CONVERTING) {
             if (!this.isSilent()) {
-                this.level.playLocalSound(this.getX(), this.getEyeY(), this.getZ(), SoundEvents.ZOMBIE_VILLAGER_CURE, this.getSoundSource(), 1.0F + this.random.nextFloat(), this.random.nextFloat() * 0.7F + 0.3F, false);
+                this.level().playLocalSound(this.getX(), this.getEyeY(), this.getZ(), SoundEvents.ZOMBIE_VILLAGER_CURE, this.getSoundSource(), 1.0F + this.random.nextFloat(), this.random.nextFloat() * 0.7F + 0.3F, false);
             }
         } else {
             super.handleEntityEvent(id);
@@ -306,10 +306,10 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     private void finishConversion() {
-        this.recreateHorseFromData(this.level, this).or(this::createFreshHorse).ifPresent(entity -> {
+        this.recreateHorseFromData(this.level(), this).or(this::createFreshHorse).ifPresent(entity -> {
             entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
             if (!this.isSilent()) {
-                this.level.levelEvent(null, 1027, this.blockPosition(), 0);
+                this.level().levelEvent(null, 1027, this.blockPosition(), 0);
             }
             CommonAbstractions.INSTANCE.onLivingConvert(this, entity);
         });
@@ -352,15 +352,15 @@ public class FallenMount extends AbstractHorse implements Enemy {
             }
         }
 
-        horse.finalizeSpawn((ServerLevelAccessor) this.level, this.level.getCurrentDifficultyAt(horse.blockPosition()), MobSpawnType.CONVERSION, new AgeableMob.AgeableMobGroupData(0.0F), null);
+        horse.finalizeSpawn((ServerLevelAccessor) this.level(), this.level().getCurrentDifficultyAt(horse.blockPosition()), MobSpawnType.CONVERSION, new AgeableMob.AgeableMobGroupData(0.0F), null);
         horse.setTamed(true);
         horse.setBaby(false);
         return Optional.of(horse);
     }
 
     @Override
-    public boolean wasKilled(ServerLevel level, LivingEntity entity) {
-        boolean flag = super.wasKilled(level, entity);
+    public boolean killedEntity(ServerLevel level, LivingEntity entity) {
+        boolean flag = super.killedEntity(level, entity);
         if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD) && entity instanceof AbstractHorse horse && CommonAbstractions.INSTANCE.canLivingConvert(entity, ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), (timer) -> {
         })) {
             if (level.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
@@ -419,7 +419,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     protected void playSwimSound(float volume) {
-        if (this.onGround) {
+        if (this.onGround()) {
             super.playSwimSound(0.3F);
         } else {
             super.playSwimSound(Math.min(0.1F, volume * 25.0F));

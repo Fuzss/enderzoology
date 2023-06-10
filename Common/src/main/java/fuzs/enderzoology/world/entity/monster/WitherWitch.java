@@ -46,7 +46,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
                 if (this.getCooldown() <= 0 && this.mob.getRandom().nextBoolean()) {
                     this.findTarget();
                     if (this.target != null) {
-                        if (this.target.level.getNearestPlayer(this.target.getX(), this.target.getY(), this.target.getZ(), 12.0, true) != null) {
+                        if (this.target.level().getNearestPlayer(this.target.getX(), this.target.getY(), this.target.getZ(), 12.0, true) != null) {
                             this.target = null;
                             return false;
                         } else {
@@ -63,7 +63,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level.isClientSide && this.isAlive()) {
+        if (!this.level().isClientSide && this.isAlive()) {
             this.healCatsGoal.decrementCooldown();
             ((WitchAccessor) this).enderzoology$getAttackPlayersGoal().setCanAttack(((WitchAccessor) this).enderzoology$getHealRaidersGoal().getCooldown() <= 0 || this.healCatsGoal.getCooldown() <= 0);
         }
@@ -149,15 +149,15 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
                 potion = ModRegistry.RISING_POTION.get();
             }
 
-            ThrownPotion thrownPotion = new ThrownPotion(this.level, this);
+            ThrownPotion thrownPotion = new ThrownPotion(this.level(), this);
             thrownPotion.setItem(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), potion));
             thrownPotion.setXRot(thrownPotion.getXRot() - -20.0F);
             thrownPotion.shoot(d, e + g * 0.2, f, 0.75F, 8.0F);
             if (!this.isSilent()) {
-                this.level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WITCH_THROW, this.getSoundSource(), 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
+                this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WITCH_THROW, this.getSoundSource(), 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
             }
 
-            this.level.addFreshEntity(thrownPotion);
+            this.level().addFreshEntity(thrownPotion);
         }
     }
 

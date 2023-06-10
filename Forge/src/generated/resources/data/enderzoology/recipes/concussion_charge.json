@@ -27,5 +27,6 @@
   ],
   "result": {
     "item": "enderzoology:concussion_charge"
-  }
+  },
+  "show_notification": true
 }

@@ -33,7 +33,7 @@ public interface CompanionMob<T extends Mob> {
     }
 
     default Level getCompanionLevel() {
-        return this.getCompanionMob().getLevel();
+        return this.getCompanionMob().level();
     }
 
     Class<T> getCompanionType();

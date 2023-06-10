@@ -56,7 +56,7 @@ public class FallenKnight extends AbstractSkeleton {
         if (random.nextBoolean()) {
             item = ModRegistry.HUNTING_BOW.get();
         } else {
-            if (random.nextFloat() < (this.level.getDifficulty() == Difficulty.HARD ? 0.6F : 0.2F)) {
+            if (random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.6F : 0.2F)) {
                 item = Items.IRON_SWORD;
             } else {
                 item = Items.STONE_SWORD;
@@ -82,7 +82,7 @@ public class FallenKnight extends AbstractSkeleton {
         List<EquipmentSlot> slots = Stream.of(EquipmentSlot.values()).filter(slot -> slot.getType() == EquipmentSlot.Type.ARMOR).sorted(Comparator.reverseOrder()).toList();
         for (EquipmentSlot slot : slots) {
             ItemStack itemStack = this.getItemBySlot(slot);
-            if (slot != EquipmentSlot.HEAD && random.nextFloat() < (this.level.getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F)) {
+            if (slot != EquipmentSlot.HEAD && random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F)) {
                 break;
             }
 
@@ -119,7 +119,7 @@ public class FallenKnight extends AbstractSkeleton {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
         if (level.getRandom().nextBoolean()) {
-            Mob fallenMount = ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get().create(this.level);
+            Mob fallenMount = ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get().create(this.level());
             fallenMount.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             fallenMount.finalizeSpawn(level, difficulty, MobSpawnType.JOCKEY, null, null);
             this.startRiding(fallenMount);
@@ -155,13 +155,13 @@ public class FallenKnight extends AbstractSkeleton {
 
     @Override
     public void reassessWeaponGoal() {
-        if (this.level != null && !this.level.isClientSide) {
+        if (this.level() != null && !this.level().isClientSide) {
             this.goalSelector.removeGoal(this.meleeGoal());
             this.goalSelector.removeGoal(this.bowGoal());
             ItemStack itemStack = this.getItemInHand(RangedBowEasyAttackGoal.getWeaponHoldingHand(this, stack -> stack.getItem() instanceof BowItem));
             if (itemStack.getItem() instanceof BowItem) {
                 int i = 20;
-                if (this.level.getDifficulty() != Difficulty.HARD) {
+                if (this.level().getDifficulty() != Difficulty.HARD) {
                     i = 40;
                 }
 

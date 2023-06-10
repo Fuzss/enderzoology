@@ -35,7 +35,7 @@ public class FollowPackLeaderGoal<T extends Mob & PackMob> extends Goal {
             return false;
         } else {
             this.nextStartTick = this.nextStartTick(this.mob);
-            List<? extends T> list = this.mob.level.getEntitiesOfClass((Class<T>) this.mob.getClass(), this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), (Predicate<? super T>) (packMob) -> {
+            List<? extends T> list = this.mob.level().getEntitiesOfClass((Class<T>) this.mob.getClass(), this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), (Predicate<? super T>) (packMob) -> {
                 return packMob.canBeFollowed() || !packMob.isFollower();
             });
             T mob = DataFixUtils.orElse(list.stream().filter(PackMob::canBeFollowed).findAny(), this.mob);

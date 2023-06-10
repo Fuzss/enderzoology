@@ -39,8 +39,8 @@ public class RepellentEnchantment extends ThornsEnchantment {
     public void doPostHurt(LivingEntity target, Entity attacker, int level) {
         Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(ModRegistry.REPELLENT_ENCHANTMENT.get(), target);
         if (shouldHit(level, target.getRandom())) {
-            if (attacker instanceof LivingEntity livingEntity && !attacker.level.isClientSide) {
-                EnderExplosion.teleportEntity((ServerLevel) attacker.level, livingEntity, 8 + level * 4, false);
+            if (attacker instanceof LivingEntity livingEntity && !attacker.level().isClientSide) {
+                EnderExplosion.teleportEntity((ServerLevel) attacker.level(), livingEntity, 8 + level * 4, false);
             }
 
             if (entry != null) {

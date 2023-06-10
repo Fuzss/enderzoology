@@ -35,7 +35,7 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
     public void handleEntityEvent(byte id) {
         if (id == EntityEvent.DEATH) {
             for (int i = 0; i < 8; ++i) {
-                this.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem()), this.getX(), this.getY(), this.getZ(), ((double) this.random.nextFloat() - 0.5) * 0.08, ((double) this.random.nextFloat() - 0.5) * 0.08, ((double) this.random.nextFloat() - 0.5) * 0.08);
+                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem()), this.getX(), this.getY(), this.getZ(), ((double) this.random.nextFloat() - 0.5) * 0.08, ((double) this.random.nextFloat() - 0.5) * 0.08, ((double) this.random.nextFloat() - 0.5) * 0.08);
             }
         }
     }
@@ -49,14 +49,14 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             if (this.random.nextInt(8) == 0) {
-                Owl owl = ModRegistry.OWL_ENTITY_TYPE.get().create(this.level);
+                Owl owl = ModRegistry.OWL_ENTITY_TYPE.get().create(this.level());
                 owl.setAge(-24000);
                 owl.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-                this.level.addFreshEntity(owl);
+                this.level().addFreshEntity(owl);
             }
-            this.level.broadcastEntityEvent(this, EntityEvent.DEATH);
+            this.level().broadcastEntityEvent(this, EntityEvent.DEATH);
             this.discard();
         }
     }

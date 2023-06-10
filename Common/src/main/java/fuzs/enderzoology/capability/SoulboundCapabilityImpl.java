@@ -24,7 +24,7 @@ public class SoulboundCapabilityImpl implements SoulboundCapability {
 
     @Override
     public void saveOnDeath(Player player) {
-        if (player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) return;
+        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) return;
         Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
@@ -80,7 +80,7 @@ public class SoulboundCapabilityImpl implements SoulboundCapability {
                 if (itementity1 != null) {
                     itementity1.makeFakeItem();
                 }
-                player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
                 player.containerMenu.broadcastChanges();
             } else {
                 ItemEntity itementity = player.drop(itemstack, false);

@@ -78,14 +78,14 @@ public class Enderminy extends Monster implements NeutralMob {
             this.maybePlayFirstAngerSound();
         }
 
-        this.updatePersistentAnger((ServerLevel) this.level, true);
+        this.updatePersistentAnger((ServerLevel) this.level(), true);
         if (this.getTarget() != null) {
             this.maybeAlertOthers();
         }
 
-        if (this.level.isDay() && this.tickCount >= this.targetChangeTime + MIN_DEAGGRESSION_TIME) {
+        if (this.level().isDay() && this.tickCount >= this.targetChangeTime + MIN_DEAGGRESSION_TIME) {
             float f = this.getLightLevelDependentMagicValue();
-            if (f > 0.5F && this.level.canSeeSky(this.blockPosition()) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
+            if (f > 0.5F && this.level().canSeeSky(this.blockPosition()) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
                 this.setTarget(null);
                 this.teleport();
             }
@@ -119,7 +119,7 @@ public class Enderminy extends Monster implements NeutralMob {
     private void alertOthers() {
         double followRange = this.getAttributeValue(Attributes.FOLLOW_RANGE);
         AABB aABB = AABB.unitCubeFromLowerCorner(this.position()).inflate(followRange, 10.0, followRange);
-        List<Enderminy> list = this.level.getEntitiesOfClass(Enderminy.class, aABB, EntitySelector.ENTITY_STILL_ALIVE);
+        List<Enderminy> list = this.level().getEntitiesOfClass(Enderminy.class, aABB, EntitySelector.ENTITY_STILL_ALIVE);
         for (Enderminy enderminy : list) {
             if (enderminy != this) {
                 if (enderminy.getTarget() == null && !enderminy.isAlliedTo(this.getTarget())) {
@@ -194,7 +194,7 @@ public class Enderminy extends Monster implements NeutralMob {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.readPersistentAngerSaveData(this.level, compound);
+        this.readPersistentAngerSaveData(this.level(), compound);
     }
 
     @Override
@@ -204,8 +204,8 @@ public class Enderminy extends Monster implements NeutralMob {
 
     @Override
     public void aiStep() {
-        if (this.level.isClientSide) {
-            this.level.addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5), this.getRandomY() - 0.25, this.getRandomZ(0.5), (this.random.nextDouble() - 0.5) * 2.0, -this.random.nextDouble(), (this.random.nextDouble() - 0.5) * 2.0);
+        if (this.level().isClientSide) {
+            this.level().addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5), this.getRandomY() - 0.25, this.getRandomZ(0.5), (this.random.nextDouble() - 0.5) * 2.0, -this.random.nextDouble(), (this.random.nextDouble() - 0.5) * 2.0);
         }
 
         this.jumping = false;
@@ -219,7 +219,7 @@ public class Enderminy extends Monster implements NeutralMob {
     }
 
     protected boolean teleport() {
-        if (!this.level.isClientSide() && this.isAlive()) {
+        if (!this.level().isClientSide() && this.isAlive()) {
             double d = this.getX() + (this.random.nextDouble() - 0.5) * 64.0;
             double e = this.getY() + (double) (this.random.nextInt(64) - 32);
             double f = this.getZ() + (this.random.nextDouble() - 0.5) * 64.0;
@@ -232,20 +232,20 @@ public class Enderminy extends Monster implements NeutralMob {
     private boolean teleport(double x, double y, double z) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(x, y, z);
 
-        while (mutableBlockPos.getY() > this.level.getMinBuildHeight() && !this.level.getBlockState(mutableBlockPos).getMaterial().blocksMotion()) {
+        while (mutableBlockPos.getY() > this.level().getMinBuildHeight() && !this.level().getBlockState(mutableBlockPos).blocksMotion()) {
             mutableBlockPos.move(Direction.DOWN);
         }
 
-        BlockState blockState = this.level.getBlockState(mutableBlockPos);
-        boolean bl = blockState.getMaterial().blocksMotion();
+        BlockState blockState = this.level().getBlockState(mutableBlockPos);
+        boolean bl = blockState.blocksMotion();
         boolean bl2 = blockState.getFluidState().is(FluidTags.WATER);
         if (bl && !bl2) {
             Vec3 vec3 = this.position();
             boolean bl3 = this.randomTeleport(x, y, z, true);
             if (bl3) {
-                this.level.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
+                this.level().gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
                 if (!this.isSilent()) {
-                    this.level.playSound(null, this.xo, this.yo, this.zo, SoundEvents.ENDERMAN_TELEPORT, this.getSoundSource(), 1.0F, 1.0F);
+                    this.level().playSound(null, this.xo, this.yo, this.zo, SoundEvents.ENDERMAN_TELEPORT, this.getSoundSource(), 1.0F, 1.0F);
                     this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
                 }
             }
@@ -293,7 +293,7 @@ public class Enderminy extends Monster implements NeutralMob {
             return bl;
         } else {
             boolean bl2 = super.hurt(source, amount);
-            if (!this.level.isClientSide() && !(source.getEntity() instanceof LivingEntity) && this.random.nextInt(10) != 0) {
+            if (!this.level().isClientSide() && !(source.getEntity() instanceof LivingEntity) && this.random.nextInt(10) != 0) {
                 this.teleport();
             }
 

@@ -1,4 +1,4 @@
-// 1.19.3	2023-05-23T22:30:17.467282	Block Loot Tables
-2c54b7a8ada3ba61ae29ef5cbaf856caa39f8945 data/enderzoology/loot_tables/blocks/concussion_charge.json
-43c45278b4110013e3628be9eef6e5f99ea36e31 data/enderzoology/loot_tables/blocks/confusing_charge.json
-108ce5a19c73c9cd12103b2f60fd84ace2a02c3a data/enderzoology/loot_tables/blocks/ender_charge.json
+// 1.20	2023-06-10T23:12:55.787862	Block Loot Tables
+28ba99981fe098dda86f557dc19449471047f9df data/enderzoology/loot_tables/blocks/concussion_charge.json
+9dbafde716a5cad3b53525c464fff25057b6be53 data/enderzoology/loot_tables/blocks/confusing_charge.json
+9ba7f906472e6a6dd334e922ab48a4e93f0dc09f data/enderzoology/loot_tables/blocks/ender_charge.json

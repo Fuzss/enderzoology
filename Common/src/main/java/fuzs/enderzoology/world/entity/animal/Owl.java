@@ -94,7 +94,7 @@ public class Owl extends Animal implements FlyingAnimal {
 
         this.calculateFlapping();
 
-        if (!this.level.isClientSide && this.isAlive() && !this.isBaby() && this.level.getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
+        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && this.level().getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             this.spawnAtLocation(ModRegistry.OWL_EGG_ITEM.get());
             this.gameEvent(GameEvent.ENTITY_PLACE);
@@ -105,15 +105,15 @@ public class Owl extends Animal implements FlyingAnimal {
     private void calculateFlapping() {
         this.oFlap = this.flap;
         this.oFlapSpeed = this.flapSpeed;
-        this.flapSpeed += (float)(!this.onGround && !this.isPassenger() ? 4.0 : -1.0) * 0.3F;
+        this.flapSpeed += (float)(!this.onGround() && !this.isPassenger() ? 4.0 : -1.0) * 0.3F;
         this.flapSpeed = Mth.clamp(this.flapSpeed, 0.0F, 1.0F);
-        if (!this.onGround && this.flapping < 1.0F) {
+        if (!this.onGround() && this.flapping < 1.0F) {
             this.flapping = 1.0F;
         }
 
         this.flapping *= 0.9F;
         Vec3 vec3 = this.getDeltaMovement();
-        if (!this.onGround && vec3.y < 0.0) {
+        if (!this.onGround() && vec3.y < 0.0) {
             this.setDeltaMovement(vec3.multiply(1.0, 0.6, 1.0));
         }
 
@@ -198,7 +198,7 @@ public class Owl extends Animal implements FlyingAnimal {
 
     @Override
     public boolean isFlying() {
-        return !this.onGround;
+        return !this.onGround();
     }
 
     @Override
@@ -235,9 +235,9 @@ public class Owl extends Animal implements FlyingAnimal {
 
             for (BlockPos blockpos1 : BlockPos.betweenClosed(Mth.floor(this.mob.getX() - 3.0D), Mth.floor(this.mob.getY() - 6.0D), Mth.floor(this.mob.getZ() - 3.0D), Mth.floor(this.mob.getX() + 3.0D), Mth.floor(this.mob.getY() + 6.0D), Mth.floor(this.mob.getZ() + 3.0D))) {
                 if (!blockpos.equals(blockpos1)) {
-                    BlockState blockstate = this.mob.level.getBlockState(blockpos$mutableblockpos1.setWithOffset(blockpos1, Direction.DOWN));
+                    BlockState blockstate = this.mob.level().getBlockState(blockpos$mutableblockpos1.setWithOffset(blockpos1, Direction.DOWN));
                     boolean flag = blockstate.getBlock() instanceof LeavesBlock || blockstate.is(BlockTags.LOGS);
-                    if (flag && this.mob.level.isEmptyBlock(blockpos1) && this.mob.level.isEmptyBlock(blockpos$mutableblockpos.setWithOffset(blockpos1, Direction.UP))) {
+                    if (flag && this.mob.level().isEmptyBlock(blockpos1) && this.mob.level().isEmptyBlock(blockpos$mutableblockpos.setWithOffset(blockpos1, Direction.UP))) {
                         return Vec3.atBottomCenterOf(blockpos1);
                     }
                 }

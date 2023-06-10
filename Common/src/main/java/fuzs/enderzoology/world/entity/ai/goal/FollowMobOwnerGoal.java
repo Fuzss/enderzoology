@@ -28,7 +28,7 @@ public class FollowMobOwnerGoal extends Goal {
         if (this.mob.getTarget() != null) {
             return false;
         } else {
-            List<? extends Mob> list = this.mob.level.getEntitiesOfClass(this.ownerClazz, this.mob.getBoundingBox().inflate(HORIZONTAL_SCAN_RANGE, VERTICAL_SCAN_RANGE, HORIZONTAL_SCAN_RANGE));
+            List<? extends Mob> list = this.mob.level().getEntitiesOfClass(this.ownerClazz, this.mob.getBoundingBox().inflate(HORIZONTAL_SCAN_RANGE, VERTICAL_SCAN_RANGE, HORIZONTAL_SCAN_RANGE));
             Mob owner = null;
             double d = Double.MAX_VALUE;
 

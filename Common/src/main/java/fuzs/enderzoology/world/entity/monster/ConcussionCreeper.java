@@ -47,9 +47,9 @@ public class ConcussionCreeper extends Creeper {
 
     @Override
     public void aiStep() {
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             for (int i = 0; i < 2; ++i) {
-                this.level.addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5D), this.getRandomY() - 0.25D, this.getRandomZ(0.5D), (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
+                this.level().addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5D), this.getRandomY() - 0.25D, this.getRandomZ(0.5D), (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
             }
         }
         super.aiStep();
@@ -67,10 +67,10 @@ public class ConcussionCreeper extends Creeper {
     }
 
     private void explodeCreeper() {
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             float poweredMultiplier = this.isPowered() ? 2.0F : 1.0F;
             float explosionRadius = ((CreeperAccessor) this).enderzoology$getExplosionRadius() * poweredMultiplier;
-            EnderExplosion.explode(this.level, this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.MOB, EnderExplosion.EntityInteraction.CONCUSSION, false);
+            EnderExplosion.explode(this.level(), this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.MOB, EnderExplosion.EntityInteraction.CONCUSSION, false);
             this.discard();
         }
     }

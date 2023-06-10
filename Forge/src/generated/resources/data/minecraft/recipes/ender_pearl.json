@@ -13,5 +13,6 @@
   ],
   "result": {
     "item": "minecraft:ender_pearl"
-  }
+  },
+  "show_notification": true
 }
