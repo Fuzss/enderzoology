@@ -27,20 +27,32 @@
   },
   "entity.owl.death": {
     "sounds": [
-      "enderzoology:mob/owl/hurt"
+      {
+        "name": "enderzoology:mob/owl/hurt",
+        "volume": 0.2
+      }
     ],
     "subtitle": "subtitles.entity.owl.death"
   },
   "entity.owl.hoot": {
     "sounds": [
-      "enderzoology:mob/owl/hoot1",
-      "enderzoology:mob/owl/hoot2"
+      {
+        "name": "enderzoology:mob/owl/hoot1",
+        "volume": 0.2
+      },
+      {
+        "name": "enderzoology:mob/owl/hoot2",
+        "volume": 0.2
+      }
     ],
     "subtitle": "subtitles.entity.owl.hoot"
   },
   "entity.owl.hurt": {
     "sounds": [
-      "enderzoology:mob/owl/hurt"
+      {
+        "name": "enderzoology:mob/owl/hurt",
+        "volume": 0.2
+      }
     ],
     "subtitle": "subtitles.entity.owl.hurt"
   },
