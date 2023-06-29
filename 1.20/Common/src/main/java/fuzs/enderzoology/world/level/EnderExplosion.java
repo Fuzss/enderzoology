@@ -1,5 +1,6 @@
 package fuzs.enderzoology.world.level;
 
+import com.google.common.collect.Lists;
 import fuzs.enderzoology.core.CommonAbstractions;
 import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.core.BlockPos;
@@ -27,7 +28,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -190,9 +190,12 @@ public class EnderExplosion extends Explosion {
 
         public List<MobEffectInstance> createEffects(int strength) {
             List<MobEffectInstance> effects = Lists.newArrayList();
-            if (this.teleport)
+            if (this.teleport) {
                 effects.add(new MobEffectInstance(ModRegistry.DISPLACEMENT_MOB_EFFECT.get(), 1, strength));
-            if (this.confusion) effects.add(new MobEffectInstance(MobEffects.CONFUSION, 100));
+            }
+            if (this.confusion) {
+                effects.add(new MobEffectInstance(MobEffects.CONFUSION, 100));
+            }
             return effects;
         }
     }
