@@ -143,7 +143,7 @@ public class Enderminy extends Monster implements NeutralMob {
         AttributeInstance attributeInstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
         if (target == null) {
             this.targetChangeTime = 0;
-            attributeInstance.removeModifier(SPEED_MODIFIER_ATTACKING);
+            attributeInstance.removeModifier(SPEED_MODIFIER_ATTACKING.getId());
         } else {
             this.targetChangeTime = this.tickCount;
             if (!attributeInstance.hasModifier(SPEED_MODIFIER_ATTACKING)) {

@@ -361,14 +361,14 @@ public class FallenMount extends AbstractHorse implements Enemy {
     @Override
     public boolean killedEntity(ServerLevel level, LivingEntity entity) {
         boolean flag = super.killedEntity(level, entity);
-        if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD) && entity instanceof AbstractHorse horse && CommonAbstractions.INSTANCE.canLivingConvert(entity, ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), (timer) -> {
+        if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD) && entity instanceof AbstractHorse horse && CommonAbstractions.INSTANCE.canLivingConvert(entity, ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.value(), (timer) -> {
         })) {
             if (level.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
                 return flag;
             }
 
 
-            FallenMount fallenMount = horse.convertTo(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), true);
+            FallenMount fallenMount = horse.convertTo(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.value(), true);
             fallenMount.finalizeSpawn(level, level.getCurrentDifficultyAt(fallenMount.blockPosition()), MobSpawnType.CONVERSION, new AgeableMob.AgeableMobGroupData(0.0F), null);
 
             CompoundTag compoundtag = new CompoundTag();

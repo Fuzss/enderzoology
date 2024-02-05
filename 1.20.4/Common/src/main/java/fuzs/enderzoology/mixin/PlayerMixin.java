@@ -21,6 +21,6 @@ abstract class PlayerMixin extends LivingEntity {
     protected void dropEquipment(CallbackInfo callback) {
         // on Forge using LivingDropsEvent would work, requires a different implementation though
         // just do it like this since the event is hard to replicate on Fabric anyway due to the whole capturing of drops Forge does
-        ModRegistry.SOULBOUND_CAPABILITY.maybeGet(this).ifPresent(capability -> capability.saveOnDeath(Player.class.cast(this)));
+        ModRegistry.SOULBOUND_CAPABILITY.get(Player.class.cast(this)).saveOnDeath();
     }
 }

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
-import fuzs.enderzoology.world.level.EnderExplosion;
+import fuzs.enderzoology.world.level.EnderExplosionInteraction;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -46,11 +46,11 @@ public class ChargeRenderer extends EntityRenderer<PrimedCharge> {
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
-    private Block getEntityInteractionBlock(EnderExplosion.EntityInteraction entityInteraction) {
-        return switch (entityInteraction) {
-            case ENDER -> ModRegistry.ENDER_CHARGE_BLOCK.get();
-            case CONFUSION -> ModRegistry.CONFUSING_CHARGE_BLOCK.get();
-            case CONCUSSION -> ModRegistry.CONCUSSION_CHARGE_BLOCK.get();
+    private Block getEntityInteractionBlock(EnderExplosionInteraction enderExplosionInteraction) {
+        return switch (enderExplosionInteraction) {
+            case ENDER -> ModRegistry.ENDER_CHARGE_BLOCK.value();
+            case CONFUSION -> ModRegistry.CONFUSING_CHARGE_BLOCK.value();
+            case CONCUSSION -> ModRegistry.CONCUSSION_CHARGE_BLOCK.value();
         };
     }
 

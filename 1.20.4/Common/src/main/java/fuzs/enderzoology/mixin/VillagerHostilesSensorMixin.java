@@ -14,7 +14,7 @@ abstract class VillagerHostilesSensorMixin extends NearestVisibleLivingEntitySen
 
     @Inject(method = "isMatchingEntity", at = @At("HEAD"), cancellable = true)
     protected void isMatchingEntity(LivingEntity attacker, LivingEntity target, CallbackInfoReturnable<Boolean> callback) {
-        if (attacker.getType() == ModRegistry.INFESTED_ZOMBIE_ENTITY_TYPE.get()) {
+        if (attacker.getType() == ModRegistry.INFESTED_ZOMBIE_ENTITY_TYPE.value()) {
             callback.setReturnValue(target.distanceToSqr(attacker) <= 64.0);
         }
     }

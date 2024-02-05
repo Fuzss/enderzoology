@@ -2,6 +2,7 @@ package fuzs.enderzoology.world.entity.monster;
 
 import fuzs.enderzoology.mixin.accessor.CreeperAccessor;
 import fuzs.enderzoology.world.level.EnderExplosion;
+import fuzs.enderzoology.world.level.EnderExplosionInteraction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -70,7 +71,7 @@ public class ConcussionCreeper extends Creeper {
         if (!this.level().isClientSide) {
             float poweredMultiplier = this.isPowered() ? 2.0F : 1.0F;
             float explosionRadius = ((CreeperAccessor) this).enderzoology$getExplosionRadius() * poweredMultiplier;
-            EnderExplosion.explode(this.level(), this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.MOB, EnderExplosion.EntityInteraction.CONCUSSION, false);
+            EnderExplosion.explode(this.level(), this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.MOB, EnderExplosionInteraction.CONCUSSION, false);
             this.discard();
         }
     }

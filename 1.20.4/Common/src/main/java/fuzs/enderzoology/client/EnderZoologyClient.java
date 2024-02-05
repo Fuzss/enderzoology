@@ -1,8 +1,10 @@
 package fuzs.enderzoology.client;
 
+import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.client.handler.FovModifierHandler;
 import fuzs.enderzoology.client.init.ClientModRegistry;
 import fuzs.enderzoology.client.model.OwlModel;
+import fuzs.enderzoology.client.packs.DynamicallyCopiedPackResources;
 import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
@@ -10,8 +12,10 @@ import fuzs.puzzleslib.api.client.core.v1.context.EntityRenderersContext;
 import fuzs.puzzleslib.api.client.core.v1.context.EntitySpectatorShaderContext;
 import fuzs.puzzleslib.api.client.core.v1.context.ItemModelPropertiesContext;
 import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
-import fuzs.puzzleslib.api.client.event.v1.ComputeFovModifierCallback;
-import fuzs.puzzleslib.api.client.event.v1.RenderHandCallback;
+import fuzs.puzzleslib.api.client.event.v1.entity.player.ComputeFovModifierCallback;
+import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandCallback;
+import fuzs.puzzleslib.api.core.v1.context.PackRepositorySourcesContext;
+import fuzs.puzzleslib.api.resources.v1.PackResourcesHelper;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -32,23 +36,23 @@ public class EnderZoologyClient implements ClientModConstructor {
 
     @Override
     public void onRegisterEntityRenderers(EntityRenderersContext context) {
-        context.registerEntityRenderer(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-        context.registerEntityRenderer(ModRegistry.PRIMED_CHARGE_ENTITY_TYPE.get(), ChargeRenderer::new);
-        context.registerEntityRenderer(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get(), ConcussionCreeperRenderer::new);
-        context.registerEntityRenderer(ModRegistry.INFESTED_ZOMBIE_ENTITY_TYPE.get(), EnderInfestedZombieRenderer::new);
-        context.registerEntityRenderer(ModRegistry.ENDERMINY_ENTITY_TYPE.get(), EnderminyRenderer::new);
-        context.registerEntityRenderer(ModRegistry.DIRE_WOLF_ENTITY_TYPE.get(), DireWolfRenderer::new);
-        context.registerEntityRenderer(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get(), FallenMountRenderer::new);
-        context.registerEntityRenderer(ModRegistry.WITHER_CAT_ENTITY_TYPE.get(), WitherCatRenderer::new);
-        context.registerEntityRenderer(ModRegistry.WITHER_WITCH_ENTITY_TYPE.get(), WitherWitchRenderer::new);
-        context.registerEntityRenderer(ModRegistry.OWL_ENTITY_TYPE.get(), OwlRenderer::new);
-        context.registerEntityRenderer(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.get(), FallenKnightRenderer::new);
+        context.registerEntityRenderer(ModRegistry.OWL_EGG_ENTITY_TYPE.value(), ThrownItemRenderer::new);
+        context.registerEntityRenderer(ModRegistry.PRIMED_CHARGE_ENTITY_TYPE.value(), ChargeRenderer::new);
+        context.registerEntityRenderer(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.value(), ConcussionCreeperRenderer::new);
+        context.registerEntityRenderer(ModRegistry.INFESTED_ZOMBIE_ENTITY_TYPE.value(), EnderInfestedZombieRenderer::new);
+        context.registerEntityRenderer(ModRegistry.ENDERMINY_ENTITY_TYPE.value(), EnderminyRenderer::new);
+        context.registerEntityRenderer(ModRegistry.DIRE_WOLF_ENTITY_TYPE.value(), DireWolfRenderer::new);
+        context.registerEntityRenderer(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.value(), FallenMountRenderer::new);
+        context.registerEntityRenderer(ModRegistry.WITHER_CAT_ENTITY_TYPE.value(), WitherCatRenderer::new);
+        context.registerEntityRenderer(ModRegistry.WITHER_WITCH_ENTITY_TYPE.value(), WitherWitchRenderer::new);
+        context.registerEntityRenderer(ModRegistry.OWL_ENTITY_TYPE.value(), OwlRenderer::new);
+        context.registerEntityRenderer(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.value(), FallenKnightRenderer::new);
     }
 
     @Override
     public void onRegisterEntitySpectatorShaders(EntitySpectatorShaderContext context) {
-        context.registerSpectatorShader(new ResourceLocation("shaders/post/creeper.json"), ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.get());
-        context.registerSpectatorShader(new ResourceLocation("shaders/post/invert.json"), ModRegistry.ENDERMINY_ENTITY_TYPE.get());
+        context.registerSpectatorShader(new ResourceLocation("shaders/post/creeper.json"), ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.value());
+        context.registerSpectatorShader(new ResourceLocation("shaders/post/invert.json"), ModRegistry.ENDERMINY_ENTITY_TYPE.value());
     }
 
     @Override
@@ -59,10 +63,10 @@ public class EnderZoologyClient implements ClientModConstructor {
             } else {
                 return entity.getUseItem() != stack ? 0.0F : (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
             }
-        }, ModRegistry.HUNTING_BOW.get());
+        }, ModRegistry.HUNTING_BOW.value());
         context.registerItemProperty(new ResourceLocation("pulling"), (stack, level, entity, data) -> {
             return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
-        }, ModRegistry.HUNTING_BOW.get());
+        }, ModRegistry.HUNTING_BOW.value());
     }
 
     @Override
@@ -82,5 +86,11 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerLayerDefinition(ClientModRegistry.DIRE_WOLF, WolfModel::createBodyLayer);
         context.registerLayerDefinition(ClientModRegistry.CONCUSSION_CREEPER, () -> CreeperModel.createBodyLayer(CubeDeformation.NONE));
         context.registerLayerDefinition(ClientModRegistry.CONCUSSION_CREEPER_ARMOR, () -> CreeperModel.createBodyLayer(new CubeDeformation(2.0F)));
+    }
+
+    @Override
+    public void onAddResourcePackFinders(PackRepositorySourcesContext context) {
+        context.addRepositorySource(PackResourcesHelper.buildClientPack(EnderZoology.id("dynamically_copied_textures"),
+                DynamicallyCopiedPackResources.create(new DynamicallyCopiedPackResources.TextureCopy(FallenMountRenderer.VANILLA_TEXTURE_LOCATION, FallenMountRenderer.TEXTURE_LOCATION, 64, 64)), false));
     }
 }

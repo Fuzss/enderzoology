@@ -16,7 +16,7 @@ public class FovModifierHandler {
     public static void onComputeFovModifier(Player player, DefaultedFloat fieldOfViewModifier) {
         if (player.isUsingItem()) {
             ItemStack itemStack = player.getUseItem();
-            if (itemStack.is(ModRegistry.HUNTING_BOW.get())) {
+            if (itemStack.is(ModRegistry.HUNTING_BOW.value())) {
                 int i = player.getTicksUsingItem();
                 float g = (float) i / 20.0F;
                 if (g > 1.0F) {

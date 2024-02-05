@@ -96,7 +96,7 @@ public class Owl extends Animal implements FlyingAnimal {
 
         if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && this.level().getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-            this.spawnAtLocation(ModRegistry.OWL_EGG_ITEM.get());
+            this.spawnAtLocation(ModRegistry.OWL_EGG_ITEM.value());
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(2000) + 2000;
         }
@@ -151,17 +151,17 @@ public class Owl extends Animal implements FlyingAnimal {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return ModRegistry.OWL_HOOT_SOUND_EVENT.get();
+        return ModRegistry.OWL_HOOT_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return ModRegistry.OWL_HURT_SOUND_EVENT.get();
+        return ModRegistry.OWL_HURT_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModRegistry.OWL_DEATH_SOUND_EVENT.get();
+        return ModRegistry.OWL_DEATH_SOUND_EVENT.value();
     }
 
     @Override
@@ -193,7 +193,7 @@ public class Owl extends Animal implements FlyingAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return ModRegistry.OWL_ENTITY_TYPE.get().create(level);
+        return ModRegistry.OWL_ENTITY_TYPE.value().create(level);
     }
 
     @Override

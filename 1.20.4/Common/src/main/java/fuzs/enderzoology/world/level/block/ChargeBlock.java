@@ -1,7 +1,7 @@
 package fuzs.enderzoology.world.level.block;
 
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
-import fuzs.enderzoology.world.level.EnderExplosion;
+import fuzs.enderzoology.world.level.EnderExplosionInteraction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -28,16 +28,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class ChargeBlock extends TntBlock {
-    private final EnderExplosion.EntityInteraction entityInteraction;
+    private final EnderExplosionInteraction enderExplosionInteraction;
 
-    public ChargeBlock(Properties properties, EnderExplosion.EntityInteraction entityInteraction) {
+    public ChargeBlock(EnderExplosionInteraction enderExplosionInteraction, Properties properties) {
         super(properties);
-        this.entityInteraction = entityInteraction;
+        this.enderExplosionInteraction = enderExplosionInteraction;
     }
 
     public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
         if (!world.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.entityInteraction);
+            PrimedTnt primedtnt = new PrimedCharge(world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.enderExplosionInteraction);
             world.addFreshEntity(primedtnt);
             world.playSound(null, primedtnt.getX(), primedtnt.getY(), primedtnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
@@ -47,7 +47,7 @@ public class ChargeBlock extends TntBlock {
     @Override
     public void wasExploded(Level level, BlockPos pos, Explosion explosion) {
         if (!level.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getIndirectSourceEntity(), this.entityInteraction);
+            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getIndirectSourceEntity(), this.enderExplosionInteraction);
             int fuse = primedtnt.getFuse();
             primedtnt.setFuse((short)(level.random.nextInt(fuse / 4) + fuse / 8));
             level.addFreshEntity(primedtnt);
@@ -75,12 +75,12 @@ public class ChargeBlock extends TntBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+    public BlockState playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
         if (!pLevel.isClientSide() && !pPlayer.isCreative() && pState.getValue(UNSTABLE)) {
             this.onCaughtFire(pState, pLevel, pPos, null, null);
         }
 
-        super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
+        return super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
     }
 
     @Override
@@ -117,6 +117,5 @@ public class ChargeBlock extends TntBlock {
                 pLevel.removeBlock(blockpos, false);
             }
         }
-
     }
 }

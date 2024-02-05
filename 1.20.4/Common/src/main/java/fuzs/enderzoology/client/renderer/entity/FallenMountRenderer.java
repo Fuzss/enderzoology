@@ -1,5 +1,6 @@
 package fuzs.enderzoology.client.renderer.entity;
 
+import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.client.init.ClientModRegistry;
 import fuzs.enderzoology.client.renderer.entity.layers.FallenMountArmorLayer;
 import fuzs.enderzoology.world.entity.monster.FallenMount;
@@ -9,7 +10,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, HorseModel<FallenMount>> {
-    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/entity/horse/horse_zombie.png");
+    public static final ResourceLocation VANILLA_TEXTURE_LOCATION = new ResourceLocation("textures/entity/horse/horse_zombie.png");
+    public static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/horse/horse_zombie.png");
 
     public FallenMountRenderer(EntityRendererProvider.Context context) {
         super(context, new HorseModel<>(context.bakeLayer(ClientModRegistry.FALLEN_MOUNT)), 1.0F);

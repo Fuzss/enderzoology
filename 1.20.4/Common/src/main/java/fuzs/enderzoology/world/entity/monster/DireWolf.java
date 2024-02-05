@@ -251,7 +251,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         if (!stack.isEmpty() && !this.level().isClientSide) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0, this.getZ() + this.getLookAngle().z, stack);
             itemEntity.setPickUpDelay(40);
-            itemEntity.setThrower(this.getUUID());
+            itemEntity.setThrower(this);
             this.playSound(SoundEvents.FOX_SPIT, 1.0F, 1.0F);
             this.level().addFreshEntity(itemEntity);
         }
@@ -295,17 +295,17 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return this.random.nextFloat() < 0.1F ? ModRegistry.DIRE_WOLF_HOWL_SOUND_EVENT.get() : ModRegistry.DIRE_WOLF_GROWL_SOUND_EVENT.get();
+        return this.random.nextFloat() < 0.1F ? ModRegistry.DIRE_WOLF_HOWL_SOUND_EVENT.value() : ModRegistry.DIRE_WOLF_GROWL_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-        return ModRegistry.DIRE_WOLF_HURT_SOUND_EVENT.get();
+        return ModRegistry.DIRE_WOLF_HURT_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModRegistry.DIRE_WOLF_DEATH_SOUND_EVENT.get();
+        return ModRegistry.DIRE_WOLF_DEATH_SOUND_EVENT.value();
     }
 
     @Override

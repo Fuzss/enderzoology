@@ -54,7 +54,7 @@ public class FallenKnight extends AbstractSkeleton {
         this.populateArmorEquipmentSlots(random);
         Item item;
         if (random.nextBoolean()) {
-            item = ModRegistry.HUNTING_BOW.get();
+            item = ModRegistry.HUNTING_BOW.value();
         } else {
             if (random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.6F : 0.2F)) {
                 item = Items.IRON_SWORD;
@@ -100,7 +100,7 @@ public class FallenKnight extends AbstractSkeleton {
         super.enchantSpawnedWeapon(random, chanceMultiplier);
         if (random.nextInt(10) == 0) {
             ItemStack itemstack = this.getMainHandItem();
-            if (itemstack.is(ModRegistry.HUNTING_BOW.get())) {
+            if (itemstack.is(ModRegistry.HUNTING_BOW.value())) {
                 Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(itemstack);
                 map.putIfAbsent(Enchantments.PIERCING, 1);
                 EnchantmentHelper.setEnchantments(map, itemstack);
@@ -119,7 +119,7 @@ public class FallenKnight extends AbstractSkeleton {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
         if (level.getRandom().nextBoolean()) {
-            Mob fallenMount = ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.get().create(this.level());
+            Mob fallenMount = ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level());
             fallenMount.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             fallenMount.finalizeSpawn(level, difficulty, MobSpawnType.JOCKEY, null, null);
             this.startRiding(fallenMount);

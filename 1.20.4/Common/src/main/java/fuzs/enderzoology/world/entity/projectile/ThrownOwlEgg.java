@@ -24,11 +24,11 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
     }
 
     public ThrownOwlEgg(Level level, LivingEntity livingEntity) {
-        super(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), livingEntity, level);
+        super(ModRegistry.OWL_EGG_ENTITY_TYPE.value(), livingEntity, level);
     }
 
     public ThrownOwlEgg(Level level, double d, double e, double f) {
-        super(ModRegistry.OWL_EGG_ENTITY_TYPE.get(), d, e, f, level);
+        super(ModRegistry.OWL_EGG_ENTITY_TYPE.value(), d, e, f, level);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
         super.onHit(result);
         if (!this.level().isClientSide) {
             if (this.random.nextInt(8) == 0) {
-                Owl owl = ModRegistry.OWL_ENTITY_TYPE.get().create(this.level());
+                Owl owl = ModRegistry.OWL_ENTITY_TYPE.value().create(this.level());
                 owl.setAge(-24000);
                 owl.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
                 this.level().addFreshEntity(owl);
@@ -63,6 +63,6 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
 
     @Override
     protected Item getDefaultItem() {
-        return ModRegistry.OWL_EGG_ITEM.get();
+        return ModRegistry.OWL_EGG_ITEM.value();
     }
 }

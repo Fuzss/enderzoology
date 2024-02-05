@@ -99,10 +99,10 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
             }
         } else {
             if (movementSpeedAttribute.hasModifier(SPEED_MODIFIER_ATTACKING)) {
-                movementSpeedAttribute.removeModifier(SPEED_MODIFIER_ATTACKING);
+                movementSpeedAttribute.removeModifier(SPEED_MODIFIER_ATTACKING.getId());
             }
             if (maxHealthAttribute.hasModifier(HEALTH_MODIFIER_ATTACKING)) {
-                maxHealthAttribute.removeModifier(HEALTH_MODIFIER_ATTACKING);
+                maxHealthAttribute.removeModifier(HEALTH_MODIFIER_ATTACKING.getId());
             }
         }
 

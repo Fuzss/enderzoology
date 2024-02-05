@@ -84,7 +84,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     private void trySpawnCompanion(ServerLevel serverLevel, BlockPos pos, int maxDistance) {
         BlockPos blockPos = this.findSpawnPositionNear(serverLevel, pos, maxDistance);
         if (blockPos != null) {
-            ModRegistry.WITHER_CAT_ENTITY_TYPE.get().spawn(serverLevel, blockPos, MobSpawnType.EVENT);
+            ModRegistry.WITHER_CAT_ENTITY_TYPE.value().spawn(serverLevel, blockPos, MobSpawnType.EVENT);
         }
     }
 
@@ -117,7 +117,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
             int k = pos.getZ() + this.random.nextInt(maxDistance * 2) - maxDistance;
             int l = level.getHeight(Heightmap.Types.WORLD_SURFACE, j, k);
             BlockPos blockPos2 = new BlockPos(j, l, k);
-            if (NaturalSpawner.isSpawnPositionOk(SpawnPlacements.Type.ON_GROUND, level, blockPos2, ModRegistry.WITHER_WITCH_ENTITY_TYPE.get())) {
+            if (NaturalSpawner.isSpawnPositionOk(SpawnPlacements.Type.ON_GROUND, level, blockPos2, ModRegistry.WITHER_WITCH_ENTITY_TYPE.value())) {
                 blockPos = blockPos2;
                 break;
             }
@@ -144,9 +144,9 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
 
                 this.setTarget(null);
             } else if (target.getHealth() >= 8.0F && !target.hasEffect(MobEffects.WITHER)) {
-                potion = ModRegistry.DECAY_POTION.get();
+                potion = ModRegistry.DECAY_POTION.value();
             } else if (g <= 3.0 && !target.hasEffect(MobEffects.LEVITATION) && this.random.nextFloat() < 0.05F) {
-                potion = ModRegistry.RISING_POTION.get();
+                potion = ModRegistry.RISING_POTION.value();
             }
 
             ThrownPotion thrownPotion = new ThrownPotion(this.level(), this);

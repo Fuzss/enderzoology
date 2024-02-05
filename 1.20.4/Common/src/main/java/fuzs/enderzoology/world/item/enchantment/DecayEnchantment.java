@@ -21,7 +21,7 @@ public class DecayEnchantment extends FireAspectEnchantment {
     @Override
     public void doPostAttack(LivingEntity user, Entity target, int level) {
         if (target instanceof LivingEntity livingentity && level > 0) {
-            MobEffectInstance mobEffectInstance = new MobEffectInstance(MobEffects.WITHER, 5 * level);
+            MobEffectInstance mobEffectInstance = new MobEffectInstance(MobEffects.WITHER, 100 * level);
             if (livingentity.canBeAffected(mobEffectInstance)) {
                 livingentity.addEffect(mobEffectInstance);
             }

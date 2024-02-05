@@ -21,7 +21,7 @@ public class OwlItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), ModRegistry.OWL_EGG_THROW_SOUND_EVENT.get(), SoundSource.PLAYERS, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), ModRegistry.OWL_EGG_THROW_SOUND_EVENT.value(), SoundSource.PLAYERS, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide) {
             ThrownOwlEgg thrownegg = new ThrownOwlEgg(level, player);
             thrownegg.setItem(itemstack);
