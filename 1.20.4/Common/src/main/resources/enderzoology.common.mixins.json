@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "fuzs.enderzoology.mixin",
+  "refmap": "enderzoology.refmap.json",
+  "plugin": "fuzs.enderzoology.mixin.ModMixinConfigPlugin",
+  "mixins": [
+    "PlayerMixin",
+    "ProjectileUtilMixin",
+    "VillagerHostilesSensorMixin",
+    "accessor.CreeperAccessor",
+    "accessor.WitchAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

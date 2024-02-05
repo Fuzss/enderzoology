@@ -1,0 +1,4 @@
+// 1.20.1	2023-06-28T08:09:12.856053	Tags for minecraft:entity_type mod id enderzoology
+7ef76c381a88b4bc99ed3c0ee02475baf8b66e59 data/enderzoology/tags/entity_types/concussion_immune.json
+113fcf0aefa526f67eaf6f17722d13ae48d538fa data/enderzoology/tags/entity_types/fallen_mount_targets.json
+7e74c1c68af528c4ef36cb9dbe856d2ee523147e data/minecraft/tags/entity_types/impact_projectiles.json

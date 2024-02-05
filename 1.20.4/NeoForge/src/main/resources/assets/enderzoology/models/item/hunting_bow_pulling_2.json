@@ -1,0 +1,6 @@
+{
+    "parent": "enderzoology:item/hunting_bow",
+    "textures": {
+        "layer0": "enderzoology:item/hunting_bow_pulling_2"
+    }
+}
