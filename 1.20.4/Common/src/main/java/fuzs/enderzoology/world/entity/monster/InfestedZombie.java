@@ -1,6 +1,6 @@
 package fuzs.enderzoology.world.entity.monster;
 
-import fuzs.enderzoology.world.level.EnderExplosion;
+import fuzs.enderzoology.world.level.EnderTeleportHelper;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -45,7 +45,7 @@ public class InfestedZombie extends Zombie {
         // ranges from 0.0 to 6.75 according to Minecraft Wiki
         float localDifficulty = this.level().getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
         if (this.isAlive() && entity instanceof LivingEntity && (!(entity instanceof Player player) || !player.getAbilities().invulnerable) && this.random.nextFloat() < localDifficulty / 10.0F) {
-            EnderExplosion.teleportEntity((ServerLevel) this.level(), (LivingEntity) entity, 8, false);
+            EnderTeleportHelper.teleportEntity((ServerLevel) this.level(), (LivingEntity) entity, 8, false);
         }
         return true;
     }
@@ -54,7 +54,7 @@ public class InfestedZombie extends Zombie {
     public boolean hurt(DamageSource source, float amount) {
         if (!super.hurt(source, amount)) return false;
         if (this.isAlive() && this.getHealth() < this.getMaxHealth() * 0.5 && this.random.nextInt(4) == 0) {
-            EnderExplosion.teleportEntity((ServerLevel) this.level(), this, 8, false, true);
+            EnderTeleportHelper.teleportEntity((ServerLevel) this.level(), this, 8, false, true);
         }
         return true;
     }

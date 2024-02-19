@@ -1,7 +1,7 @@
 package fuzs.enderzoology.neoforge.world.level.block;
 
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
-import fuzs.enderzoology.world.level.EnderExplosionInteraction;
+import fuzs.enderzoology.world.level.EnderExplosionType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -16,17 +16,17 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class ChargeNeoForgeBlock extends TntBlock {
-    private final EnderExplosionInteraction enderExplosionInteraction;
+    private final EnderExplosionType enderExplosionType;
 
-    public ChargeNeoForgeBlock(Properties properties, EnderExplosionInteraction enderExplosionInteraction) {
+    public ChargeNeoForgeBlock(Properties properties, EnderExplosionType enderExplosionType) {
         super(properties);
-        this.enderExplosionInteraction = enderExplosionInteraction;
+        this.enderExplosionType = enderExplosionType;
     }
 
     @Override
     public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
         if (!world.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.enderExplosionInteraction);
+            PrimedTnt primedtnt = new PrimedCharge(world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.enderExplosionType);
             world.addFreshEntity(primedtnt);
             world.playSound(null, primedtnt.getX(), primedtnt.getY(), primedtnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
@@ -36,7 +36,7 @@ public class ChargeNeoForgeBlock extends TntBlock {
     @Override
     public void wasExploded(Level level, BlockPos pos, Explosion explosion) {
         if (!level.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getIndirectSourceEntity(), this.enderExplosionInteraction);
+            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getIndirectSourceEntity(), this.enderExplosionType);
             int fuse = primedtnt.getFuse();
             primedtnt.setFuse((short)(level.random.nextInt(fuse / 4) + fuse / 8));
             level.addFreshEntity(primedtnt);

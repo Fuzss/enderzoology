@@ -1,8 +1,9 @@
 package fuzs.enderzoology.world.entity.item;
 
+import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.init.ModRegistry;
-import fuzs.enderzoology.world.level.EnderExplosion;
-import fuzs.enderzoology.world.level.EnderExplosionInteraction;
+import fuzs.enderzoology.world.level.EnderExplosionHelper;
+import fuzs.enderzoology.world.level.EnderExplosionType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -14,28 +15,33 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class PrimedCharge extends PrimedTnt {
-    public static final String TAG_ENTITY_INTERACTION = "EntityInteraction";
+    public static final String TAG_ENTITY_INTERACTION = EnderZoology.id("entity_interaction").toString();
 
     @Nullable
     private LivingEntity owner;
-    private EnderExplosionInteraction enderExplosionInteraction;
+    private EnderExplosionType enderExplosionType;
 
     public PrimedCharge(EntityType<? extends PrimedCharge> entityType, Level level) {
         super(entityType, level);
     }
 
-    public PrimedCharge(Level level, double posX, double posY, double posZ, @Nullable LivingEntity owner, EnderExplosionInteraction enderExplosionInteraction) {
+    public PrimedCharge(Level level, double posX, double posY, double posZ, @Nullable LivingEntity owner, EnderExplosionType enderExplosionType) {
         this(ModRegistry.PRIMED_CHARGE_ENTITY_TYPE.value(), level);
+        this.setInitalProperties(level, posX, posY, posZ, owner);
+        this.enderExplosionType = enderExplosionType;
+        this.setBlockState(enderExplosionType.getChargeBlock().defaultBlockState());
+    }
+
+    private void setInitalProperties(Level level, double posX, double posY, double posZ, @Nullable LivingEntity owner) {
         // copied from PrimedTnt super as it sets the entity type
         this.setPos(posX, posY, posZ);
-        double g = level.random.nextDouble() * 6.2831854820251465;
-        this.setDeltaMovement(-Math.sin(g) * 0.02, 0.20000000298023224, -Math.cos(g) * 0.02);
+        double movementOffset = level.random.nextDouble() * Math.PI * 2.0;
+        this.setDeltaMovement(-Math.sin(movementOffset) * 0.02, 0.2, -Math.cos(movementOffset) * 0.02);
         this.setFuse(80);
         this.xo = posX;
         this.yo = posY;
         this.zo = posZ;
         this.owner = owner;
-        this.enderExplosionInteraction = enderExplosionInteraction;
     }
 
     @Override
@@ -43,7 +49,10 @@ public class PrimedCharge extends PrimedTnt {
         if (this.getFuse() - 1 <= 0) {
             this.discard();
             if (!this.level().isClientSide) {
-                EnderExplosion.explode(this.level(), this, this.getX(), this.getY(0.0625), this.getZ(), 4.0F, Level.ExplosionInteraction.TNT, this.enderExplosionInteraction, true);
+                EnderExplosionHelper.explode(this.level(), this,
+                        null,
+                        this.getX(), this.getY(0.0625), this.getZ(), 4.0F,
+                        Level.ExplosionInteraction.TNT, this.enderExplosionType, true);
             }
         } else {
             super.tick();
@@ -59,27 +68,23 @@ public class PrimedCharge extends PrimedTnt {
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putByte(TAG_ENTITY_INTERACTION, (byte) this.enderExplosionInteraction.ordinal());
+        compound.putByte(TAG_ENTITY_INTERACTION, (byte) this.enderExplosionType.ordinal());
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.enderExplosionInteraction = EnderExplosionInteraction.values()[compound.getByte(TAG_ENTITY_INTERACTION)];
-    }
-
-    public EnderExplosionInteraction getEntityInteraction() {
-        return this.enderExplosionInteraction;
+        this.enderExplosionType = EnderExplosionType.values()[compound.getByte(TAG_ENTITY_INTERACTION)];
     }
 
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this, this.enderExplosionInteraction.ordinal());
+        return new ClientboundAddEntityPacket(this, this.enderExplosionType.ordinal());
     }
 
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
-        this.enderExplosionInteraction = EnderExplosionInteraction.values()[packet.getData()];
+        this.enderExplosionType = EnderExplosionType.values()[packet.getData()];
     }
 }

@@ -5,7 +5,7 @@ import fuzs.puzzleslib.api.client.init.v1.ModelLayerFactory;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public class ClientModRegistry {
-    private static final ModelLayerFactory REGISTRY = ModelLayerFactory.from(EnderZoology.MOD_ID);
+    static final ModelLayerFactory REGISTRY = ModelLayerFactory.from(EnderZoology.MOD_ID);
     public static final ModelLayerLocation OWL = REGISTRY.register("owl");
     public static final ModelLayerLocation FALLEN_KNIGHT = REGISTRY.register("fallen_knight");
     public static final ModelLayerLocation FALLEN_KNIGHT_INNER_ARMOR = REGISTRY.registerInnerArmor("fallen_knight");

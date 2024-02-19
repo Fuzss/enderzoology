@@ -1,7 +1,7 @@
 package fuzs.enderzoology.world.level.block;
 
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
-import fuzs.enderzoology.world.level.EnderExplosionInteraction;
+import fuzs.enderzoology.world.level.EnderExplosionType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -28,16 +28,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class ChargeBlock extends TntBlock {
-    private final EnderExplosionInteraction enderExplosionInteraction;
+    private final EnderExplosionType enderExplosionType;
 
-    public ChargeBlock(EnderExplosionInteraction enderExplosionInteraction, Properties properties) {
+    public ChargeBlock(EnderExplosionType enderExplosionType, Properties properties) {
         super(properties);
-        this.enderExplosionInteraction = enderExplosionInteraction;
+        this.enderExplosionType = enderExplosionType;
     }
 
     public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
         if (!world.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.enderExplosionInteraction);
+            PrimedTnt primedtnt = new PrimedCharge(world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.enderExplosionType);
             world.addFreshEntity(primedtnt);
             world.playSound(null, primedtnt.getX(), primedtnt.getY(), primedtnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
@@ -47,7 +47,7 @@ public class ChargeBlock extends TntBlock {
     @Override
     public void wasExploded(Level level, BlockPos pos, Explosion explosion) {
         if (!level.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getIndirectSourceEntity(), this.enderExplosionInteraction);
+            PrimedTnt primedtnt = new PrimedCharge(level, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, explosion.getIndirectSourceEntity(), this.enderExplosionType);
             int fuse = primedtnt.getFuse();
             primedtnt.setFuse((short)(level.random.nextInt(fuse / 4) + fuse / 8));
             level.addFreshEntity(primedtnt);
@@ -55,66 +55,64 @@ public class ChargeBlock extends TntBlock {
     }
 
     @Override
-    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
-        if (!pOldState.is(pState.getBlock())) {
-            if (pLevel.hasNeighborSignal(pPos)) {
-                this.onCaughtFire(pState, pLevel, pPos, null, null);
-                pLevel.removeBlock(pPos, false);
+    public void onPlace(BlockState pState, Level level, BlockPos blockPos, BlockState oldState, boolean movedByPiston) {
+        if (!oldState.is(pState.getBlock())) {
+            if (level.hasNeighborSignal(blockPos)) {
+                this.onCaughtFire(pState, level, blockPos, null, null);
+                level.removeBlock(blockPos, false);
             }
-
         }
     }
 
     @Override
-    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
-        if (pLevel.hasNeighborSignal(pPos)) {
-            this.onCaughtFire(pState, pLevel, pPos, null, null);
-            pLevel.removeBlock(pPos, false);
+    public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (level.hasNeighborSignal(blockPos)) {
+            this.onCaughtFire(blockState, level, blockPos, null, null);
+            level.removeBlock(blockPos, false);
         }
-
     }
 
     @Override
-    public BlockState playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
-        if (!pLevel.isClientSide() && !pPlayer.isCreative() && pState.getValue(UNSTABLE)) {
-            this.onCaughtFire(pState, pLevel, pPos, null, null);
+    public BlockState playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player player) {
+        if (!level.isClientSide() && !player.isCreative() && blockState.getValue(UNSTABLE)) {
+            this.onCaughtFire(blockState, level, blockPos, null, null);
         }
 
-        return super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
+        return super.playerWillDestroy(level, blockPos, blockState, player);
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        ItemStack itemstack = pPlayer.getItemInHand(pHand);
+    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult hitResult) {
+        ItemStack itemstack = player.getItemInHand(interactionHand);
         if (!itemstack.is(Items.FLINT_AND_STEEL) && !itemstack.is(Items.FIRE_CHARGE)) {
-            return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+            return super.use(blockState, level, blockPos, player, interactionHand, hitResult);
         } else {
-            this.onCaughtFire(pState, pLevel, pPos, pHit.getDirection(), pPlayer);
-            pLevel.setBlock(pPos, Blocks.AIR.defaultBlockState(), 11);
+            this.onCaughtFire(blockState, level, blockPos, hitResult.getDirection(), player);
+            level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 11);
             Item item = itemstack.getItem();
-            if (!pPlayer.isCreative()) {
+            if (!player.isCreative()) {
                 if (itemstack.is(Items.FLINT_AND_STEEL)) {
-                    itemstack.hurtAndBreak(1, pPlayer, (p_57425_) -> {
-                        p_57425_.broadcastBreakEvent(pHand);
+                    itemstack.hurtAndBreak(1, player, (p_57425_) -> {
+                        p_57425_.broadcastBreakEvent(interactionHand);
                     });
                 } else {
                     itemstack.shrink(1);
                 }
             }
 
-            pPlayer.awardStat(Stats.ITEM_USED.get(item));
-            return InteractionResult.sidedSuccess(pLevel.isClientSide);
+            player.awardStat(Stats.ITEM_USED.get(item));
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
     }
 
     @Override
-    public void onProjectileHit(Level pLevel, BlockState pState, BlockHitResult pHit, Projectile pProjectile) {
-        if (!pLevel.isClientSide) {
-            BlockPos blockpos = pHit.getBlockPos();
-            Entity entity = pProjectile.getOwner();
-            if (pProjectile.isOnFire() && pProjectile.mayInteract(pLevel, blockpos)) {
-                this.onCaughtFire(pState, pLevel, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-                pLevel.removeBlock(blockpos, false);
+    public void onProjectileHit(Level level, BlockState blockState, BlockHitResult hitResult, Projectile projectile) {
+        if (!level.isClientSide) {
+            BlockPos blockpos = hitResult.getBlockPos();
+            Entity entity = projectile.getOwner();
+            if (projectile.isOnFire() && projectile.mayInteract(level, blockpos)) {
+                this.onCaughtFire(blockState, level, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+                level.removeBlock(blockpos, false);
             }
         }
     }

@@ -20,6 +20,8 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.entity.TntMinecartRenderer;
+import net.minecraft.client.renderer.entity.TntRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class EnderZoologyClient implements ClientModConstructor {
@@ -37,7 +39,7 @@ public class EnderZoologyClient implements ClientModConstructor {
     @Override
     public void onRegisterEntityRenderers(EntityRenderersContext context) {
         context.registerEntityRenderer(ModRegistry.OWL_EGG_ENTITY_TYPE.value(), ThrownItemRenderer::new);
-        context.registerEntityRenderer(ModRegistry.PRIMED_CHARGE_ENTITY_TYPE.value(), ChargeRenderer::new);
+        context.registerEntityRenderer(ModRegistry.PRIMED_CHARGE_ENTITY_TYPE.value(), TntRenderer::new);
         context.registerEntityRenderer(ModRegistry.CONCUSSION_CREEPER_ENTITY_TYPE.value(), ConcussionCreeperRenderer::new);
         context.registerEntityRenderer(ModRegistry.INFESTED_ZOMBIE_ENTITY_TYPE.value(), EnderInfestedZombieRenderer::new);
         context.registerEntityRenderer(ModRegistry.ENDERMINY_ENTITY_TYPE.value(), EnderminyRenderer::new);
@@ -47,6 +49,9 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModRegistry.WITHER_WITCH_ENTITY_TYPE.value(), WitherWitchRenderer::new);
         context.registerEntityRenderer(ModRegistry.OWL_ENTITY_TYPE.value(), OwlRenderer::new);
         context.registerEntityRenderer(ModRegistry.FALLEN_KNIGHT_ENTITY_TYPE.value(), FallenKnightRenderer::new);
+        context.registerEntityRenderer(ModRegistry.ENDER_CHARGE_MINECART_ENTITY_TYPE.value(), TntMinecartRenderer::new);
+        context.registerEntityRenderer(ModRegistry.CONFUSING_CHARGE_MINECART_ENTITY_TYPE.value(), TntMinecartRenderer::new);
+        context.registerEntityRenderer(ModRegistry.CONCUSSION_CHARGE_MINECART_ENTITY_TYPE.value(), TntMinecartRenderer::new);
     }
 
     @Override

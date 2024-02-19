@@ -23,6 +23,7 @@ public class ModModelProvider extends AbstractModelProvider {
 
     @Override
     public void addItemModels(ItemModelGenerators builder) {
+        this.skipItem(ModRegistry.HUNTING_BOW.value());
         builder.generateFlatItem(ModRegistry.CONFUSING_POWDER_ITEM.value(), ModelTemplates.FLAT_ITEM);
         builder.generateFlatItem(ModRegistry.ENDER_FRAGMENT_ITEM.value(), ModelTemplates.FLAT_ITEM);
         builder.generateFlatItem(ModRegistry.OWL_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
@@ -36,5 +37,9 @@ public class ModModelProvider extends AbstractModelProvider {
         builder.generateFlatItem(ModRegistry.WITHER_WITCH_SPAWN_EGG_ITEM.value(), SPAWN_EGG);
         builder.generateFlatItem(ModRegistry.OWL_SPAWN_EGG_ITEM.value(), SPAWN_EGG);
         builder.generateFlatItem(ModRegistry.FALLEN_KNIGHT_SPAWN_EGG_ITEM.value(), SPAWN_EGG);
+        builder.generateFlatItem(ModRegistry.ENDER_CHARGE_MINECART_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        builder.generateFlatItem(ModRegistry.CONFUSING_CHARGE_MINECART_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        builder.generateFlatItem(ModRegistry.CONCUSSION_CHARGE_MINECART_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        builder.generateFlatItem(ModRegistry.ENDERIOS_ITEM.value(), ModelTemplates.FLAT_ITEM);
     }
 }

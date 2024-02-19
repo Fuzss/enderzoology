@@ -7,12 +7,14 @@ import fuzs.enderzoology.world.entity.animal.Owl;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.entity.monster.*;
 import fuzs.enderzoology.world.entity.projectile.ThrownOwlEgg;
+import fuzs.enderzoology.world.entity.vehicle.MinecartCharge;
+import fuzs.enderzoology.world.item.EnderiosItem;
 import fuzs.enderzoology.world.item.OwlItem;
 import fuzs.enderzoology.world.item.enchantment.DecayEnchantment;
 import fuzs.enderzoology.world.item.enchantment.RepellentEnchantment;
 import fuzs.enderzoology.world.item.enchantment.SoulboundEnchantment;
 import fuzs.enderzoology.world.item.enchantment.WitheringEnchantment;
-import fuzs.enderzoology.world.level.EnderExplosionInteraction;
+import fuzs.enderzoology.world.level.EnderExplosionType;
 import fuzs.enderzoology.world.level.block.ChargeBlock;
 import fuzs.puzzleslib.api.capability.v3.CapabilityController;
 import fuzs.puzzleslib.api.capability.v3.data.EntityCapabilityKey;
@@ -29,8 +31,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.MinecartItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
@@ -39,13 +45,15 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class ModRegistry {
     private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    private static final FoodProperties ENDERIOS_FOOD_PROPERTIES = new FoodProperties.Builder().nutrition(6).saturationMod(0.6F).alwaysEat().build();
+
     static final RegistryManager REGISTRY = RegistryManager.from(EnderZoology.MOD_ID);
     public static final Holder.Reference<Block> CONCUSSION_CHARGE_BLOCK = REGISTRY.whenOnFabricLike().registerBlock("concussion_charge", () -> new ChargeBlock(
-            EnderExplosionInteraction.CONCUSSION, BlockBehaviour.Properties.ofFullCopy(Blocks.TNT)));
+            EnderExplosionType.CONCUSSION, BlockBehaviour.Properties.ofFullCopy(Blocks.TNT)));
     public static final Holder.Reference<Block> CONFUSING_CHARGE_BLOCK = REGISTRY.whenOnFabricLike().registerBlock("confusing_charge", () -> new ChargeBlock(
-            EnderExplosionInteraction.CONFUSION, BlockBehaviour.Properties.ofFullCopy(Blocks.TNT)));
+            EnderExplosionType.CONFUSION, BlockBehaviour.Properties.ofFullCopy(Blocks.TNT)));
     public static final Holder.Reference<Block> ENDER_CHARGE_BLOCK = REGISTRY.whenOnFabricLike().registerBlock("ender_charge", () -> new ChargeBlock(
-            EnderExplosionInteraction.ENDER, BlockBehaviour.Properties.ofFullCopy(Blocks.TNT)));
+            EnderExplosionType.ENDER, BlockBehaviour.Properties.ofFullCopy(Blocks.TNT)));
     public static final Holder.Reference<Item> CONCUSSION_CHARGE_ITEM = REGISTRY.registerBlockItem(CONCUSSION_CHARGE_BLOCK);
     public static final Holder.Reference<Item> CONFUSING_CHARGE_ITEM = REGISTRY.registerBlockItem(CONFUSING_CHARGE_BLOCK);
     public static final Holder.Reference<Item> ENDER_CHARGE_ITEM = REGISTRY.registerBlockItem(ENDER_CHARGE_BLOCK);
@@ -54,6 +62,12 @@ public class ModRegistry {
     public static final Holder.Reference<Item> HUNTING_BOW = REGISTRY.whenOnFabricLike().registerItem("hunting_bow", () -> new BowItem(new Item.Properties().durability(546)));
     public static final Holder.Reference<Item> OWL_EGG_ITEM = REGISTRY.registerItem("owl_egg", () -> new OwlItem(new Item.Properties().stacksTo(16)));
     public static final Holder.Reference<Item> WITHERING_DUST_ITEM = REGISTRY.registerItem("withering_dust", () -> new Item(new Item.Properties()));
+    public static final Holder.Reference<Item> ENDER_CHARGE_MINECART_ITEM = REGISTRY.registerItem("ender_charge_minecart", () -> new MinecartItem(EnderExplosionType.ENDER.getMinecartType(), new Item.Properties().stacksTo(1)));
+    public static final Holder.Reference<Item> CONFUSING_CHARGE_MINECART_ITEM = REGISTRY.registerItem("confusing_charge_minecart", () -> new MinecartItem(EnderExplosionType.CONFUSION.getMinecartType(), new Item.Properties().stacksTo(1)));
+    public static final Holder.Reference<Item> CONCUSSION_CHARGE_MINECART_ITEM = REGISTRY.registerItem("concussion_charge_minecart", () -> new MinecartItem(EnderExplosionType.CONCUSSION.getMinecartType(), new Item.Properties().stacksTo(1)));
+    public static final Holder.Reference<Item> ENDERIOS_ITEM = REGISTRY.registerItem("enderios", () -> new EnderiosItem(
+            new Item.Properties().stacksTo(1).food(
+            ENDERIOS_FOOD_PROPERTIES)));
     public static final Holder.Reference<EntityType<ThrownOwlEgg>> OWL_EGG_ENTITY_TYPE = REGISTRY.registerEntityType("owl_egg", () -> EntityType.Builder.<ThrownOwlEgg>of(ThrownOwlEgg::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10));
     public static final Holder.Reference<EntityType<PrimedCharge>> PRIMED_CHARGE_ENTITY_TYPE = REGISTRY.registerEntityType("primed_charge", () -> EntityType.Builder.<PrimedCharge>of(PrimedCharge::new, MobCategory.MISC).fireImmune().sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10));
     public static final Holder.Reference<EntityType<ConcussionCreeper>> CONCUSSION_CREEPER_ENTITY_TYPE = REGISTRY.registerEntityType("concussion_creeper", () -> EntityType.Builder.of(ConcussionCreeper::new, MobCategory.MONSTER).sized(0.6F, 1.7F).clientTrackingRange(8));
@@ -65,6 +79,24 @@ public class ModRegistry {
     public static final Holder.Reference<EntityType<WitherWitch>> WITHER_WITCH_ENTITY_TYPE = REGISTRY.registerEntityType("wither_witch", () -> EntityType.Builder.of(WitherWitch::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(8));
     public static final Holder.Reference<EntityType<Owl>> OWL_ENTITY_TYPE = REGISTRY.registerEntityType("owl", () -> EntityType.Builder.of(Owl::new, MobCategory.CREATURE).sized(0.4F, 0.85F).clientTrackingRange(8));
     public static final Holder.Reference<EntityType<FallenKnight>> FALLEN_KNIGHT_ENTITY_TYPE = REGISTRY.registerEntityType("fallen_knight", () -> EntityType.Builder.of(FallenKnight::new, MobCategory.MONSTER).sized(0.6F, 1.99F).clientTrackingRange(8));
+    public static final Holder.Reference<EntityType<MinecartCharge>> ENDER_CHARGE_MINECART_ENTITY_TYPE = REGISTRY.registerEntityType(
+            "ender_charge_minecart",
+            () -> EntityType.Builder.<MinecartCharge>of(MinecartCharge::new, MobCategory.MISC)
+                    .sized(0.98F, 0.7F)
+                    .clientTrackingRange(8)
+    );
+    public static final Holder.Reference<EntityType<MinecartCharge>> CONFUSING_CHARGE_MINECART_ENTITY_TYPE = REGISTRY.registerEntityType(
+            "confusing_charge_minecart",
+            () -> EntityType.Builder.<MinecartCharge>of(MinecartCharge::new, MobCategory.MISC)
+                    .sized(0.98F, 0.7F)
+                    .clientTrackingRange(8)
+    );
+    public static final Holder.Reference<EntityType<MinecartCharge>> CONCUSSION_CHARGE_MINECART_ENTITY_TYPE = REGISTRY.registerEntityType(
+            "concussion_charge_minecart",
+            () -> EntityType.Builder.<MinecartCharge>of(MinecartCharge::new, MobCategory.MISC)
+                    .sized(0.98F, 0.7F)
+                    .clientTrackingRange(8)
+    );
     public static final Holder.Reference<Item> CONCUSSION_CREEPER_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(CONCUSSION_CREEPER_ENTITY_TYPE, 0x56FF8E, 0xFF0A22);
     public static final Holder.Reference<Item> INFESTED_ZOMBIE_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(INFESTED_ZOMBIE_ENTITY_TYPE, 0x132F55, 0x2B2D1C);
     public static final Holder.Reference<Item> ENDERMINY_SPAWN_EGG_ITEM = REGISTRY.registerSpawnEggItem(ENDERMINY_ENTITY_TYPE, 0x27624D, 0x212121);

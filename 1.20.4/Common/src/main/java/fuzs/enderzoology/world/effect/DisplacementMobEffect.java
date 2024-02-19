@@ -1,6 +1,6 @@
 package fuzs.enderzoology.world.effect;
 
-import fuzs.enderzoology.world.level.EnderExplosion;
+import fuzs.enderzoology.world.level.EnderTeleportHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.InstantenousMobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -15,7 +15,7 @@ public class DisplacementMobEffect extends InstantenousMobEffect {
     @Override
     public void applyEffectTick(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.level().isClientSide) {
-            EnderExplosion.teleportEntity((ServerLevel) livingEntity.level(), livingEntity, ++amplifier * 8, true);
+            EnderTeleportHelper.teleportEntity((ServerLevel) livingEntity.level(), livingEntity, ++amplifier * 8, true);
         }
     }
 }

@@ -378,7 +378,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
             horse.saveWithoutId(compoundtag);
             fallenMount.horseData = compoundtag;
 
-            CommonAbstractions.INSTANCE.onLivingConvert(entity, fallenMount);
+            CommonAbstractions.INSTANCE.onLivingConvert(horse, fallenMount);
             if (!this.isSilent()) {
                 level.levelEvent(null, 1026, this.blockPosition(), 0);
             }

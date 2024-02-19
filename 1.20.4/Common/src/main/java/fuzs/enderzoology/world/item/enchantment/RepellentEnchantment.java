@@ -1,7 +1,7 @@
 package fuzs.enderzoology.world.item.enchantment;
 
 import fuzs.enderzoology.init.ModRegistry;
-import fuzs.enderzoology.world.level.EnderExplosion;
+import fuzs.enderzoology.world.level.EnderTeleportHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -40,7 +40,7 @@ public class RepellentEnchantment extends ThornsEnchantment {
         Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(ModRegistry.REPELLENT_ENCHANTMENT.value(), target);
         if (shouldHit(level, target.getRandom())) {
             if (attacker instanceof LivingEntity livingEntity && !attacker.level().isClientSide) {
-                EnderExplosion.teleportEntity((ServerLevel) attacker.level(), livingEntity, 8 + level * 4, false);
+                EnderTeleportHelper.teleportEntity((ServerLevel) attacker.level(), livingEntity, 8 + level * 4, false);
             }
 
             if (entry != null) {

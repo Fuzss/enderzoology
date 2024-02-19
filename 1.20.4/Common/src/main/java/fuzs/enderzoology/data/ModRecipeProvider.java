@@ -6,6 +6,7 @@ import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
@@ -60,6 +61,28 @@ public class ModRecipeProvider extends AbstractRecipeProvider {
                 .unlockedBy(getHasName(ModRegistry.CONFUSING_POWDER_ITEM.value()),
                         has(ModRegistry.CONFUSING_POWDER_ITEM.value())
                 )
+                .save(recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TRANSPORTATION, ModRegistry.ENDER_CHARGE_MINECART_ITEM.value())
+                .requires(ModRegistry.ENDER_CHARGE_ITEM.value())
+                .requires(Items.MINECART)
+                .unlockedBy(getHasName(Items.MINECART), has(Items.MINECART))
+                .save(recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TRANSPORTATION, ModRegistry.CONFUSING_CHARGE_MINECART_ITEM.value())
+                .requires(ModRegistry.CONFUSING_CHARGE_ITEM.value())
+                .requires(Items.MINECART)
+                .unlockedBy(getHasName(Items.MINECART), has(Items.MINECART))
+                .save(recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TRANSPORTATION, ModRegistry.CONCUSSION_CHARGE_MINECART_ITEM.value())
+                .requires(ModRegistry.CONCUSSION_CHARGE_ITEM.value())
+                .requires(Items.MINECART)
+                .unlockedBy(getHasName(Items.MINECART), has(Items.MINECART))
+                .save(recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModRegistry.ENDERIOS_ITEM.value())
+                .requires(Items.BOWL)
+                .requires(Items.MILK_BUCKET)
+                .requires(Items.WHEAT)
+                .requires(ModRegistry.ENDER_FRAGMENT_ITEM.value())
+                .unlockedBy(getHasName(ModRegistry.ENDER_FRAGMENT_ITEM.value()), has(ModRegistry.ENDER_FRAGMENT_ITEM.value()))
                 .save(recipeOutput);
     }
 }
