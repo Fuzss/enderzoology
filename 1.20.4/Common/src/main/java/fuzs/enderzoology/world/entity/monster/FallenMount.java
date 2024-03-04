@@ -154,14 +154,14 @@ public class FallenMount extends AbstractHorse implements Enemy {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
-        if (itemStack.is(Items.GOLDEN_CARROT)) {
+        if (itemStack.is(Items.GOLDEN_APPLE)) {
             if (this.hasEffect(MobEffects.WEAKNESS)) {
                 if (!player.getAbilities().instabuild) {
                     itemStack.shrink(1);
                 }
 
                 if (!this.level().isClientSide) {
-                    this.startConverting(this.random.nextInt(2401) + 3600);
+                    this.startConverting(this.random.nextInt(2400) + 3600);
                 }
 
                 return InteractionResult.SUCCESS;

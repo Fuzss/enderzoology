@@ -5,7 +5,6 @@ import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.api.event.v1.data.MutableInt;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,39 +20,54 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 public class HuntingBowHandler {
+    private static final float BOW_MULTISHOT_ANGLE = 6.5F;
 
     public static EventResult onArrowLoose(Player player, ItemStack stack, Level level, MutableInt charge, boolean hasAmmo) {
+        // multishot enchantment for bows
         if (hasAmmo && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack) > 0) {
             float velocity = BowItem.getPowerForTime(charge.getAsInt());
             if (!level.isClientSide && velocity >= 0.1F) {
-                ItemStack itemstack = player.getProjectile(stack);
-                ArrowItem arrowitem = (ArrowItem) (itemstack.getItem() instanceof ArrowItem ? itemstack.getItem() : Items.ARROW);
-                float[] shotPitches = getShotPitches(level.random, velocity);
+                ItemStack projectile = player.getProjectile(stack);
+                ArrowItem item = (ArrowItem) (projectile.getItem() instanceof ArrowItem ?
+                        projectile.getItem() :
+                        Items.ARROW);
                 for (int i = 0; i < 2; i++) {
-                    AbstractArrow abstractarrow = arrowitem.createArrow(level, itemstack, player);
-                    abstractarrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, velocity * 3.0F, 1.5F);
-                    applyPowerEnchantment(abstractarrow, stack);
-                    applyPunchEnchantment(abstractarrow, stack);
-                    applyFlameEnchantment(abstractarrow, stack);
-                    applyPiercingEnchantment(abstractarrow, stack);
-                    applyWitheringEnchantment(abstractarrow, stack);
-                    abstractarrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
-                    level.addFreshEntity(abstractarrow);
-                    level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, shotPitches[i + 1]);
+                    createAndShootArrow(player, stack, level, item, projectile, -BOW_MULTISHOT_ANGLE + i * BOW_MULTISHOT_ANGLE * 2.0F, velocity);
                 }
             }
         }
+
         return EventResult.PASS;
     }
 
-    private static float[] getShotPitches(RandomSource random, float velocity) {
-        boolean flag = random.nextBoolean();
-        return new float[]{1.0F, getRandomShotPitch(flag, random, velocity), getRandomShotPitch(!flag, random, velocity)};
-    }
-
-    private static float getRandomShotPitch(boolean p_150798_, RandomSource random, float velocity) {
-        float f = p_150798_ ? 0.63F : 0.43F;
-        return 1.0F / (random.nextFloat() * 0.5F + 1.8F) + f * velocity;
+    private static void createAndShootArrow(Player player, ItemStack stack, Level level, ArrowItem item, ItemStack projectile, float shootAngle, float velocity) {
+        AbstractArrow abstractArrow = item.createArrow(level, projectile, player);
+        abstractArrow.shootFromRotation(player,
+                player.getXRot() + shootAngle,
+                player.getYRot(),
+                0.0F,
+                velocity * 3.0F,
+                1.5F
+        );
+        if (velocity == 1.0F) {
+            abstractArrow.setCritArrow(true);
+        }
+        applyPowerEnchantment(abstractArrow, stack);
+        applyPunchEnchantment(abstractArrow, stack);
+        applyFlameEnchantment(abstractArrow, stack);
+        applyPiercingEnchantment(abstractArrow, stack);
+        applyWitheringEnchantment(abstractArrow, stack);
+        abstractArrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+        level.addFreshEntity(abstractArrow);
+        level.playSound(null,
+                player.getX(),
+                player.getY(),
+                player.getZ(),
+                SoundEvents.ARROW_SHOOT,
+                SoundSource.PLAYERS,
+                1.0F,
+                1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + velocity * 0.5F
+        );
     }
 
     public static EventResult onUseItemTick(LivingEntity entity, ItemStack useItem, MutableInt useItemRemaining) {

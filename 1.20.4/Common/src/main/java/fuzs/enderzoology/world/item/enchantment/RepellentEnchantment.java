@@ -23,14 +23,17 @@ public class RepellentEnchantment extends ThornsEnchantment {
         return 4;
     }
 
+    @Override
     public boolean isTreasureOnly() {
         return true;
     }
 
+    @Override
     public boolean isTradeable() {
         return false;
     }
 
+    @Override
     public boolean isDiscoverable() {
         return false;
     }
