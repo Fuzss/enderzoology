@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "enderzoology:item/confusing_charge_minecart"
+  }
+}
