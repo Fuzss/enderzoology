@@ -2,10 +2,9 @@ package fuzs.enderzoology.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ClientModRegistry;
+import fuzs.enderzoology.client.init.ModelLayerLocations;
 import fuzs.enderzoology.world.entity.monster.WitherCat;
 import net.minecraft.client.model.OcelotModel;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +15,7 @@ public class WitherCatRenderer extends MobRenderer<WitherCat, OcelotModel<Wither
     private static final float NORMAL_SHADOW_RADIUS = 0.4F;
 
     public WitherCatRenderer(EntityRendererProvider.Context context) {
-        super(context, new OcelotModel<>(context.bakeLayer(ClientModRegistry.WITHER_CAT)), NORMAL_SHADOW_RADIUS);
+        super(context, new OcelotModel<>(context.bakeLayer(ModelLayerLocations.WITHER_CAT)), NORMAL_SHADOW_RADIUS);
     }
 
     @Override

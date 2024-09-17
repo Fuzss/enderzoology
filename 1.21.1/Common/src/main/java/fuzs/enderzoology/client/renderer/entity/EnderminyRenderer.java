@@ -2,7 +2,7 @@ package fuzs.enderzoology.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ClientModRegistry;
+import fuzs.enderzoology.client.init.ModelLayerLocations;
 import fuzs.enderzoology.client.renderer.entity.layers.EnderminyEyesLayer;
 import fuzs.enderzoology.world.entity.monster.Enderminy;
 import net.minecraft.client.model.EndermanModel;
@@ -14,7 +14,7 @@ public class EnderminyRenderer extends MobRenderer<Enderminy, EndermanModel<Ende
     private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/enderminy/enderminy.png");
 
     public EnderminyRenderer(EntityRendererProvider.Context context) {
-        super(context, new EndermanModel<>(context.bakeLayer(ClientModRegistry.ENDERMINY)), 0.25F);
+        super(context, new EndermanModel<>(context.bakeLayer(ModelLayerLocations.ENDERMINY)), 0.25F);
         this.addLayer(new EnderminyEyesLayer<>(this));
     }
 

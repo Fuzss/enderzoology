@@ -1,9 +1,12 @@
 package fuzs.enderzoology.world.entity.monster;
 
+import fuzs.enderzoology.EnderZoology;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -12,7 +15,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -25,13 +27,12 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -40,8 +41,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class Enderminy extends Monster implements NeutralMob {
-    private static final UUID SPEED_MODIFIER_ATTACKING_UUID = UUID.fromString("51560D00-9B48-11ED-A8FC-0242AC120002");
-    private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.15F, AttributeModifier.Operation.ADDITION);
+    private static final ResourceLocation SPEED_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_speed_boost");
+    private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_ID, 0.15F, AttributeModifier.Operation.ADD_VALUE);
     private static final int MIN_DEAGGRESSION_TIME = 600;
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final UniformInt FIRST_ANGER_SOUND_DELAY = TimeUtil.rangeOfSeconds(0, 1);
@@ -55,8 +56,7 @@ public class Enderminy extends Monster implements NeutralMob {
 
     public Enderminy(EntityType<? extends Enderminy> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, -1.0F);
     }
 
     @Override
@@ -143,10 +143,10 @@ public class Enderminy extends Monster implements NeutralMob {
         AttributeInstance attributeInstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
         if (target == null) {
             this.targetChangeTime = 0;
-            attributeInstance.removeModifier(SPEED_MODIFIER_ATTACKING.getId());
+            attributeInstance.removeModifier(SPEED_MODIFIER_ATTACKING);
         } else {
             this.targetChangeTime = this.tickCount;
-            if (!attributeInstance.hasModifier(SPEED_MODIFIER_ATTACKING)) {
+            if (!attributeInstance.hasModifier(SPEED_MODIFIER_ATTACKING.id())) {
                 attributeInstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
             }
 
@@ -195,11 +195,6 @@ public class Enderminy extends Monster implements NeutralMob {
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return 0.6375F;
     }
 
     @Override
@@ -277,11 +272,11 @@ public class Enderminy extends Monster implements NeutralMob {
             return false;
         } else if (source.is(DamageTypeTags.IS_PROJECTILE)) {
             Entity entity = source.getDirectEntity();
-            boolean bl;
+            boolean isHurt;
             if (entity instanceof ThrownPotion) {
-                bl = this.hurtWithCleanWater(source, (ThrownPotion) entity, amount);
+                isHurt = this.hurtWithCleanWater(source, (ThrownPotion) entity, amount);
             } else {
-                bl = false;
+                isHurt = false;
             }
 
             for (int i = 0; i < 64; ++i) {
@@ -290,23 +285,21 @@ public class Enderminy extends Monster implements NeutralMob {
                 }
             }
 
-            return bl;
+            return isHurt;
         } else {
-            boolean bl2 = super.hurt(source, amount);
+            boolean isHurt = super.hurt(source, amount);
             if (!this.level().isClientSide() && !(source.getEntity() instanceof LivingEntity) && this.random.nextInt(10) != 0) {
                 this.teleport();
             }
 
-            return bl2;
+            return isHurt;
         }
     }
 
     private boolean hurtWithCleanWater(DamageSource source, ThrownPotion potion, float amount) {
         ItemStack itemStack = potion.getItem();
-        Potion potion2 = PotionUtils.getPotion(itemStack);
-        List<MobEffectInstance> list = PotionUtils.getMobEffects(itemStack);
-        boolean bl = potion2 == Potions.WATER && list.isEmpty();
-        return bl && super.hurt(source, amount);
+        PotionContents potionContents = itemStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        return potionContents.is(Potions.WATER) && super.hurt(source, amount);
     }
 
     @Override

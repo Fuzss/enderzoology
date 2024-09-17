@@ -2,13 +2,14 @@ package fuzs.enderzoology.world.level.block;
 
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.level.EnderExplosionType;
+import fuzs.puzzleslib.api.item.v2.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
@@ -82,26 +83,23 @@ public class ChargeBlock extends TntBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult hitResult) {
-        ItemStack itemstack = player.getItemInHand(interactionHand);
-        if (!itemstack.is(Items.FLINT_AND_STEEL) && !itemstack.is(Items.FIRE_CHARGE)) {
-            return super.use(blockState, level, blockPos, player, interactionHand, hitResult);
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult hitResult) {
+        if (!itemStack.is(Items.FLINT_AND_STEEL) && !itemStack.is(Items.FIRE_CHARGE)) {
+            return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, hitResult);
         } else {
             this.onCaughtFire(blockState, level, blockPos, hitResult.getDirection(), player);
             level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 11);
-            Item item = itemstack.getItem();
+            Item item = itemStack.getItem();
             if (!player.isCreative()) {
-                if (itemstack.is(Items.FLINT_AND_STEEL)) {
-                    itemstack.hurtAndBreak(1, player, (p_57425_) -> {
-                        p_57425_.broadcastBreakEvent(interactionHand);
-                    });
+                if (itemStack.is(Items.FLINT_AND_STEEL)) {
+                    ItemHelper.hurtAndBreak(itemStack, 1, player, interactionHand);
                 } else {
-                    itemstack.shrink(1);
+                    itemStack.shrink(1);
                 }
             }
 
             player.awardStat(Stats.ITEM_USED.get(item));
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
     }
 

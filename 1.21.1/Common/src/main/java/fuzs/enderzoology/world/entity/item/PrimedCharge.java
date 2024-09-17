@@ -1,13 +1,14 @@
 package fuzs.enderzoology.world.entity.item;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
@@ -26,7 +27,7 @@ public class PrimedCharge extends PrimedTnt {
     }
 
     public PrimedCharge(Level level, double posX, double posY, double posZ, @Nullable LivingEntity owner, EnderExplosionType enderExplosionType) {
-        this(ModRegistry.PRIMED_CHARGE_ENTITY_TYPE.value(), level);
+        this(ModEntityTypes.PRIMED_CHARGE_ENTITY_TYPE.value(), level);
         this.setInitalProperties(level, posX, posY, posZ, owner);
         this.enderExplosionType = enderExplosionType;
         this.setBlockState(enderExplosionType.getChargeBlock().defaultBlockState());
@@ -49,10 +50,9 @@ public class PrimedCharge extends PrimedTnt {
         if (this.getFuse() - 1 <= 0) {
             this.discard();
             if (!this.level().isClientSide) {
-                EnderExplosionHelper.explode(this.level(), this,
-                        null,
-                        this.getX(), this.getY(0.0625), this.getZ(), 4.0F,
-                        Level.ExplosionInteraction.TNT, this.enderExplosionType, true);
+                EnderExplosionHelper.explode(this.level(), this, null, this.getX(), this.getY(0.0625), this.getZ(),
+                        4.0F, Level.ExplosionInteraction.TNT, this.enderExplosionType, true
+                );
             }
         } else {
             super.tick();
@@ -78,8 +78,8 @@ public class PrimedCharge extends PrimedTnt {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this, this.enderExplosionType.ordinal());
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
+        return new ClientboundAddEntityPacket(this, entity, this.enderExplosionType.ordinal());
     }
 
     @Override

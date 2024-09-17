@@ -1,6 +1,8 @@
 package fuzs.enderzoology.world.entity.animal;
 
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.ModEntityTypes;
+import fuzs.enderzoology.init.ModItems;
+import fuzs.enderzoology.init.ModSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +33,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,19 +52,19 @@ public class Owl extends Animal implements FlyingAnimal {
         super(entityType, level);
         this.eggTime = this.random.nextInt(2000) + 2000;
         this.moveControl = new FlyingMoveControl(this, 10, false);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, 0.0F);
     }
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (spawnData == null) {
             spawnData = new AgeableMob.AgeableMobGroupData(true);
         }
 
-        return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
     @Override
@@ -96,7 +98,7 @@ public class Owl extends Animal implements FlyingAnimal {
 
         if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && this.level().getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-            this.spawnAtLocation(ModRegistry.OWL_EGG_ITEM.value());
+            this.spawnAtLocation(ModItems.OWL_EGG_ITEM.value());
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(2000) + 2000;
         }
@@ -151,17 +153,17 @@ public class Owl extends Animal implements FlyingAnimal {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return ModRegistry.OWL_HOOT_SOUND_EVENT.value();
+        return ModSoundEvents.OWL_HOOT_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return ModRegistry.OWL_HURT_SOUND_EVENT.value();
+        return ModSoundEvents.OWL_HURT_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModRegistry.OWL_DEATH_SOUND_EVENT.value();
+        return ModSoundEvents.OWL_DEATH_SOUND_EVENT.value();
     }
 
     @Override
@@ -193,7 +195,7 @@ public class Owl extends Animal implements FlyingAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return ModRegistry.OWL_ENTITY_TYPE.value().create(level);
+        return ModEntityTypes.OWL_ENTITY_TYPE.value().create(level);
     }
 
     @Override

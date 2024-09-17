@@ -24,12 +24,12 @@ public class ChargeNeoForgeBlock extends TntBlock {
     }
 
     @Override
-    public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
-        if (!world.isClientSide) {
-            PrimedTnt primedtnt = new PrimedCharge(world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.enderExplosionType);
-            world.addFreshEntity(primedtnt);
-            world.playSound(null, primedtnt.getX(), primedtnt.getY(), primedtnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
-            world.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
+    public void onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
+        if (!level.isClientSide) {
+            PrimedTnt primedtnt = new PrimedCharge(level, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, igniter, this.enderExplosionType);
+            level.addFreshEntity(primedtnt);
+            level.playSound(null, primedtnt.getX(), primedtnt.getY(), primedtnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
         }
     }
 

@@ -1,12 +1,13 @@
 package fuzs.enderzoology.world.entity.monster;
 
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.ModSoundEvents;
 import fuzs.enderzoology.world.entity.ai.goal.FollowPackLeaderGoal;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
@@ -23,8 +24,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -66,12 +67,12 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Wolf.class, 8, true, false, entity -> entity.getType() == EntityType.WOLF));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 12, true, false, entity -> (entity instanceof Animal || entity instanceof Zombie) && !(entity instanceof Wolf) && this.isHungry() && !this.getMainHandItem().isEdible()));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 12, true, false, entity -> (entity instanceof Animal || entity instanceof Zombie) && !(entity instanceof Wolf) && this.isHungry() && !this.getMainHandItem().has(DataComponents.FOOD)));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, true));
     }
 
     @Override
-    public int getExperienceReward() {
+    public int getBaseExperienceReward() {
         return this.xpReward;
     }
 
@@ -154,7 +155,6 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         if (this.isFollower()) {
             this.getNavigation().moveTo(this.wolfPackLeader, 1.0D);
         }
-
     }
 
     @Override
@@ -168,14 +168,14 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        if (pSpawnData == null) {
-            pSpawnData = new PackSpawnGroupData(this);
-        } else if (pSpawnData instanceof PackSpawnGroupData packSpawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+        if (spawnGroupData == null) {
+            spawnGroupData = new PackSpawnGroupData(this);
+        } else if (spawnGroupData instanceof PackSpawnGroupData packSpawnData) {
             this.startFollowing(packSpawnData.leader);
         }
 
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(level, difficulty, mobSpawnType, spawnGroupData);
     }
 
     @Override
@@ -193,13 +193,11 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     @Override
-    public ItemStack eat(Level level, ItemStack food) {
-        Item item = food.getItem();
-        if (item.isEdible()) {
-            this.heal(item.getFoodProperties().getNutrition() * (item.getFoodProperties().isMeat() ? 2.0F : 1.0F));
-            this.level().broadcastEntityEvent(this, EntityEvent.IN_LOVE_HEARTS);
-        }
-        return super.eat(level, food);
+    public ItemStack eat(Level level, ItemStack food, FoodProperties foodProperties) {
+        float meatMultiplier = food.is(ItemTags.MEAT) ? 2.0F : 1.0F;
+        this.heal(foodProperties.nutrition() * meatMultiplier);
+        this.level().broadcastEntityEvent(this, EntityEvent.IN_LOVE_HEARTS);
+        return super.eat(level, food, foodProperties);
     }
 
     @Override
@@ -214,7 +212,6 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         } else {
             super.handleEntityEvent(id);
         }
-
     }
 
     private boolean isHungry() {
@@ -222,7 +219,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     private boolean canEat(ItemStack stack) {
-        return stack.getItem().isEdible() && this.getTarget() == null && this.onGround() && this.isHungry();
+        return stack.has(DataComponents.FOOD) && this.getTarget() == null && this.onGround() && !this.isSleeping();
     }
 
     @Override
@@ -232,7 +229,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     public boolean canTakeItem(ItemStack stack) {
-        EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(stack);
+        EquipmentSlot equipmentSlot = this.getEquipmentSlotForItem(stack);
         if (!this.getItemBySlot(equipmentSlot).isEmpty()) {
             return false;
         } else {
@@ -242,9 +239,8 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     public boolean canHoldItem(ItemStack stack) {
-        Item item = stack.getItem();
         ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
-        return itemStack.isEmpty() || item.isEdible() && !itemStack.getItem().isEdible();
+        return itemStack.isEmpty() || this.ticksSinceEaten > 0 && stack.has(DataComponents.FOOD) && !itemStack.has(DataComponents.FOOD);
     }
 
     private void spitOutItem(ItemStack stack) {
@@ -283,29 +279,29 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     @Override
-    protected void dropAllDeathLoot(DamageSource damageSource) {
+    protected void dropAllDeathLoot(ServerLevel serverLevel, DamageSource damageSource) {
         ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
         if (!itemStack.isEmpty()) {
             this.spawnAtLocation(itemStack);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
 
-        super.dropAllDeathLoot(damageSource);
+        super.dropAllDeathLoot(serverLevel, damageSource);
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return this.random.nextFloat() < 0.1F ? ModRegistry.DIRE_WOLF_HOWL_SOUND_EVENT.value() : ModRegistry.DIRE_WOLF_GROWL_SOUND_EVENT.value();
+        return this.random.nextFloat() < 0.1F ? ModSoundEvents.DIRE_WOLF_HOWL_SOUND_EVENT.value() : ModSoundEvents.DIRE_WOLF_GROWL_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-        return ModRegistry.DIRE_WOLF_HURT_SOUND_EVENT.value();
+        return ModSoundEvents.DIRE_WOLF_HURT_SOUND_EVENT.value();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModRegistry.DIRE_WOLF_DEATH_SOUND_EVENT.value();
+        return ModSoundEvents.DIRE_WOLF_DEATH_SOUND_EVENT.value();
     }
 
     @Override
@@ -314,8 +310,8 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     @Override
-    public void setTame(boolean tamed) {
-
+    public void setTame(boolean tame, boolean applyTamingSideEffects) {
+        // NO-OP
     }
 
     @Override
@@ -340,12 +336,12 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     public void setAge(int age) {
-
+        // NO-OP
     }
 
     @Override
     public void setIsInterested(boolean isInterested) {
-
+        // NO-OP
     }
 
     @Override

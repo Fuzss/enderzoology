@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "item": "enderzoology:confusing_powder"
+    },
+    "S": [
+      {
+        "item": "minecraft:sand"
+      },
+      {
+        "item": "minecraft:red_sand"
+      }
+    ],
+    "X": {
+      "item": "minecraft:gunpowder"
+    }
+  },
+  "pattern": [
+    "#S#",
+    "SXS",
+    "#S#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "enderzoology:confusing_charge"
+  }
+}

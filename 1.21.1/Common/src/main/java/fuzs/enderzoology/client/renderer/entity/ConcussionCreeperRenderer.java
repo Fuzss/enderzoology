@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ClientModRegistry;
+import fuzs.enderzoology.client.init.ModelLayerLocations;
 import net.minecraft.client.model.CreeperModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.CreeperRenderer;
@@ -15,11 +15,11 @@ public class ConcussionCreeperRenderer extends CreeperRenderer {
 
     public ConcussionCreeperRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new CreeperModel<>(context.bakeLayer(ClientModRegistry.CONCUSSION_CREEPER));
+        this.model = new CreeperModel<>(context.bakeLayer(ModelLayerLocations.CONCUSSION_CREEPER));
         this.layers.set(0, new CreeperPowerLayer(this, context.getModelSet()) {
             private static final ResourceLocation POWER_LOCATION = EnderZoology.id("textures/entity/creeper/creeper_armor.png");
 
-            private final CreeperModel<Creeper> model = new CreeperModel<>(context.bakeLayer(ClientModRegistry.CONCUSSION_CREEPER_ARMOR));
+            private final CreeperModel<Creeper> model = new CreeperModel<>(context.bakeLayer(ModelLayerLocations.CONCUSSION_CREEPER_ARMOR));
 
             @Override
             protected ResourceLocation getTextureLocation() {

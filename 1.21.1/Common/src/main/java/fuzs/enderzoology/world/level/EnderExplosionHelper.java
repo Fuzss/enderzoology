@@ -79,7 +79,7 @@ public class EnderExplosionHelper {
         level.addFreshEntity(areaEffectCloud);
     }
 
-    private static class EnderExplosionDamageCalculator extends EntityBasedExplosionDamageCalculator {
+    public static class EnderExplosionDamageCalculator extends EntityBasedExplosionDamageCalculator {
         public final EnderExplosionType enderExplosionType;
         public final boolean spawnLingeringCloud;
 

@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.MinecartTNT;
@@ -55,9 +56,9 @@ public class MinecartCharge extends MinecartTNT {
     @Override
     protected void explode(@Nullable DamageSource damageSource, double radiusModifier) {
         if (!this.level().isClientSide) {
-            double d = Math.sqrt(radiusModifier);
-            if (d > 5.0) {
-                d = 5.0;
+            double radiusModifierSqrt = Math.sqrt(radiusModifier);
+            if (radiusModifierSqrt > 5.0) {
+                radiusModifierSqrt = 5.0;
             }
 
             EnderExplosionHelper.explode(this.level(),
@@ -66,7 +67,7 @@ public class MinecartCharge extends MinecartTNT {
                     this.getX(),
                     this.getY(),
                     this.getZ(),
-                    (float) (4.0 + this.random.nextDouble() * 1.5 * d),
+                    (float) (4.0 + this.random.nextDouble() * 1.5 * radiusModifierSqrt),
                     Level.ExplosionInteraction.TNT,
                     this.enderExplosionType,
                     true
@@ -88,8 +89,8 @@ public class MinecartCharge extends MinecartTNT {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this, this.enderExplosionType.ordinal());
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
+        return new ClientboundAddEntityPacket(this, entity, this.enderExplosionType.ordinal());
     }
 
     @Override

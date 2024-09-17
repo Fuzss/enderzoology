@@ -1,5 +1,6 @@
 package fuzs.enderzoology.world.entity.monster;
 
+import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -50,7 +51,7 @@ public interface CompanionMob<T extends Mob> {
         return this.getCompanionMob().position();
     }
 
-    default double getCompanionAttributeValue(Attribute attribute) {
+    default double getCompanionAttributeValue(Holder<Attribute> attribute) {
         return this.getCompanionMob().getAttributeValue(attribute);
     }
 

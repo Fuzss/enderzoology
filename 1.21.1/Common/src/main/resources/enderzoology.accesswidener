@@ -1,1 +1,4 @@
 accessWidener   v2  named
+accessible  method  net/minecraft/server/commands/GiveCommand   giveItem    (Lnet/minecraft/commands/CommandSourceStack;Lnet/minecraft/commands/arguments/item/ItemInput;Ljava/util/Collection;I)I
+accessible  field   net/minecraft/world/entity/monster/Witch    healRaidersGoal Lnet/minecraft/world/entity/ai/goal/target/NearestHealableRaiderTargetGoal;
+accessible  field   net/minecraft/world/entity/monster/Witch    attackPlayersGoal   Lnet/minecraft/world/entity/ai/goal/target/NearestAttackableWitchTargetGoal;

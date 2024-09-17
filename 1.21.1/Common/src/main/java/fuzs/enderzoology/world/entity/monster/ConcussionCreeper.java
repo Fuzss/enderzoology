@@ -1,17 +1,16 @@
 package fuzs.enderzoology.world.entity.monster;
 
-import fuzs.enderzoology.mixin.accessor.CreeperAccessor;
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
+import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 
 public class ConcussionCreeper extends Creeper {
@@ -30,19 +29,10 @@ public class ConcussionCreeper extends Creeper {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource pSource, int pLooting, boolean pRecentlyHit) {
-        // copied from Mob super, we don't want the head to drop
-        for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-            ItemStack itemstack = this.getItemBySlot(equipmentslot);
-            float f = this.getEquipmentDropChance(equipmentslot);
-            boolean flag = f > 1.0F;
-            if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack) && (pRecentlyHit || flag) && Math.max(this.random.nextFloat() - (float) pLooting * 0.01F, 0.0F) < f) {
-                if (!flag && itemstack.isDamageableItem()) {
-                    itemstack.setDamageValue(itemstack.getMaxDamage() - this.random.nextInt(1 + this.random.nextInt(Math.max(itemstack.getMaxDamage() - 3, 1))));
-                }
-                this.spawnAtLocation(itemstack);
-                this.setItemSlot(equipmentslot, ItemStack.EMPTY);
-            }
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
+        // we don't want the head to drop
+        if (!(damageSource.getEntity() instanceof Creeper)) {
+            super.dropCustomDeathLoot(level, damageSource, recentlyHit);
         }
     }
 
@@ -56,26 +46,15 @@ public class ConcussionCreeper extends Creeper {
         super.aiStep();
     }
 
-    @Override
-    public void tick() {
-        if (this.isAlive()) {
-            if (((CreeperAccessor) this).enderzoology$getSwell() >= ((CreeperAccessor) this).enderzoology$getMaxSwell() - 1) {
-                ((CreeperAccessor) this).enderzoology$setSwell(0);
-                this.explodeCreeper();
-            }
-        }
-        super.tick();
-    }
-
-    private void explodeCreeper() {
-        if (!this.level().isClientSide) {
-            float poweredMultiplier = this.isPowered() ? 2.0F : 1.0F;
-            float explosionRadius = ((CreeperAccessor) this).enderzoology$getExplosionRadius() * poweredMultiplier;
-            EnderExplosionHelper.explode(this.level(), this,
+    public static EventResult onExplosionStart(Level level, Explosion explosion) {
+        if (explosion.getDirectSourceEntity() instanceof ConcussionCreeper concussionCreeper && !(explosion.damageCalculator instanceof EnderExplosionHelper.EnderExplosionDamageCalculator)) {
+            EnderExplosionHelper.explode(level, concussionCreeper,
                     null,
-                    this.getX(), this.getY(), this.getZ(), explosionRadius,
+                    concussionCreeper.getX(), concussionCreeper.getY(), concussionCreeper.getZ(), explosion.radius(),
                     Level.ExplosionInteraction.MOB, EnderExplosionType.CONCUSSION, false);
-            this.discard();
+            return EventResult.INTERRUPT;
+        } else {
+            return EventResult.PASS;
         }
     }
 }

@@ -1,7 +1,10 @@
 package fuzs.enderzoology.world.entity.monster;
 
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.ModEntityTypes;
+import fuzs.enderzoology.init.ModItems;
 import fuzs.enderzoology.world.entity.ai.goal.RangedBowEasyAttackGoal;
+import fuzs.puzzleslib.api.init.v3.registry.LookupHelper;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -17,17 +20,12 @@ import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class FallenKnight extends AbstractSkeleton {
     private static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = difficulty -> difficulty == Difficulty.HARD;
@@ -54,7 +52,7 @@ public class FallenKnight extends AbstractSkeleton {
         this.populateArmorEquipmentSlots(random);
         Item item;
         if (random.nextBoolean()) {
-            item = ModRegistry.HUNTING_BOW.value();
+            item = ModItems.HUNTING_BOW_ITEM.value();
         } else {
             if (random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.6F : 0.2F)) {
                 item = Items.IRON_SWORD;
@@ -79,31 +77,34 @@ public class FallenKnight extends AbstractSkeleton {
             quality = 2;
         }
 
-        List<EquipmentSlot> slots = Stream.of(EquipmentSlot.values()).filter(slot -> slot.getType() == EquipmentSlot.Type.ARMOR).sorted(Comparator.reverseOrder()).toList();
-        for (EquipmentSlot slot : slots) {
-            ItemStack itemStack = this.getItemBySlot(slot);
-            if (slot != EquipmentSlot.HEAD && random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F)) {
-                break;
-            }
+        EquipmentSlot[] values = EquipmentSlot.values();
+        for (int i = values.length - 1; i >= 0; i--) {
+            EquipmentSlot slot = values[i];
+            if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                ItemStack itemStack = this.getItemBySlot(slot);
+                if (slot != EquipmentSlot.HEAD && random.nextFloat() < (
+                        this.level().getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F)) {
+                    break;
+                }
 
-            if (itemStack.isEmpty()) {
-                Item item = getEquipmentForSlot(slot, quality);
-                if (item != null) {
-                    this.setItemSlot(slot, new ItemStack(item));
+                if (itemStack.isEmpty()) {
+                    Item item = getEquipmentForSlot(slot, quality);
+                    if (item != null) {
+                        this.setItemSlot(slot, new ItemStack(item));
+                    }
                 }
             }
         }
     }
 
     @Override
-    protected void enchantSpawnedWeapon(RandomSource random, float chanceMultiplier) {
-        super.enchantSpawnedWeapon(random, chanceMultiplier);
+    protected void enchantSpawnedWeapon(ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {
+        super.enchantSpawnedWeapon(level, random, difficulty);
         if (random.nextInt(10) == 0) {
             ItemStack itemstack = this.getMainHandItem();
-            if (itemstack.is(ModRegistry.HUNTING_BOW.value())) {
-                Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(itemstack);
-                map.putIfAbsent(Enchantments.PIERCING, 1);
-                EnchantmentHelper.setEnchantments(map, itemstack);
+            if (itemstack.is(ModItems.HUNTING_BOW_ITEM.value())) {
+                Holder<Enchantment> enchantment = LookupHelper.lookupEnchantment(level, Enchantments.PIERCING);
+                itemstack.enchant(enchantment, 1);
                 this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
             }
         }
@@ -116,12 +117,12 @@ public class FallenKnight extends AbstractSkeleton {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData);
         if (level.getRandom().nextBoolean()) {
-            Mob fallenMount = ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level());
+            Mob fallenMount = ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level());
             fallenMount.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-            fallenMount.finalizeSpawn(level, difficulty, MobSpawnType.JOCKEY, null, null);
+            fallenMount.finalizeSpawn(level, difficulty, MobSpawnType.JOCKEY, null);
             this.startRiding(fallenMount);
             level.addFreshEntity(fallenMount);
         }

@@ -1,6 +1,7 @@
 package fuzs.enderzoology.world.entity.monster;
 
 import fuzs.enderzoology.core.CommonAbstractions;
+import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.init.ModRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,7 +20,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -28,13 +28,15 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.HorseArmorItem;
+import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,12 +45,15 @@ import java.util.UUID;
 
 public class FallenMount extends AbstractHorse implements Enemy {
     public static final String TAG_HORSE_DATA = "HorseData";
-    private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("870A1AC8-9BD8-11ED-A8FC-0242AC120002");
-    private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(FallenMount.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(FallenMount.class,
+            EntityDataSerializers.BOOLEAN
+    );
 
     @Nullable
     private CompoundTag horseData;
     private int conversionTime;
+    @Nullable
+    private UUID conversionStarter;
 
     public FallenMount(EntityType<? extends AbstractHorse> entityType, Level level) {
         super(entityType, level);
@@ -77,12 +82,18 @@ public class FallenMount extends AbstractHorse implements Enemy {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractHorse.class, false, entity -> entity.getType().is(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)));
+        this.targetSelector.addGoal(3,
+                new NearestAttackableTargetGoal<>(this,
+                        AbstractHorse.class,
+                        false,
+                        entity -> entity.getType().is(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)
+                )
+        );
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
 
     @Override
-    public int getExperienceReward() {
+    protected int getBaseExperienceReward() {
         return this.xpReward;
     }
 
@@ -92,9 +103,9 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_CONVERTING_ID, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_CONVERTING_ID, false);
     }
 
     @Override
@@ -107,7 +118,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
         if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
             this.conversionTime--;
             if (this.conversionTime <= 0) {
-                this.finishConversion();
+                this.finishConversion((ServerLevel)this.level());
             }
         }
 
@@ -152,8 +163,13 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack itemStack = player.getItemInHand(hand);
+    public boolean isTamed() {
+        return false;
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
+        ItemStack itemStack = player.getItemInHand(interactionHand);
         if (itemStack.is(Items.GOLDEN_APPLE)) {
             if (this.hasEffect(MobEffects.WEAKNESS)) {
                 if (!player.getAbilities().instabuild) {
@@ -161,27 +177,22 @@ public class FallenMount extends AbstractHorse implements Enemy {
                 }
 
                 if (!this.level().isClientSide) {
-                    this.startConverting(this.random.nextInt(2400) + 3600);
+                    this.startConverting(player.getUUID(), this.random.nextInt(2400) + 3600);
                 }
 
-                return InteractionResult.SUCCESS;
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
             } else {
                 return InteractionResult.CONSUME;
             }
         } else {
-            return super.mobInteract(player, hand);
+            return InteractionResult.PASS;
         }
     }
 
     @Override
-    protected void doPlayerRide(Player player) {
-
-    }
-
-    @Override
     public void aiStep() {
-        if (this.isAlive() && this.isSunBurnTick() && !this.isVehicle() && !this.isWearingArmor()) {
-            this.setSecondsOnFire(8);
+        if (this.isAlive() && this.isSunBurnTick() && !this.isVehicle() && !this.isWearingBodyArmor()) {
+            this.igniteForSeconds(8);
         }
 
         super.aiStep();
@@ -189,19 +200,22 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
-        Item item;
-        float selector = random.nextFloat();
-        if (selector < 0.015F) {
-            item = Items.DIAMOND_HORSE_ARMOR;
-        } else if (selector < 0.05F) {
-            item = Items.GOLDEN_HORSE_ARMOR;
-        } else if (selector < 0.2F) {
-            item = Items.LEATHER_HORSE_ARMOR;
-        } else {
-            item = Items.IRON_HORSE_ARMOR;
-        }
+        ItemStack itemStack = new ItemStack(this.pickDefaultHorseArmor(random));
+        this.setItemSlot(EquipmentSlot.BODY, itemStack);
+        this.setDropChance(EquipmentSlot.BODY, 0.0F);
+    }
 
-        this.setArmor(new ItemStack(item));
+    private Item pickDefaultHorseArmor(RandomSource random) {
+        float randomValue = random.nextFloat();
+        if (randomValue < 0.015F) {
+            return Items.DIAMOND_HORSE_ARMOR;
+        } else if (randomValue < 0.05F) {
+            return Items.GOLDEN_HORSE_ARMOR;
+        } else if (randomValue < 0.2F) {
+            return Items.LEATHER_HORSE_ARMOR;
+        } else {
+            return Items.IRON_HORSE_ARMOR;
+        }
     }
 
     @Override
@@ -210,71 +224,35 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    public boolean canWearArmor() {
+    public boolean canUseSlot(EquipmentSlot slot) {
         return true;
     }
 
     @Override
-    public boolean isArmor(ItemStack stack) {
-        return stack.getItem() instanceof HorseArmorItem;
+    public boolean isBodyArmorItem(ItemStack itemStack) {
+        return itemStack.getItem() instanceof AnimalArmorItem item &&
+                item.getBodyType() == AnimalArmorItem.BodyType.EQUESTRIAN;
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(CompoundTag compoundTag) {
+        super.addAdditionalSaveData(compoundTag);
         if (this.horseData != null) {
-            tag.put(TAG_HORSE_DATA, this.horseData);
+            compoundTag.put(TAG_HORSE_DATA, this.horseData);
         }
-        if (!this.inventory.getItem(1).isEmpty()) {
-            tag.put("ArmorItem", this.inventory.getItem(1).save(new CompoundTag()));
+        compoundTag.putInt("ConversionTime", this.isConverting() ? this.conversionTime : -1);
+        if (this.conversionStarter != null) {
+            compoundTag.putUUID("ConversionPlayer", this.conversionStarter);
         }
-
-    }
-
-    public ItemStack getArmor() {
-        return this.getItemBySlot(EquipmentSlot.CHEST);
-    }
-
-    private void setArmor(ItemStack pStack) {
-        this.setItemSlot(EquipmentSlot.CHEST, pStack);
-        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.horseData = tag.getCompound(TAG_HORSE_DATA);
-        if (tag.contains("ArmorItem", 10)) {
-            ItemStack itemstack = ItemStack.of(tag.getCompound("ArmorItem"));
-            if (!itemstack.isEmpty() && this.isArmor(itemstack)) {
-                this.inventory.setItem(1, itemstack);
-            }
+    public void readAdditionalSaveData(CompoundTag compoundTag) {
+        super.readAdditionalSaveData(compoundTag);
+        this.horseData = compoundTag.getCompound(TAG_HORSE_DATA);
+        if (compoundTag.contains("ConversionTime", 99) && compoundTag.getInt("ConversionTime") > -1) {
+            this.startConverting(compoundTag.hasUUID("ConversionPlayer") ? compoundTag.getUUID("ConversionPlayer") : null, compoundTag.getInt("ConversionTime"));
         }
-
-        this.updateContainerEquipment();
-    }
-
-    @Override
-    protected void updateContainerEquipment() {
-        if (!this.level().isClientSide) {
-            super.updateContainerEquipment();
-            this.setArmorEquipment(this.inventory.getItem(1));
-            this.setDropChance(EquipmentSlot.CHEST, 0.0F);
-        }
-    }
-
-    private void setArmorEquipment(ItemStack stack) {
-        this.setArmor(stack);
-        if (!this.level().isClientSide) {
-            this.getAttribute(Attributes.ARMOR).removeModifier(ARMOR_MODIFIER_UUID);
-            if (this.isArmor(stack)) {
-                int i = ((HorseArmorItem) stack.getItem()).getProtection();
-                if (i != 0) {
-                    this.getAttribute(Attributes.ARMOR).addTransientModifier(new AttributeModifier(ARMOR_MODIFIER_UUID, "Horse armor bonus", i, AttributeModifier.Operation.ADDITION));
-                }
-            }
-        }
-
     }
 
     @Override
@@ -286,11 +264,15 @@ public class FallenMount extends AbstractHorse implements Enemy {
         return this.getEntityData().get(DATA_CONVERTING_ID);
     }
 
-    private void startConverting(int villagerConversionTime) {
-        this.conversionTime = villagerConversionTime;
+    private void startConverting(@Nullable UUID conversionStarter, int conversionTime) {
+        this.conversionStarter = conversionStarter;
+        this.conversionTime = conversionTime;
         this.getEntityData().set(DATA_CONVERTING_ID, true);
         this.removeEffect(MobEffects.WEAKNESS);
-        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, villagerConversionTime, Math.min(this.level().getDifficulty().getId() - 1, 0)));
+        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
+                conversionTime,
+                Math.min(this.level().getDifficulty().getId() - 1, 0)
+        ));
         this.level().broadcastEntityEvent(this, EntityEvent.ZOMBIE_CONVERTING);
     }
 
@@ -298,20 +280,29 @@ public class FallenMount extends AbstractHorse implements Enemy {
     public void handleEntityEvent(byte id) {
         if (id == EntityEvent.ZOMBIE_CONVERTING) {
             if (!this.isSilent()) {
-                this.level().playLocalSound(this.getX(), this.getEyeY(), this.getZ(), SoundEvents.ZOMBIE_VILLAGER_CURE, this.getSoundSource(), 1.0F + this.random.nextFloat(), this.random.nextFloat() * 0.7F + 0.3F, false);
+                this.level()
+                        .playLocalSound(this.getX(),
+                                this.getEyeY(),
+                                this.getZ(),
+                                SoundEvents.ZOMBIE_VILLAGER_CURE,
+                                this.getSoundSource(),
+                                1.0F + this.random.nextFloat(),
+                                this.random.nextFloat() * 0.7F + 0.3F,
+                                false
+                        );
             }
         } else {
             super.handleEntityEvent(id);
         }
     }
 
-    private void finishConversion() {
-        this.recreateHorseFromData(this.level(), this).or(this::createFreshHorse).ifPresent(entity -> {
-            entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+    private void finishConversion(ServerLevel serverLevel) {
+        this.recreateHorseFromData(serverLevel, this).or(this::createFreshHorse).ifPresent((AbstractHorse abstractHorse) -> {
+            abstractHorse.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
             if (!this.isSilent()) {
-                this.level().levelEvent(null, 1027, this.blockPosition(), 0);
+                this.level().levelEvent(null, LevelEvent.SOUND_ZOMBIE_CONVERTED, this.blockPosition(), 0);
             }
-            CommonAbstractions.INSTANCE.onLivingConvert(this, entity);
+            CommonAbstractions.INSTANCE.onLivingConvert(this, abstractHorse);
         });
     }
 
@@ -325,8 +316,9 @@ public class FallenMount extends AbstractHorse implements Enemy {
                 level.addFreshEntity(horse);
                 return horse;
             });
+        } else {
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     private Optional<AbstractHorse> createFreshHorse() {
@@ -336,70 +328,65 @@ public class FallenMount extends AbstractHorse implements Enemy {
         } else {
             entityType = EntityType.HORSE;
         }
-        AbstractHorse horse = this.convertTo(entityType, false);
-        for (int i = 0; i < EquipmentSlot.values().length; ++i) {
-            EquipmentSlot equipmentSlot = EquipmentSlot.values()[i];
+        AbstractHorse abstractHorse = this.convertTo(entityType, false);
+        for (EquipmentSlot equipmentSlot : this.dropPreservedEquipment(itemStack -> !EnchantmentHelper.has(itemStack,
+                EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE
+        ))) {
             ItemStack itemStack = this.getItemBySlot(equipmentSlot);
-            if (!itemStack.isEmpty()) {
-                if (EnchantmentHelper.hasBindingCurse(itemStack)) {
-                    horse.getSlot(equipmentSlot.getIndex() + 300).set(itemStack);
-                } else {
-                    double d = this.getEquipmentDropChance(equipmentSlot);
-                    if (d > 1.0) {
-                        this.spawnAtLocation(itemStack);
-                    }
-                }
-            }
+            abstractHorse.setItemSlot(equipmentSlot, itemStack);
         }
-
-        horse.finalizeSpawn((ServerLevelAccessor) this.level(), this.level().getCurrentDifficultyAt(horse.blockPosition()), MobSpawnType.CONVERSION, new AgeableMob.AgeableMobGroupData(0.0F), null);
-        horse.setTamed(true);
-        horse.setBaby(false);
-        return Optional.of(horse);
+        abstractHorse.finalizeSpawn((ServerLevelAccessor) this.level(),
+                this.level().getCurrentDifficultyAt(abstractHorse.blockPosition()),
+                MobSpawnType.CONVERSION,
+                new AgeableMob.AgeableMobGroupData(0.0F)
+        );
+        abstractHorse.setTamed(true);
+        if (this.conversionStarter != null) {
+            abstractHorse.setOwnerUUID(this.conversionStarter);
+        }
+        abstractHorse.setBaby(false);
+        return Optional.of(abstractHorse);
     }
 
     @Override
     public boolean killedEntity(ServerLevel level, LivingEntity entity) {
-        boolean flag = super.killedEntity(level, entity);
-        if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD) && entity instanceof AbstractHorse horse && CommonAbstractions.INSTANCE.canLivingConvert(entity, ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.value(), (timer) -> {
-        })) {
+        boolean killedEntity = super.killedEntity(level, entity);
+        if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD) &&
+                entity instanceof AbstractHorse abstractHorse && CommonAbstractions.INSTANCE.canLivingConvert(entity,
+                ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
+                (Integer timer) -> {
+                    // NO-OP
+                }
+        )) {
             if (level.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
-                return flag;
+                return killedEntity;
+            } else {
+                FallenMount fallenMount = abstractHorse.convertTo(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(), true);
+                CompoundTag compoundTag = new CompoundTag();
+                compoundTag.putString("id", getEncodeId(abstractHorse));
+                abstractHorse.setHealth(abstractHorse.getMaxHealth());
+                abstractHorse.setDeltaMovement(Vec3.ZERO);
+                abstractHorse.saveWithoutId(compoundTag);
+                fallenMount.horseData = compoundTag;
+
+                CommonAbstractions.INSTANCE.onLivingConvert(abstractHorse, fallenMount);
+                if (!this.isSilent()) {
+                    level.levelEvent(null, LevelEvent.SOUND_ZOMBIE_INFECTED, this.blockPosition(), 0);
+                }
+
+                return false;
             }
-
-
-            FallenMount fallenMount = horse.convertTo(ModRegistry.FALLEN_MOUNT_ENTITY_TYPE.value(), true);
-            fallenMount.finalizeSpawn(level, level.getCurrentDifficultyAt(fallenMount.blockPosition()), MobSpawnType.CONVERSION, new AgeableMob.AgeableMobGroupData(0.0F), null);
-
-            CompoundTag compoundtag = new CompoundTag();
-            compoundtag.putString("id", getEncodeId(horse));
-            horse.setHealth(horse.getMaxHealth());
-            horse.setDeltaMovement(Vec3.ZERO);
-            horse.saveWithoutId(compoundtag);
-            fallenMount.horseData = compoundtag;
-
-            CommonAbstractions.INSTANCE.onLivingConvert(horse, fallenMount);
-            if (!this.isSilent()) {
-                level.levelEvent(null, 1026, this.blockPosition(), 0);
-            }
-
-            flag = false;
         }
 
-        return flag;
+        return killedEntity;
     }
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        SpawnGroupData spawnGroupData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        SpawnGroupData spawnGroupData = super.finalizeSpawn(level, difficulty, reason, spawnData);
         this.populateDefaultEquipmentSlots(level.getRandom(), difficulty);
         return spawnGroupData;
-    }
-
-    @Override
-    public MobType getMobType() {
-        return MobType.UNDEAD;
     }
 
     @Override

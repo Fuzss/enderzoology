@@ -21,6 +21,7 @@ public class MobHuntingHandler {
                 mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, FallenMount.class, 16.0F, 1.5, 1.8));
             }
         }
+
         return EventResult.PASS;
     }
 }

@@ -2,7 +2,7 @@ package fuzs.enderzoology.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ClientModRegistry;
+import fuzs.enderzoology.client.init.ModelLayerLocations;
 import fuzs.enderzoology.client.model.DireWolfModel;
 import fuzs.enderzoology.client.renderer.entity.layers.WolfHeldItemLayer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -16,7 +16,7 @@ public class DireWolfRenderer extends WolfRenderer {
     public DireWolfRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.addLayer(new WolfHeldItemLayer(this, context.getItemInHandRenderer()));
-        this.model = new DireWolfModel<>(context.bakeLayer(ClientModRegistry.DIRE_WOLF));
+        this.model = new DireWolfModel<>(context.bakeLayer(ModelLayerLocations.DIRE_WOLF));
     }
 
     @Override
