@@ -4,7 +4,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 
 public class ModSoundEvents {
-
     public static final Holder.Reference<SoundEvent> DIRE_WOLF_HURT_SOUND_EVENT = ModRegistry.REGISTRIES.registerSoundEvent(
             "entity.dire_wolf.hurt");
     public static final Holder.Reference<SoundEvent> DIRE_WOLF_DEATH_SOUND_EVENT = ModRegistry.REGISTRIES.registerSoundEvent(
