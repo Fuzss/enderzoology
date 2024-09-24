@@ -20,7 +20,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 public class HuntingBowHandler {
-    private static final float BOW_MULTISHOT_ANGLE = 6.5F;
+    private static final float BOW_MULTISHOT_ANGLE = 10.0F;
 
     public static EventResult onArrowLoose(Player player, ItemStack stack, Level level, MutableInt charge, boolean hasAmmo) {
         // multishot enchantment for bows
@@ -43,8 +43,8 @@ public class HuntingBowHandler {
     private static void createAndShootArrow(Player player, ItemStack stack, Level level, ArrowItem item, ItemStack projectile, float shootAngle, float velocity) {
         AbstractArrow abstractArrow = item.createArrow(level, projectile, player);
         abstractArrow.shootFromRotation(player,
-                player.getXRot() + shootAngle,
-                player.getYRot(),
+                player.getXRot(),
+                player.getYRot() + shootAngle,
                 0.0F,
                 velocity * 3.0F,
                 1.5F

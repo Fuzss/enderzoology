@@ -174,7 +174,9 @@ public class FallenMount extends AbstractHorse implements Enemy {
                     this.startConverting(player.getUUID(), this.random.nextInt(2400) + 3600);
                 }
 
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                // this has to be InteractionResult#SUCCESS on the server as well as it sends the swing packet to the client.
+                // the client does not know about any effect on the mob.
+                return InteractionResult.SUCCESS;
             } else {
                 return InteractionResult.CONSUME;
             }

@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v8.0.3-1.20.1] - 2024-09-24
+### Fixed
+- Fix fallen knights unable to control their fallen mount when riding
+- Fix fallen mounts not saving their conversion properties
+
 ## [v8.0.2-1.20.1] - 2024-03-04
 ### Added
 - Add wonderful new textures made by the talented [Tamlighter](https://www.curseforge.com/members/tamlighter)

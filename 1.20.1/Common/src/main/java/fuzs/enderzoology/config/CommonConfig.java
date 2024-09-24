@@ -10,7 +10,7 @@ public class CommonConfig implements ConfigCore {
     public boolean infestedZombie = true;
     @Config(description = "Should enderminies spawn anywhere where enderman can spawn in the overworld.")
     public boolean enderminy = true;
-    @Config(description = "Should enderminies spawn anywhere in snowy biomes where wolves can spawn in the overworld.")
+    @Config(description = "Should dire wolves spawn anywhere in snowy biomes where wolves can spawn in the overworld.")
     public boolean direWolf = true;
     @Config(description = "Should wither witches spawn anywhere where witches can spawn in the overworld.")
     public boolean witherWitch = true;
