@@ -44,7 +44,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class FallenMount extends AbstractHorse implements Enemy {
-    public static final String TAG_HORSE_DATA = "HorseData";
+    static final String TAG_HORSE_DATA = "HorseData";
     private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(FallenMount.class,
             EntityDataSerializers.BOOLEAN
     );
@@ -144,12 +144,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
             living.setYRot(this.getYRot());
             living.setXRot(this.getXRot());
         }
-    }
-
-    @Override
-    @Nullable
-    public LivingEntity getControllingPassenger() {
-        return null;
     }
 
     @Override

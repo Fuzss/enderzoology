@@ -18,6 +18,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -159,8 +160,8 @@ public class FallenKnight extends AbstractSkeleton {
         if (this.level() != null && !this.level().isClientSide) {
             this.goalSelector.removeGoal(this.meleeGoal());
             this.goalSelector.removeGoal(this.bowGoal());
-            ItemStack itemStack = this.getItemInHand(RangedBowEasyAttackGoal.getWeaponHoldingHand(this, stack -> stack.getItem() instanceof BowItem));
-            if (itemStack.getItem() instanceof BowItem) {
+            ItemStack weaponStack = this.getCorrectBowWeapon(ItemStack.EMPTY);
+            if (weaponStack.getItem() instanceof BowItem) {
                 int i = 20;
                 if (this.level().getDifficulty() != Difficulty.HARD) {
                     i = 40;
@@ -175,9 +176,22 @@ public class FallenKnight extends AbstractSkeleton {
     }
 
     @Override
+    protected AbstractArrow getArrow(ItemStack arrow, float velocity, @Nullable ItemStack weaponStack) {
+        return super.getArrow(arrow, velocity, this.getCorrectBowWeapon(weaponStack));
+    }
+
+    @Override
     public ItemStack getProjectile(ItemStack weaponStack) {
-        InteractionHand interactionHand = RangedBowEasyAttackGoal.getWeaponHoldingHand(this, stack -> stack.getItem() instanceof BowItem);
-        return super.getProjectile(this.getItemInHand(interactionHand));
+        return super.getProjectile(this.getCorrectBowWeapon(weaponStack));
+    }
+
+    private ItemStack getCorrectBowWeapon(@Nullable ItemStack weaponStack) {
+        if (weaponStack != null && (weaponStack.isEmpty() || weaponStack.is(Items.BOW))) {
+            InteractionHand interactionHand = RangedBowEasyAttackGoal.getWeaponHoldingHand(this, itemStack -> itemStack.getItem() instanceof BowItem);
+            return this.getItemInHand(interactionHand);
+        } else {
+            return weaponStack;
+        }
     }
 
     private RangedBowAttackGoal<AbstractSkeleton> bowGoal() {
