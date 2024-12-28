@@ -1,0 +1,68 @@
+{
+  "entity.dire_wolf.death": {
+    "sounds": [
+      "enderzoology:mob/dire_wolf/death"
+    ],
+    "subtitle": "subtitles.entity.dire_wolf.death"
+  },
+  "entity.dire_wolf.growl": {
+    "sounds": [
+      "enderzoology:mob/dire_wolf/growl1",
+      "enderzoology:mob/dire_wolf/growl2",
+      "enderzoology:mob/dire_wolf/growl3"
+    ],
+    "subtitle": "subtitles.entity.dire_wolf.growl"
+  },
+  "entity.dire_wolf.howl": {
+    "sounds": [
+      "enderzoology:mob/dire_wolf/howl"
+    ],
+    "subtitle": "subtitles.entity.dire_wolf.howl"
+  },
+  "entity.dire_wolf.hurt": {
+    "sounds": [
+      "enderzoology:mob/dire_wolf/hurt"
+    ],
+    "subtitle": "subtitles.entity.dire_wolf.hurt"
+  },
+  "entity.owl.death": {
+    "sounds": [
+      {
+        "name": "enderzoology:mob/owl/hurt",
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.entity.owl.death"
+  },
+  "entity.owl.hoot": {
+    "sounds": [
+      {
+        "name": "enderzoology:mob/owl/hoot1",
+        "volume": 0.2
+      },
+      {
+        "name": "enderzoology:mob/owl/hoot2",
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.entity.owl.hoot"
+  },
+  "entity.owl.hurt": {
+    "sounds": [
+      {
+        "name": "enderzoology:mob/owl/hurt",
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.entity.owl.hurt"
+  },
+  "entity.owl_egg.throw": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.egg.throw"
+      }
+    ],
+    "subtitle": "subtitles.entity.owl_egg.throw"
+  }
+}
