@@ -21,11 +21,11 @@ import fuzs.puzzleslib.api.resources.v1.PackResourcesHelper;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshTransformer;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.TntMinecartRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,8 +38,7 @@ public class EnderZoologyClient implements ClientModConstructor {
 
     private static void registerEventHandlers() {
         ComputeFovModifierCallback.EVENT.register(FovModifierHandler::onComputeFovModifier);
-        RenderHandEvents.MAIN_HAND.register(FovModifierHandler.onRenderHand(InteractionHand.MAIN_HAND));
-        RenderHandEvents.OFF_HAND.register(FovModifierHandler.onRenderHand(InteractionHand.OFF_HAND)::onRenderMainHand);
+        RenderHandEvents.BOTH.register(FovModifierHandler::onRenderBothHands);
     }
 
     @Override
@@ -47,11 +46,9 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModEntityTypes.OWL_EGG_ENTITY_TYPE.value(), ThrownItemRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.PRIMED_CHARGE_ENTITY_TYPE.value(), TntRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
-                ConcussionCreeperRenderer::new
-        );
+                ConcussionCreeperRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(),
-                EnderInfestedZombieRenderer::new
-        );
+                EnderInfestedZombieRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(), EnderminyRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(), DireWolfRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(), FallenMountRenderer::new);
@@ -59,23 +56,20 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerEntityRenderer(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(), WitherWitchRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.OWL_ENTITY_TYPE.value(), OwlRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(), FallenKnightRenderer::new);
-        context.registerEntityRenderer(ModEntityTypes.ENDER_CHARGE_MINECART_ENTITY_TYPE.value(), TntMinecartRenderer::new);
+        context.registerEntityRenderer(ModEntityTypes.ENDER_CHARGE_MINECART_ENTITY_TYPE.value(),
+                TntMinecartRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.CONFUSING_CHARGE_MINECART_ENTITY_TYPE.value(),
-                TntMinecartRenderer::new
-        );
+                TntMinecartRenderer::new);
         context.registerEntityRenderer(ModEntityTypes.CONCUSSION_CHARGE_MINECART_ENTITY_TYPE.value(),
-                TntMinecartRenderer::new
-        );
+                TntMinecartRenderer::new);
     }
 
     @Override
     public void onRegisterEntitySpectatorShaders(EntitySpectatorShaderContext context) {
         context.registerSpectatorShader(ResourceLocationHelper.withDefaultNamespace("shaders/post/creeper.json"),
-                ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value()
-        );
+                ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value());
         context.registerSpectatorShader(ResourceLocationHelper.withDefaultNamespace("shaders/post/invert.json"),
-                ModEntityTypes.ENDERMINY_ENTITY_TYPE.value()
-        );
+                ModEntityTypes.ENDERMINY_ENTITY_TYPE.value());
     }
 
     @Override
@@ -89,55 +83,57 @@ public class EnderZoologyClient implements ClientModConstructor {
                                 (float) (itemStack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / 20.0F;
                     }
                 },
-                ModItems.HUNTING_BOW_ITEM.value()
-        );
+                ModItems.HUNTING_BOW_ITEM.value());
         context.registerItemProperty(ResourceLocationHelper.withDefaultNamespace("pulling"),
                 (stack, level, entity, data) -> {
                     return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
                 },
-                ModItems.HUNTING_BOW_ITEM.value()
-        );
+                ModItems.HUNTING_BOW_ITEM.value());
     }
 
     @Override
     public void onRegisterLayerDefinitions(LayerDefinitionsContext context) {
         context.registerLayerDefinition(ModelLayerLocations.OWL, OwlModel::createBodyLayer);
+        context.registerLayerDefinition(ModelLayerLocations.OWL_BABY,
+                () -> OwlModel.createBodyLayer().apply(OwlModel.BABY_TRANSFORMER));
         context.registerLayerDefinition(ModelLayerLocations.FALLEN_KNIGHT, SkeletonModel::createBodyLayer);
         context.registerLayerDefinition(ModelLayerLocations.FALLEN_KNIGHT_INNER_ARMOR,
-                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32)
-        );
+                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32));
         context.registerLayerDefinition(ModelLayerLocations.FALLEN_KNIGHT_OUTER_ARMOR,
-                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.0F), 0.0F), 64, 32)
-        );
+                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.0F), 0.0F), 64, 32));
         context.registerLayerDefinition(ModelLayerLocations.ENDER_INFESTED_ZOMBIE,
-                () -> LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64)
-        );
+                () -> LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64));
         context.registerLayerDefinition(ModelLayerLocations.ENDER_INFESTED_ZOMBIE_INNER_ARMOR,
-                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32)
-        );
+                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32));
         context.registerLayerDefinition(ModelLayerLocations.ENDER_INFESTED_ZOMBIE_OUTER_ARMOR,
+                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.0F), 0.0F), 64, 32));
+        context.registerLayerDefinition(ModelLayerLocations.ENDER_INFESTED_ZOMBIE_BABY,
+                () -> LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64)
+                        .apply(HumanoidModel.BABY_TRANSFORMER));
+        context.registerLayerDefinition(ModelLayerLocations.ENDER_INFESTED_ZOMBIE_BABY_INNER_ARMOR,
+                () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32)
+                        .apply(HumanoidModel.BABY_TRANSFORMER));
+        context.registerLayerDefinition(ModelLayerLocations.ENDER_INFESTED_ZOMBIE_BABY_OUTER_ARMOR,
                 () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.0F), 0.0F), 64, 32)
-        );
+                        .apply(HumanoidModel.BABY_TRANSFORMER));
         context.registerLayerDefinition(ModelLayerLocations.ENDERMINY, EndermanModel::createBodyLayer);
         context.registerLayerDefinition(ModelLayerLocations.FALLEN_MOUNT,
-                () -> LayerDefinition.create(HorseModel.createBodyMesh(CubeDeformation.NONE), 64, 64)
-        );
-        context.registerLayerDefinition(ModelLayerLocations.FALLEN_MOUNT_ARMOR,
-                () -> LayerDefinition.create(HorseModel.createBodyMesh(new CubeDeformation(0.1F)), 64, 64)
-        );
+                () -> LayerDefinition.create(AbstractEquineModel.createBodyMesh(CubeDeformation.NONE), 64, 64));
+        context.registerLayerDefinition(ModelLayerLocations.FALLEN_MOUNT_BABY,
+                () -> LayerDefinition.create(AbstractEquineModel.createBabyMesh(CubeDeformation.NONE), 64, 64));
         context.registerLayerDefinition(ModelLayerLocations.WITHER_CAT,
-                () -> LayerDefinition.create(OcelotModel.createBodyMesh(CubeDeformation.NONE), 64, 32)
-        );
+                () -> LayerDefinition.create(OcelotModel.createBodyMesh(CubeDeformation.NONE), 64, 32));
         context.registerLayerDefinition(ModelLayerLocations.WITHER_WITCH, WitchModel::createBodyLayer);
         context.registerLayerDefinition(ModelLayerLocations.DIRE_WOLF,
                 () -> LayerDefinition.create(WolfModel.createMeshDefinition(CubeDeformation.NONE), 64, 32)
-        );
+                        .apply(MeshTransformer.scaling(1.2F)));
+        context.registerLayerDefinition(ModelLayerLocations.DIRE_WOLF_BABY,
+                () -> LayerDefinition.create(WolfModel.createMeshDefinition(CubeDeformation.NONE), 64, 32)
+                        .apply(MeshTransformer.scaling(1.2F)).apply(WolfModel.BABY_TRANSFORMER));
         context.registerLayerDefinition(ModelLayerLocations.CONCUSSION_CREEPER,
-                () -> CreeperModel.createBodyLayer(CubeDeformation.NONE)
-        );
+                () -> CreeperModel.createBodyLayer(CubeDeformation.NONE));
         context.registerLayerDefinition(ModelLayerLocations.CONCUSSION_CREEPER_ARMOR,
-                () -> CreeperModel.createBodyLayer(new CubeDeformation(2.0F))
-        );
+                () -> CreeperModel.createBodyLayer(new CubeDeformation(2.0F)));
     }
 
     @Override
@@ -146,9 +142,7 @@ public class EnderZoologyClient implements ClientModConstructor {
                 DynamicallyCopiedPackResources.create(new DynamicallyCopiedPackResources.TextureCopy(FallenMountRenderer.VANILLA_TEXTURE_LOCATION,
                         FallenMountRenderer.TEXTURE_LOCATION,
                         64,
-                        64
-                )),
-                false
-        ));
+                        64)),
+                false));
     }
 }

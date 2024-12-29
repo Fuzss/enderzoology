@@ -1,8 +1,8 @@
 package fuzs.enderzoology.world.entity.monster;
 
-import fuzs.enderzoology.core.CommonAbstractions;
 import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.services.CommonAbstractions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -28,7 +28,6 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,8 +45,7 @@ import java.util.UUID;
 public class FallenMount extends AbstractHorse implements Enemy {
     static final String TAG_HORSE_DATA = "HorseData";
     private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(FallenMount.class,
-            EntityDataSerializers.BOOLEAN
-    );
+            EntityDataSerializers.BOOLEAN);
 
     @Nullable
     private CompoundTag horseData;
@@ -86,14 +84,13 @@ public class FallenMount extends AbstractHorse implements Enemy {
                 new NearestAttackableTargetGoal<>(this,
                         AbstractHorse.class,
                         false,
-                        entity -> entity.getType().is(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)
-                )
-        );
+                        (LivingEntity livingEntity, ServerLevel serverLevel) -> livingEntity.getType()
+                                .is(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
 
     @Override
-    protected int getBaseExperienceReward() {
+    protected int getBaseExperienceReward(ServerLevel serverLevel) {
         return this.xpReward;
     }
 
@@ -115,10 +112,10 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     public void tick() {
-        if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
+        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && this.isConverting()) {
             this.conversionTime--;
             if (this.conversionTime <= 0) {
-                this.finishConversion((ServerLevel)this.level());
+                this.finishConversion(serverLevel);
             }
         }
 
@@ -225,12 +222,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    public boolean isBodyArmorItem(ItemStack itemStack) {
-        return itemStack.getItem() instanceof AnimalArmorItem item &&
-                item.getBodyType() == AnimalArmorItem.BodyType.EQUESTRIAN;
-    }
-
-    @Override
     public void addAdditionalSaveData(CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         if (this.horseData != null) {
@@ -247,7 +238,9 @@ public class FallenMount extends AbstractHorse implements Enemy {
         super.readAdditionalSaveData(compoundTag);
         this.horseData = compoundTag.getCompound(TAG_HORSE_DATA);
         if (compoundTag.contains("ConversionTime", 99) && compoundTag.getInt("ConversionTime") > -1) {
-            this.startConverting(compoundTag.hasUUID("ConversionPlayer") ? compoundTag.getUUID("ConversionPlayer") : null, compoundTag.getInt("ConversionTime"));
+            this.startConverting(
+                    compoundTag.hasUUID("ConversionPlayer") ? compoundTag.getUUID("ConversionPlayer") : null,
+                    compoundTag.getInt("ConversionTime"));
         }
     }
 
@@ -267,8 +260,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
         this.removeEffect(MobEffects.WEAKNESS);
         this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
                 conversionTime,
-                Math.min(this.level().getDifficulty().getId() - 1, 0)
-        ));
+                Math.min(this.level().getDifficulty().getId() - 1, 0)));
         this.level().broadcastEntityEvent(this, EntityEvent.ZOMBIE_CONVERTING);
     }
 
@@ -284,8 +276,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
                                 this.getSoundSource(),
                                 1.0F + this.random.nextFloat(),
                                 this.random.nextFloat() * 0.7F + 0.3F,
-                                false
-                        );
+                                false);
             }
         } else {
             super.handleEntityEvent(id);
@@ -293,84 +284,89 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     private void finishConversion(ServerLevel serverLevel) {
-        this.recreateHorseFromData(serverLevel, this).or(this::createFreshHorse).ifPresent((AbstractHorse abstractHorse) -> {
-            abstractHorse.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
-            if (!this.isSilent()) {
-                this.level().levelEvent(null, LevelEvent.SOUND_ZOMBIE_CONVERTED, this.blockPosition(), 0);
-            }
-            CommonAbstractions.INSTANCE.onLivingConvert(this, abstractHorse);
-        });
+        this.createHorseFromData(serverLevel, this)
+                .or(() -> this.createFreshHorse(serverLevel))
+                .ifPresent((AbstractHorse abstractHorse) -> {
+                    abstractHorse.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+                    if (!this.isSilent()) {
+                        serverLevel.levelEvent(null, LevelEvent.SOUND_ZOMBIE_CONVERTED, this.blockPosition(), 0);
+                    }
+                });
     }
 
-    private Optional<AbstractHorse> recreateHorseFromData(Level level, FallenMount source) {
-        CompoundTag tag = source.horseData;
-        if (!level.isClientSide && tag != null && !tag.isEmpty()) {
-            return EntityType.create(tag, level).map((entity) -> {
-                AbstractHorse horse = (AbstractHorse) entity;
-                horse.copyPosition(source);
-                source.discard();
-                level.addFreshEntity(horse);
-                return horse;
-            });
+    private Optional<AbstractHorse> createHorseFromData(ServerLevel serverLevel, FallenMount fallenMount) {
+        if (fallenMount.horseData != null && !fallenMount.horseData.isEmpty()) {
+            return EntityType.create(fallenMount.horseData, serverLevel, EntitySpawnReason.CONVERSION)
+                    .map((Entity entity) -> {
+                        AbstractHorse abstractHorse = (AbstractHorse) entity;
+                        abstractHorse.copyPosition(fallenMount);
+                        fallenMount.discard();
+                        serverLevel.addFreshEntity(abstractHorse);
+                        return abstractHorse;
+                    });
         } else {
             return Optional.empty();
         }
     }
 
-    private Optional<AbstractHorse> createFreshHorse() {
+    private Optional<AbstractHorse> createFreshHorse(ServerLevel serverLevel) {
+        ConversionParams conversionParams = ConversionParams.single(this, false, false);
+        return Optional.ofNullable(this.convertTo(this.getRandomHorseType(), conversionParams, (AbstractHorse mob) -> {
+            for (EquipmentSlot equipmentSlot : this.dropPreservedEquipment(serverLevel,
+                    (ItemStack itemStack) -> !EnchantmentHelper.has(itemStack,
+                            EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE))) {
+                ItemStack itemStack = this.getItemBySlot(equipmentSlot);
+                mob.setItemSlot(equipmentSlot, itemStack);
+            }
+            mob.finalizeSpawn(serverLevel,
+                    serverLevel.getCurrentDifficultyAt(mob.blockPosition()),
+                    EntitySpawnReason.CONVERSION,
+                    new AgeableMobGroupData(0.0F));
+            mob.setTamed(true);
+            if (this.conversionStarter != null) {
+                mob.setOwnerUUID(this.conversionStarter);
+            }
+            mob.setBaby(false);
+            CommonAbstractions.INSTANCE.onLivingConvert(this, mob, conversionParams);
+        }));
+    }
+
+    private EntityType<AbstractHorse> getRandomHorseType() {
         EntityType<? extends AbstractHorse> entityType;
         if (this.random.nextInt(6) == 0) {
             entityType = EntityType.DONKEY;
         } else {
             entityType = EntityType.HORSE;
         }
-        AbstractHorse abstractHorse = this.convertTo(entityType, false);
-        for (EquipmentSlot equipmentSlot : this.dropPreservedEquipment(itemStack -> !EnchantmentHelper.has(itemStack,
-                EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE
-        ))) {
-            ItemStack itemStack = this.getItemBySlot(equipmentSlot);
-            abstractHorse.setItemSlot(equipmentSlot, itemStack);
-        }
-        abstractHorse.finalizeSpawn((ServerLevelAccessor) this.level(),
-                this.level().getCurrentDifficultyAt(abstractHorse.blockPosition()),
-                MobSpawnType.CONVERSION,
-                new AgeableMob.AgeableMobGroupData(0.0F)
-        );
-        abstractHorse.setTamed(true);
-        if (this.conversionStarter != null) {
-            abstractHorse.setOwnerUUID(this.conversionStarter);
-        }
-        abstractHorse.setBaby(false);
-        return Optional.of(abstractHorse);
+        return (EntityType<AbstractHorse>) entityType;
     }
 
     @Override
     public boolean killedEntity(ServerLevel level, LivingEntity entity) {
         boolean killedEntity = super.killedEntity(level, entity);
         if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD) &&
-                entity instanceof AbstractHorse abstractHorse && CommonAbstractions.INSTANCE.canLivingConvert(entity,
-                ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
-                (Integer timer) -> {
-                    // NO-OP
-                }
-        )) {
+                entity instanceof AbstractHorse abstractHorse &&
+                CommonAbstractions.INSTANCE.canLivingConvert(entity, ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value())) {
             if (level.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
                 return killedEntity;
             } else {
-                FallenMount fallenMount = abstractHorse.convertTo(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(), true);
-                CompoundTag compoundTag = new CompoundTag();
-                compoundTag.putString("id", getEncodeId(abstractHorse));
-                abstractHorse.setHealth(abstractHorse.getMaxHealth());
-                abstractHorse.setDeltaMovement(Vec3.ZERO);
-                abstractHorse.saveWithoutId(compoundTag);
-                fallenMount.horseData = compoundTag;
+                ConversionParams conversionParams = ConversionParams.single(abstractHorse, true, true);
+                FallenMount fallenMount = abstractHorse.convertTo(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
+                        conversionParams,
+                        (FallenMount mob) -> {
+                            CompoundTag compoundTag = new CompoundTag();
+                            compoundTag.putString("id", getEncodeId(abstractHorse));
+                            abstractHorse.setHealth(abstractHorse.getMaxHealth());
+                            abstractHorse.setDeltaMovement(Vec3.ZERO);
+                            abstractHorse.saveWithoutId(compoundTag);
+                            mob.horseData = compoundTag;
+                            CommonAbstractions.INSTANCE.onLivingConvert(abstractHorse, mob, conversionParams);
+                            if (!this.isSilent()) {
+                                level.levelEvent(null, LevelEvent.SOUND_ZOMBIE_INFECTED, this.blockPosition(), 0);
+                            }
+                        });
 
-                CommonAbstractions.INSTANCE.onLivingConvert(abstractHorse, fallenMount);
-                if (!this.isSilent()) {
-                    level.levelEvent(null, LevelEvent.SOUND_ZOMBIE_INFECTED, this.blockPosition(), 0);
-                }
-
-                return false;
+                return fallenMount == null;
             }
         }
 
@@ -379,8 +375,8 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        SpawnGroupData spawnGroupData = super.finalizeSpawn(level, difficulty, reason, spawnData);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason entitySpawnReason, @Nullable SpawnGroupData spawnData) {
+        SpawnGroupData spawnGroupData = super.finalizeSpawn(level, difficulty, entitySpawnReason, spawnData);
         this.populateDefaultEquipmentSlots(level.getRandom(), difficulty);
         return spawnGroupData;
     }

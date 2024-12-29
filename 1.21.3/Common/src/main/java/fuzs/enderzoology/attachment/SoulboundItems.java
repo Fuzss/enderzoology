@@ -8,7 +8,9 @@ import fuzs.puzzleslib.api.init.v3.registry.LookupHelper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.core.Holder;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.commands.GiveCommand;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,10 +30,8 @@ public record SoulboundItems(List<ItemStack> items) {
     public static final SoulboundItems EMPTY = new SoulboundItems(Collections.emptyList());
     public static final Codec<SoulboundItems> CODEC = ItemStack.CODEC.listOf()
             .xmap(SoulboundItems::new, SoulboundItems::items);
-    public static final StreamCodec<RegistryFriendlyByteBuf, SoulboundItems> STREAM_CODEC = ItemStack.LIST_STREAM_CODEC.map(
-            SoulboundItems::new,
-            SoulboundItems::items
-    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, SoulboundItems> STREAM_CODEC = ItemStack.STREAM_CODEC.<List<ItemStack>>apply(
+            ByteBufCodecs.collection(NonNullList::createWithCapacity)).map(SoulboundItems::new, SoulboundItems::items);
 
     public static EventResult onLivingDrops(LivingEntity entity, DamageSource damageSource, Collection<ItemEntity> drops, boolean recentlyHit) {
         if (entity instanceof ServerPlayer serverPlayer) {
@@ -43,20 +43,27 @@ public record SoulboundItems(List<ItemStack> items) {
 
     public static SoulboundItems saveOnDeath(ServerPlayer serverPlayer, Collection<ItemEntity> drops) {
         Holder<Enchantment> enchantment = LookupHelper.lookupEnchantment(serverPlayer,
-                ModRegistry.SOULBOUND_ENCHANTMENT
-        );
-        List<ItemStack> items = drops.stream().filter((ItemEntity itemEntity) -> {
-            return EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemEntity.getItem()) > 0;
-        }).toList().stream().peek(drops::remove).map(ItemEntity::getItem).map(ItemStack::copy).peek((ItemStack itemStack) -> {
-            if (!serverPlayer.getAbilities().instabuild) {
-                int enchantmentLevel = EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemStack);
-                if (serverPlayer.getRandom().nextInt(enchantmentLevel) == 0) {
-                    EnchantmentHelper.updateEnchantments(itemStack, (ItemEnchantments.Mutable enchantments) -> {
-                        enchantments.set(enchantment, enchantments.getLevel(enchantment) - 1);
-                    });
-                }
-            }
-        }).toList();
+                ModRegistry.SOULBOUND_ENCHANTMENT);
+        List<ItemStack> items = drops.stream()
+                .filter((ItemEntity itemEntity) -> {
+                    return EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemEntity.getItem()) > 0;
+                })
+                .toList()
+                .stream()
+                .peek(drops::remove)
+                .map(ItemEntity::getItem)
+                .map(ItemStack::copy)
+                .peek((ItemStack itemStack) -> {
+                    if (!serverPlayer.getAbilities().instabuild) {
+                        int enchantmentLevel = EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemStack);
+                        if (serverPlayer.getRandom().nextInt(enchantmentLevel) == 0) {
+                            EnchantmentHelper.updateEnchantments(itemStack, (ItemEnchantments.Mutable enchantments) -> {
+                                enchantments.set(enchantment, enchantments.getLevel(enchantment) - 1);
+                            });
+                        }
+                    }
+                })
+                .toList();
         return new SoulboundItems(items);
     }
 
@@ -75,8 +82,7 @@ public record SoulboundItems(List<ItemStack> items) {
                 GiveCommand.giveItem(commandSource,
                         itemInput,
                         Collections.singletonList(serverPlayer),
-                        itemStack.getCount()
-                );
+                        itemStack.getCount());
             } catch (CommandSyntaxException exception) {
                 // NO-OP
             }

@@ -4,14 +4,12 @@ import fuzs.enderzoology.attachment.SoulboundItems;
 import fuzs.enderzoology.config.CommonConfig;
 import fuzs.enderzoology.handler.HuntingBowHandler;
 import fuzs.enderzoology.handler.MobHuntingHandler;
-import fuzs.enderzoology.init.ModEntityTypes;
-import fuzs.enderzoology.init.ModItems;
-import fuzs.enderzoology.init.ModPotions;
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.*;
 import fuzs.enderzoology.world.entity.EntityAttributeProviders;
 import fuzs.enderzoology.world.entity.SpawnPlacementRules;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.entity.monster.ConcussionCreeper;
+import fuzs.enderzoology.world.entity.monster.DireWolf;
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
@@ -64,7 +62,7 @@ public class EnderZoology implements ModConstructor {
 
     @Override
     public void onConstructMod() {
-        ModRegistry.touch();
+        ModRegistry.bootstrap();
         registerEventHandlers();
     }
 
@@ -76,6 +74,7 @@ public class EnderZoology implements ModConstructor {
         PlayerCopyEvents.COPY.register(SoulboundItems::onCopy);
         LivingDropsCallback.EVENT.register(SoulboundItems::onLivingDrops);
         RegisterPotionBrewingMixesCallback.EVENT.register(EnderZoology::registerBrewingRecipes);
+        UseItemEvents.FINISH.register(DireWolf::onUseItemFinish);
     }
 
     @Override
@@ -85,9 +84,9 @@ public class EnderZoology implements ModConstructor {
 
     private static void registerDispenseBehaviors() {
         DispenserBlock.registerProjectileBehavior(ModItems.OWL_EGG_ITEM.value());
-        registerChargeBehavior(ModRegistry.ENDER_CHARGE_BLOCK.value(), EnderExplosionType.ENDER);
-        registerChargeBehavior(ModRegistry.CONFUSING_CHARGE_BLOCK.value(), EnderExplosionType.CONFUSION);
-        registerChargeBehavior(ModRegistry.CONCUSSION_CHARGE_BLOCK.value(), EnderExplosionType.CONCUSSION);
+        registerChargeBehavior(ModBlocks.ENDER_CHARGE_BLOCK.value(), EnderExplosionType.ENDER);
+        registerChargeBehavior(ModBlocks.CONFUSING_CHARGE_BLOCK.value(), EnderExplosionType.CONFUSION);
+        registerChargeBehavior(ModBlocks.CONCUSSION_CHARGE_BLOCK.value(), EnderExplosionType.CONCUSSION);
     }
 
     private static void registerChargeBehavior(Block block, EnderExplosionType enderExplosionType) {
@@ -97,12 +96,12 @@ public class EnderZoology implements ModConstructor {
             protected ItemStack execute(BlockSource blockSource, ItemStack stack) {
                 Level level = blockSource.level();
                 BlockPos blockpos = blockSource.pos().relative(blockSource.state().getValue(DispenserBlock.FACING));
-                PrimedTnt primedtnt = new PrimedCharge(level,
-                        (double) blockpos.getX() + 0.5D, blockpos.getY(),
-                        (double) blockpos.getZ() + 0.5D, null, enderExplosionType
+                PrimedTnt primedTnt = new PrimedCharge(level,
+                        (double) blockpos.getX() + 0.5, blockpos.getY(),
+                        (double) blockpos.getZ() + 0.5, null, enderExplosionType
                 );
-                level.addFreshEntity(primedtnt);
-                level.playSound(null, primedtnt.getX(), primedtnt.getY(), primedtnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.addFreshEntity(primedTnt);
+                level.playSound(null, primedTnt.getX(), primedTnt.getY(), primedTnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
                 level.gameEvent(null, GameEvent.ENTITY_PLACE, blockpos);
                 stack.shrink(1);
                 return stack;
@@ -125,7 +124,7 @@ public class EnderZoology implements ModConstructor {
 
     @Override
     public void onRegisterFlammableBlocks(FlammableBlocksContext context) {
-        context.registerFlammable(15, 100, ModRegistry.ENDER_CHARGE_BLOCK.value(), ModRegistry.CONFUSING_CHARGE_BLOCK.value(), ModRegistry.CONCUSSION_CHARGE_BLOCK.value());
+        context.registerFlammable(15, 100, ModBlocks.ENDER_CHARGE_BLOCK.value(), ModBlocks.CONFUSING_CHARGE_BLOCK.value(), ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
     }
 
     @Override
@@ -208,12 +207,12 @@ public class EnderZoology implements ModConstructor {
         });
     }
 
-    private static void registerSpawnData(MobSpawnSettingsContext settings, MobCategory category, EntityType<?> vanillaEntityType, Function<MobSpawnSettings.SpawnerData, MobSpawnSettings.SpawnerData> factory) {
-        findVanillaSpawnData(settings, category, vanillaEntityType).ifPresent(data -> settings.addSpawn(category, factory.apply(data)));
+    private static void registerSpawnData(MobSpawnSettingsContext settings, MobCategory mobCategory, EntityType<?> vanillaEntityType, Function<MobSpawnSettings.SpawnerData, MobSpawnSettings.SpawnerData> factory) {
+        findVanillaSpawnData(settings, mobCategory, vanillaEntityType).ifPresent(data -> settings.addSpawn(mobCategory, factory.apply(data)));
     }
 
-    private static Optional<MobSpawnSettings.SpawnerData> findVanillaSpawnData(MobSpawnSettingsContext settings, MobCategory category, EntityType<?> entityType) {
-        return settings.getSpawnerData(category).stream().filter(data -> data.type == entityType).findAny();
+    private static Optional<MobSpawnSettings.SpawnerData> findVanillaSpawnData(MobSpawnSettingsContext settings, MobCategory mobCategory, EntityType<?> entityType) {
+        return settings.getSpawnerData(mobCategory).stream().filter(data -> data.type == entityType).findAny();
     }
 
     private static void registerSpawnCost(MobSpawnSettingsContext spawnSettings, EntityType<?> vanillaEntityType, EntityType<?> modEntityType, DoubleUnaryOperator chargeConverter, DoubleUnaryOperator energyBudgetConverter) {
@@ -223,8 +222,7 @@ public class EnderZoology implements ModConstructor {
 
     @Override
     public void onRegisterCreativeModeTabs(CreativeModeTabContext context) {
-        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID)
-                .icon(() -> new ItemStack(ModItems.ENDER_FRAGMENT_ITEM.value()))
+        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID, ModItems.ENDER_FRAGMENT_ITEM)
                 .appendEnchantmentsAndPotions()
                 .displayItems((itemDisplayParameters, output) -> {
                     output.accept(ModItems.ENDER_CHARGE_ITEM.value());

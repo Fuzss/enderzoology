@@ -58,13 +58,12 @@ public class Owl extends Animal implements FlyingAnimal {
     }
 
     @Override
-    @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason entitySpawnReason, @Nullable SpawnGroupData spawnData) {
         if (spawnData == null) {
             spawnData = new AgeableMob.AgeableMobGroupData(true);
         }
 
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+        return super.finalizeSpawn(level, difficulty, entitySpawnReason, spawnData);
     }
 
     @Override
@@ -83,11 +82,11 @@ public class Owl extends Animal implements FlyingAnimal {
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
-        flyingpathnavigation.setCanOpenDoors(false);
-        flyingpathnavigation.setCanFloat(true);
-        flyingpathnavigation.setCanPassDoors(true);
-        return flyingpathnavigation;
+        FlyingPathNavigation pathNavigation = new FlyingPathNavigation(this, level);
+        pathNavigation.setCanOpenDoors(false);
+        pathNavigation.setCanFloat(true);
+        pathNavigation.setCanPassDoors(true);
+        return pathNavigation;
     }
 
     @Override
@@ -96,9 +95,9 @@ public class Owl extends Animal implements FlyingAnimal {
 
         this.calculateFlapping();
 
-        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && this.level().getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
+        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby() && serverLevel.getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-            this.spawnAtLocation(ModItems.OWL_EGG_ITEM.value());
+            this.spawnAtLocation(serverLevel, ModItems.OWL_EGG_ITEM.value());
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(2000) + 2000;
         }
@@ -188,14 +187,14 @@ public class Owl extends Animal implements FlyingAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
-        return target.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entity) {
+        return entity.hurtServer(serverLevel, this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return ModEntityTypes.OWL_ENTITY_TYPE.value().create(level);
+        return ModEntityTypes.OWL_ENTITY_TYPE.value().create(level, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -210,8 +209,8 @@ public class Owl extends Animal implements FlyingAnimal {
 
     static class OwlWanderGoal extends WaterAvoidingRandomFlyingGoal {
 
-        public OwlWanderGoal(PathfinderMob pathfinderMob, double d) {
-            super(pathfinderMob, d);
+        public OwlWanderGoal(PathfinderMob pathfinderMob, double speedModifier) {
+            super(pathfinderMob, speedModifier);
         }
 
         @Override

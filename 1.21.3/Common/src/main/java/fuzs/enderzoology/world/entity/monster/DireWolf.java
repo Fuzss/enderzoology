@@ -2,6 +2,7 @@ package fuzs.enderzoology.world.entity.monster;
 
 import fuzs.enderzoology.init.ModSoundEvents;
 import fuzs.enderzoology.world.entity.ai.goal.FollowPackLeaderGoal;
+import fuzs.puzzleslib.api.event.v1.data.MutableValue;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -39,7 +41,8 @@ import java.util.stream.Stream;
 public class DireWolf extends Wolf implements Enemy, PackMob {
     private static final UniformInt EATING_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final Predicate<ItemEntity> ALLOWED_ITEMS = (itemEntity) -> {
-        return !itemEntity.hasPickUpDelay() && itemEntity.isAlive() && !(itemEntity.getItem().getItem() instanceof BlockItem);
+        return !itemEntity.hasPickUpDelay() && itemEntity.isAlive() &&
+                !(itemEntity.getItem().getItem() instanceof BlockItem);
     };
 
     @Nullable
@@ -66,13 +69,29 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Wolf.class, 8, true, false, entity -> entity.getType() == EntityType.WOLF));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 12, true, false, entity -> (entity instanceof Animal || entity instanceof Zombie) && !(entity instanceof Wolf) && this.isHungry() && !this.getMainHandItem().has(DataComponents.FOOD)));
+        this.targetSelector.addGoal(3,
+                new NearestAttackableTargetGoal<>(this,
+                        Wolf.class,
+                        8,
+                        true,
+                        false,
+                        (LivingEntity livingEntity, ServerLevel serverLevel) -> livingEntity.getType() ==
+                                EntityType.WOLF));
+        this.targetSelector.addGoal(4,
+                new NearestAttackableTargetGoal<>(this,
+                        Mob.class,
+                        12,
+                        true,
+                        false,
+                        (LivingEntity livingEntity, ServerLevel serverLevel) ->
+                                (livingEntity instanceof Animal || livingEntity instanceof Zombie) &&
+                                        !(livingEntity instanceof Wolf) && this.isHungry() &&
+                                        !this.getMainHandItem().has(DataComponents.FOOD)));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, true));
     }
 
     @Override
-    public int getBaseExperienceReward() {
+    public int getBaseExperienceReward(ServerLevel serverLevel) {
         return this.xpReward;
     }
 
@@ -128,7 +147,8 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     public void tick() {
         super.tick();
         if (this.hasFollowers() && this.level().random.nextInt(200) == 1) {
-            List<? extends PackMob> list = this.level().getEntitiesOfClass(this.getClass(), this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D));
+            List<? extends PackMob> list = this.level()
+                    .getEntitiesOfClass(this.getClass(), this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D));
             if (list.size() <= 1) {
                 this.wolfPackSize = 1;
             }
@@ -168,21 +188,22 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason entitySpawnReason, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnGroupData == null) {
             spawnGroupData = new PackSpawnGroupData(this);
         } else if (spawnGroupData instanceof PackSpawnGroupData packSpawnData) {
             this.startFollowing(packSpawnData.leader);
         }
 
-        return super.finalizeSpawn(level, difficulty, mobSpawnType, spawnGroupData);
+        return super.finalizeSpawn(level, difficulty, entitySpawnReason, spawnGroupData);
     }
 
     @Override
     public void aiStep() {
         if (!this.level().isClientSide && this.isAlive() && this.isEffectiveAi()) {
             ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
-            if (this.canEat(itemStack) && --this.ticksSinceEaten < 40 && this.random.nextFloat() < 0.1F && !this.isUsingItem()) {
+            if (this.canEat(itemStack) && --this.ticksSinceEaten < 40 && this.random.nextFloat() < 0.1F &&
+                    !this.isUsingItem()) {
                 this.startUsingItem(InteractionHand.MAIN_HAND);
             } else if (this.ticksSinceEaten < 0) {
                 this.ticksSinceEaten = EATING_TIME.sample(this.random);
@@ -192,12 +213,15 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         super.aiStep();
     }
 
-    @Override
-    public ItemStack eat(Level level, ItemStack food, FoodProperties foodProperties) {
-        float meatMultiplier = food.is(ItemTags.MEAT) ? 2.0F : 1.0F;
-        this.heal(foodProperties.nutrition() * meatMultiplier);
-        this.level().broadcastEntityEvent(this, EntityEvent.IN_LOVE_HEARTS);
-        return super.eat(level, food, foodProperties);
+    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, int remainingUseDuration, ItemStack originalItemStack) {
+        if (livingEntity instanceof DireWolf) {
+            FoodProperties foodProperties = originalItemStack.get(DataComponents.FOOD);
+            if (foodProperties != null) {
+                float meatMultiplier = originalItemStack.is(ItemTags.MEAT) ? 2.0F : 1.0F;
+                livingEntity.heal(foodProperties.nutrition() * meatMultiplier);
+                livingEntity.level().broadcastEntityEvent(livingEntity, EntityEvent.IN_LOVE_HEARTS);
+            }
+        }
     }
 
     @Override
@@ -207,7 +231,14 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
                 double d = this.random.nextGaussian() * 0.02;
                 double e = this.random.nextGaussian() * 0.02;
                 double f = this.random.nextGaussian() * 0.02;
-                this.level().addParticle(ParticleTypes.HEART, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
+                this.level()
+                        .addParticle(ParticleTypes.HEART,
+                                this.getRandomX(1.0),
+                                this.getRandomY() + 0.5,
+                                this.getRandomZ(1.0),
+                                d,
+                                e,
+                                f);
             }
         } else {
             super.handleEntityEvent(id);
@@ -228,28 +259,28 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     @Override
-    public boolean canTakeItem(ItemStack stack) {
-        EquipmentSlot equipmentSlot = this.getEquipmentSlotForItem(stack);
-        if (!this.getItemBySlot(equipmentSlot).isEmpty()) {
-            return false;
-        } else {
-            return equipmentSlot == EquipmentSlot.MAINHAND && super.canTakeItem(stack);
-        }
+    protected boolean canDispenserEquipIntoSlot(EquipmentSlot slot) {
+        return slot == EquipmentSlot.MAINHAND && this.canPickUpLoot();
     }
 
     @Override
     public boolean canHoldItem(ItemStack stack) {
         ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
-        return itemStack.isEmpty() || this.ticksSinceEaten > 0 && stack.has(DataComponents.FOOD) && !itemStack.has(DataComponents.FOOD);
+        return itemStack.isEmpty() ||
+                this.ticksSinceEaten > 0 && stack.has(DataComponents.FOOD) && !itemStack.has(DataComponents.FOOD);
     }
 
-    private void spitOutItem(ItemStack stack) {
-        if (!stack.isEmpty() && !this.level().isClientSide) {
-            ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0, this.getZ() + this.getLookAngle().z, stack);
+    private void spitOutItem(ServerLevel serverLevel, ItemStack itemStack) {
+        if (!itemStack.isEmpty()) {
+            ItemEntity itemEntity = new ItemEntity(serverLevel,
+                    this.getX() + this.getLookAngle().x,
+                    this.getY() + 1.0,
+                    this.getZ() + this.getLookAngle().z,
+                    itemStack);
             itemEntity.setPickUpDelay(40);
             itemEntity.setThrower(this);
             this.playSound(SoundEvents.FOX_SPIT, 1.0F, 1.0F);
-            this.level().addFreshEntity(itemEntity);
+            serverLevel.addFreshEntity(itemEntity);
         }
     }
 
@@ -259,7 +290,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     }
 
     @Override
-    protected void pickUpItem(ItemEntity itemEntity) {
+    protected void pickUpItem(ServerLevel serverLevel, ItemEntity itemEntity) {
         ItemStack itemStack = itemEntity.getItem();
         if (this.canHoldItem(itemStack)) {
             int i = itemStack.getCount();
@@ -267,7 +298,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
                 this.dropItemStack(itemStack.split(i - 1));
             }
 
-            this.spitOutItem(this.getItemBySlot(EquipmentSlot.MAINHAND));
+            this.spitOutItem(serverLevel, this.getItemBySlot(EquipmentSlot.MAINHAND));
             this.onItemPickup(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.split(1));
             this.setGuaranteedDrop(EquipmentSlot.MAINHAND);
@@ -282,7 +313,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     protected void dropAllDeathLoot(ServerLevel serverLevel, DamageSource damageSource) {
         ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
         if (!itemStack.isEmpty()) {
-            this.spawnAtLocation(itemStack);
+            this.spawnAtLocation(serverLevel, itemStack);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
 
@@ -291,7 +322,8 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return this.random.nextFloat() < 0.1F ? ModSoundEvents.DIRE_WOLF_HOWL_SOUND_EVENT.value() : ModSoundEvents.DIRE_WOLF_GROWL_SOUND_EVENT.value();
+        return this.random.nextFloat() < 0.1F ? ModSoundEvents.DIRE_WOLF_HOWL_SOUND_EVENT.value() :
+                ModSoundEvents.DIRE_WOLF_GROWL_SOUND_EVENT.value();
     }
 
     @Override
@@ -360,6 +392,10 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     static class SearchForItemsGoal extends Goal {
         private final Mob mob;
+        @Nullable
+        private Path path;
+        @Nullable
+        private ItemEntity itemEntity;
 
         public SearchForItemsGoal(Mob mob) {
             this.mob = mob;
@@ -374,31 +410,43 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
                 if (this.mob.getRandom().nextInt(reducedTickDelay(10)) != 0) {
                     return false;
                 } else {
-                    List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
-                    return !list.isEmpty() && this.mob.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
+                    for (ItemEntity itemEntity : this.mob.level()
+                            .getEntitiesOfClass(ItemEntity.class,
+                                    this.mob.getBoundingBox().inflate(8.0),
+                                    ALLOWED_ITEMS)) {
+                        Path path = this.mob.getNavigation().createPath(itemEntity, 1);
+                        if (path != null && path.canReach()) {
+                            this.path = path;
+                            this.itemEntity = itemEntity;
+                            return true;
+                        }
+                    }
                 }
-            } else {
-                return false;
             }
+
+            return false;
         }
 
         @Override
-        public void tick() {
-            List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
-            ItemStack itemStack = this.mob.getItemBySlot(EquipmentSlot.MAINHAND);
-            if (itemStack.isEmpty() && !list.isEmpty()) {
-                this.mob.getNavigation().moveTo(list.get(0), 1.2);
+        public boolean canContinueToUse() {
+            if (this.itemEntity == null || this.path == null) {
+                return false;
+            } else if (this.itemEntity.isRemoved()) {
+                return false;
+            } else {
+                return this.path.isDone() || this.itemEntity.closerThan(this.mob, 1.414);
             }
-
         }
 
         @Override
         public void start() {
-            List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(8.0, 8.0, 8.0), ALLOWED_ITEMS);
-            if (!list.isEmpty()) {
-                this.mob.getNavigation().moveTo(list.get(0), 1.2);
-            }
+            this.mob.getNavigation().moveTo(this.path, 1.2F);
+        }
 
+        @Override
+        public void stop() {
+            this.path = null;
+            this.itemEntity = null;
         }
     }
 }

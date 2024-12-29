@@ -118,14 +118,14 @@ public class FallenKnight extends AbstractSkeleton {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData);
         if (level.getRandom().nextBoolean()) {
-            Mob fallenMount = ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level());
-            fallenMount.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-            fallenMount.finalizeSpawn(level, difficulty, MobSpawnType.JOCKEY, null);
-            this.startRiding(fallenMount);
-            level.addFreshEntity(fallenMount);
+            Mob mob = ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level(), EntitySpawnReason.JOCKEY);
+            mob.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+            mob.finalizeSpawn(level, difficulty, EntitySpawnReason.JOCKEY, null);
+            this.startRiding(mob);
+            level.addFreshEntity(mob);
         }
 
         this.setCanBreakDoors(level.getRandom().nextFloat() < difficulty.getSpecialMultiplier() * BREAK_DOOR_CHANCE);

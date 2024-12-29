@@ -73,25 +73,25 @@ public class Enderminy extends Monster implements NeutralMob {
     }
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(ServerLevel serverLevel) {
         if (this.isAngry()) {
             this.maybePlayFirstAngerSound();
         }
 
-        this.updatePersistentAnger((ServerLevel) this.level(), true);
+        this.updatePersistentAnger(serverLevel, true);
         if (this.getTarget() != null) {
             this.maybeAlertOthers();
         }
 
-        if (this.level().isDay() && this.tickCount >= this.targetChangeTime + MIN_DEAGGRESSION_TIME) {
+        if (serverLevel.isDay() && this.tickCount >= this.targetChangeTime + MIN_DEAGGRESSION_TIME) {
             float f = this.getLightLevelDependentMagicValue();
-            if (f > 0.5F && this.level().canSeeSky(this.blockPosition()) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
+            if (f > 0.5F && serverLevel.canSeeSky(this.blockPosition()) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
                 this.setTarget(null);
                 this.teleport();
             }
         }
 
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     private void maybePlayFirstAngerSound() {
@@ -227,7 +227,7 @@ public class Enderminy extends Monster implements NeutralMob {
     private boolean teleport(double x, double y, double z) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(x, y, z);
 
-        while (mutableBlockPos.getY() > this.level().getMinBuildHeight() && !this.level().getBlockState(mutableBlockPos).blocksMotion()) {
+        while (mutableBlockPos.getY() > this.level().getMinY() && !this.level().getBlockState(mutableBlockPos).blocksMotion()) {
             mutableBlockPos.move(Direction.DOWN);
         }
 
@@ -267,14 +267,14 @@ public class Enderminy extends Monster implements NeutralMob {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damageSource, float damageAmount) {
+        if (this.isInvulnerableTo(serverLevel, damageSource)) {
             return false;
-        } else if (source.is(DamageTypeTags.IS_PROJECTILE)) {
-            Entity entity = source.getDirectEntity();
+        } else if (damageSource.is(DamageTypeTags.IS_PROJECTILE)) {
+            Entity entity = damageSource.getDirectEntity();
             boolean isHurt;
             if (entity instanceof ThrownPotion) {
-                isHurt = this.hurtWithCleanWater(source, (ThrownPotion) entity, amount);
+                isHurt = this.hurtWithCleanWater(serverLevel, damageSource, (ThrownPotion) entity, damageAmount);
             } else {
                 isHurt = false;
             }
@@ -287,8 +287,8 @@ public class Enderminy extends Monster implements NeutralMob {
 
             return isHurt;
         } else {
-            boolean isHurt = super.hurt(source, amount);
-            if (!this.level().isClientSide() && !(source.getEntity() instanceof LivingEntity) && this.random.nextInt(10) != 0) {
+            boolean isHurt = super.hurtServer(serverLevel, damageSource, damageAmount);
+            if (!(damageSource.getEntity() instanceof LivingEntity) && this.random.nextInt(10) != 0) {
                 this.teleport();
             }
 
@@ -296,14 +296,14 @@ public class Enderminy extends Monster implements NeutralMob {
         }
     }
 
-    private boolean hurtWithCleanWater(DamageSource source, ThrownPotion potion, float amount) {
-        ItemStack itemStack = potion.getItem();
+    private boolean hurtWithCleanWater(ServerLevel serverLevel, DamageSource damageSource, ThrownPotion thrownPotion, float damageAmount) {
+        ItemStack itemStack = thrownPotion.getItem();
         PotionContents potionContents = itemStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-        return potionContents.is(Potions.WATER) && super.hurt(source, amount);
+        return potionContents.is(Potions.WATER) && super.hurtServer(serverLevel, damageSource, damageAmount);
     }
 
     @Override
-    public boolean isPreventingPlayerRest(Player player) {
-        return this.isAngryAt(player);
+    public boolean isPreventingPlayerRest(ServerLevel serverLevel, Player player) {
+        return this.isAngryAt(player, serverLevel);
     }
 }

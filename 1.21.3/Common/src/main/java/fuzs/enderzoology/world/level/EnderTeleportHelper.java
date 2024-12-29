@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Fox;
@@ -28,9 +29,8 @@ public class EnderTeleportHelper {
                 double randomX = entity.getX() + (entity.getRandom().nextDouble() - 0.5) * teleportRange * 2;
                 double randomY = Mth.clamp(
                         entity.getY() + (entity.getRandom().nextInt(teleportRange * 2) - teleportRange),
-                        level.getMinBuildHeight(),
-                        level.getMinBuildHeight() + level.getLogicalHeight() - 1
-                );
+                        level.getMinY(),
+                        level.getMinY() + level.getLogicalHeight() - 1);
                 double randomZ = entity.getZ() + (entity.getRandom().nextDouble() - 0.5) * teleportRange * 2;
                 if (entity.isPassenger()) entity.stopRiding();
                 Vec3 vec3 = entity.position();
@@ -44,14 +44,15 @@ public class EnderTeleportHelper {
                             soundEvent,
                             entity.getSoundSource(),
                             1.0F,
-                            1.0F
-                    );
+                            1.0F);
                     entity.playSound(soundEvent, 1.0F, 1.0F);
                     if (endermiteChance && level.random.nextFloat() < 0.05F &&
                             level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
-                        Endermite endermite = EntityType.ENDERMITE.create(level);
-                        endermite.moveTo(vec3.x, vec3.y, vec3.z, entity.getYRot(), entity.getXRot());
-                        level.addFreshEntity(endermite);
+                        Endermite endermite = EntityType.ENDERMITE.create(level, EntitySpawnReason.TRIGGERED);
+                        if (endermite != null) {
+                            endermite.moveTo(vec3.x, vec3.y, vec3.z, entity.getYRot(), entity.getXRot());
+                            level.addFreshEntity(endermite);
+                        }
                     }
                     return;
                 }

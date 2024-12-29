@@ -13,8 +13,10 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestHealableRaiderTargetGoal;
 import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -40,8 +42,8 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
         this.healCatsGoal = new NearestHealableRaiderTargetGoal<>(this,
                 WitherCat.class,
                 true,
-                mob -> mob.getHealth() < mob.getMaxHealth()
-        ) {
+                (LivingEntity livingEntity, ServerLevel serverLevel) -> livingEntity.getHealth() <
+                        livingEntity.getMaxHealth()) {
 
             @Override
             public boolean canUse() {
@@ -53,8 +55,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
                                         this.target.getY(),
                                         this.target.getZ(),
                                         12.0,
-                                        true
-                                ) != null) {
+                                        true) != null) {
                             this.target = null;
                             return false;
                         } else {
@@ -80,20 +81,20 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        if (level instanceof ServerLevel && reason == MobSpawnType.NATURAL) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason entitySpawnReason, @Nullable SpawnGroupData spawnData) {
+        if (level instanceof ServerLevel && entitySpawnReason == EntitySpawnReason.NATURAL) {
             this.trySpawnCompanion((ServerLevel) level, this.blockPosition(), 4);
             if (this.random.nextInt(4) == 0) {
                 this.trySpawnCompanion((ServerLevel) level, this.blockPosition(), 4);
             }
         }
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+        return super.finalizeSpawn(level, difficulty, entitySpawnReason, spawnData);
     }
 
-    private void trySpawnCompanion(ServerLevel serverLevel, BlockPos pos, int maxDistance) {
-        BlockPos blockPos = this.findSpawnPositionNear(serverLevel, pos, maxDistance);
-        if (blockPos != null) {
-            ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value().spawn(serverLevel, blockPos, MobSpawnType.EVENT);
+    private void trySpawnCompanion(ServerLevel serverLevel, BlockPos blockPos, int maxDistance) {
+        BlockPos spawnPosition = this.findSpawnPositionNear(serverLevel, blockPos, maxDistance);
+        if (spawnPosition != null) {
+            ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value().spawn(serverLevel, spawnPosition, EntitySpawnReason.EVENT);
         }
     }
 
@@ -158,10 +159,19 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
                 potion = ModPotions.RISING_POTION;
             }
 
-            ThrownPotion thrownPotion = new ThrownPotion(this.level(), this);
-            thrownPotion.setItem(PotionContents.createItemStack(Items.SPLASH_POTION, potion));
-            thrownPotion.setXRot(thrownPotion.getXRot() - -20.0F);
-            thrownPotion.shoot(d, e + g * 0.2, f, 0.75F, 8.0F);
+            if (this.level() instanceof ServerLevel serverLevel) {
+                ItemStack itemStack = PotionContents.createItemStack(Items.SPLASH_POTION, potion);
+                Projectile.spawnProjectileUsingShoot(ThrownPotion::new,
+                        serverLevel,
+                        itemStack,
+                        this,
+                        d,
+                        e + g * 0.2,
+                        f,
+                        0.75F,
+                        8.0F);
+            }
+
             if (!this.isSilent()) {
                 this.level()
                         .playSound(null,
@@ -171,17 +181,14 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
                                 SoundEvents.WITCH_THROW,
                                 this.getSoundSource(),
                                 1.0F,
-                                0.8F + this.random.nextFloat() * 0.4F
-                        );
+                                0.8F + this.random.nextFloat() * 0.4F);
             }
-
-            this.level().addFreshEntity(thrownPotion);
         }
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        return super.isInvulnerableTo(source) || source.getEntity() instanceof Witch;
+    public boolean isInvulnerableTo(ServerLevel serverLevel, DamageSource damageSource) {
+        return super.isInvulnerableTo(serverLevel, damageSource) || damageSource.getEntity() instanceof Witch;
     }
 
     @Override

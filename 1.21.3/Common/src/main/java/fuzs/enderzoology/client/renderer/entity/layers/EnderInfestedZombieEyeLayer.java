@@ -5,9 +5,9 @@ import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 
-public class EnderInfestedZombieEyeLayer<T extends Zombie> extends EyesLayer<T, ZombieModel<T>> {
+public class EnderInfestedZombieEyeLayer<T extends ZombieRenderState> extends EyesLayer<T, ZombieModel<T>> {
     private static final RenderType TEXTURE_LOCATION = RenderType.eyes(EnderZoology.id("textures/entity/zombie/ender_infested_zombie_eye.png"));
 
     public EnderInfestedZombieEyeLayer(RenderLayerParent<T, ZombieModel<T>> renderLayerParent) {

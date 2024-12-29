@@ -8,23 +8,29 @@ import fuzs.enderzoology.world.entity.monster.Enderminy;
 import net.minecraft.client.model.EndermanModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.state.EndermanRenderState;
 import net.minecraft.resources.ResourceLocation;
 
-public class EnderminyRenderer extends MobRenderer<Enderminy, EndermanModel<Enderminy>> {
+public class EnderminyRenderer extends MobRenderer<Enderminy, EndermanRenderState, EndermanModel<EndermanRenderState>> {
     private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/enderminy/enderminy.png");
 
     public EnderminyRenderer(EntityRendererProvider.Context context) {
         super(context, new EndermanModel<>(context.bakeLayer(ModelLayerLocations.ENDERMINY)), 0.25F);
-        this.addLayer(new EnderminyEyesLayer<>(this));
+        this.addLayer(new EnderminyEyesLayer(this));
     }
 
     @Override
-    protected void scale(Enderminy livingEntity, PoseStack matrixStack, float partialTickTime) {
-        matrixStack.scale(0.5F, 0.25F, 0.5F);
+    public EndermanRenderState createRenderState() {
+        return new EndermanRenderState();
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Enderminy entity) {
+    protected void scale(EndermanRenderState endermanRenderState, PoseStack poseStack) {
+        poseStack.scale(0.5F, 0.25F, 0.5F);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(EndermanRenderState endermanRenderState) {
         return TEXTURE_LOCATION;
     }
 }

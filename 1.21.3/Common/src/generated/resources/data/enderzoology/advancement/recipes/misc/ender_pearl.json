@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "enderzoology:ender_pearl"
+        "recipe": "minecraft:ender_pearl"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "enderzoology:ender_pearl"
+      "minecraft:ender_pearl"
     ]
   }
 }

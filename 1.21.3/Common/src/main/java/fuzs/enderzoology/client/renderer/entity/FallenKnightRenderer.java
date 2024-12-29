@@ -2,29 +2,30 @@ package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.client.init.ModelLayerLocations;
-import fuzs.enderzoology.client.model.FallenKnightModel;
-import net.minecraft.client.model.SkeletonModel;
+import fuzs.enderzoology.world.entity.monster.FallenKnight;
+import net.minecraft.client.renderer.entity.AbstractSkeletonRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.client.renderer.entity.state.SkeletonRenderState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 
-public class FallenKnightRenderer extends HumanoidMobRenderer<AbstractSkeleton, SkeletonModel<AbstractSkeleton>> {
-    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/skeleton/fallen_knight.png");
+public class FallenKnightRenderer extends AbstractSkeletonRenderer<FallenKnight, SkeletonRenderState> {
+    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id(
+            "textures/entity/skeleton/fallen_knight.png");
 
     public FallenKnightRenderer(EntityRendererProvider.Context context) {
-        super(context, new FallenKnightModel<>(context.bakeLayer(ModelLayerLocations.FALLEN_KNIGHT)), 0.5F);
-        this.addLayer(new HumanoidArmorLayer<>(this, new FallenKnightModel<>(context.bakeLayer(ModelLayerLocations.FALLEN_KNIGHT_INNER_ARMOR)), new FallenKnightModel<>(context.bakeLayer(ModelLayerLocations.FALLEN_KNIGHT_OUTER_ARMOR)), context.getModelManager()));
+        super(context,
+                ModelLayerLocations.FALLEN_KNIGHT,
+                ModelLayerLocations.FALLEN_KNIGHT_INNER_ARMOR,
+                ModelLayerLocations.FALLEN_KNIGHT_OUTER_ARMOR);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(AbstractSkeleton entity) {
+    public SkeletonRenderState createRenderState() {
+        return new SkeletonRenderState();
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(SkeletonRenderState skeletonRenderState) {
         return TEXTURE_LOCATION;
-    }
-
-    @Override
-    protected boolean isShaking(AbstractSkeleton entity) {
-        return entity.isShaking();
     }
 }

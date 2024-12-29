@@ -1,6 +1,6 @@
 package fuzs.enderzoology.data.tags;
 
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.ModBlocks;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import fuzs.puzzleslib.api.data.v2.tags.AbstractTagProvider;
 import net.minecraft.core.HolderLookup;
@@ -17,6 +17,6 @@ public class ModBlockTagProvider extends AbstractTagProvider<Block> {
     @Override
     public void addTags(HolderLookup.Provider provider) {
         this.add(BlockTags.ENDERMAN_HOLDABLE)
-                .add(ModRegistry.ENDER_CHARGE_BLOCK.value(), ModRegistry.CONFUSING_CHARGE_BLOCK.value(), ModRegistry.CONCUSSION_CHARGE_BLOCK.value());
+                .add(ModBlocks.ENDER_CHARGE_BLOCK.value(), ModBlocks.CONFUSING_CHARGE_BLOCK.value(), ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
     }
 }

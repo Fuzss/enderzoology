@@ -14,9 +14,9 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
     @Override
     public void addTranslations(TranslationBuilder builder) {
         builder.addCreativeModeTab(EnderZoology.MOD_ID, EnderZoology.MOD_NAME);
-        builder.add(ModRegistry.ENDER_CHARGE_BLOCK.value(), "Ender Charge");
-        builder.add(ModRegistry.CONFUSING_CHARGE_BLOCK.value(), "Confusing Charge");
-        builder.add(ModRegistry.CONCUSSION_CHARGE_BLOCK.value(), "Concussion Charge");
+        builder.add(ModBlocks.ENDER_CHARGE_BLOCK.value(), "Ender Charge");
+        builder.add(ModBlocks.CONFUSING_CHARGE_BLOCK.value(), "Confusing Charge");
+        builder.add(ModBlocks.CONCUSSION_CHARGE_BLOCK.value(), "Concussion Charge");
         builder.add(ModItems.CONFUSING_POWDER_ITEM.value(), "Confusing Powder");
         builder.add(ModItems.ENDER_FRAGMENT_ITEM.value(), "Ender Fragment");
         builder.add(ModItems.HUNTING_BOW_ITEM.value(), "Hunting Bow");

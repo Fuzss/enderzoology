@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
@@ -49,8 +50,8 @@ public class PrimedCharge extends PrimedTnt {
     public void tick() {
         if (this.getFuse() - 1 <= 0) {
             this.discard();
-            if (!this.level().isClientSide) {
-                EnderExplosionHelper.explode(this.level(), this, null, this.getX(), this.getY(0.0625), this.getZ(),
+            if (this.level() instanceof ServerLevel serverLevel) {
+                EnderExplosionHelper.explode(serverLevel, this, null, this.getX(), this.getY(0.0625), this.getZ(),
                         4.0F, Level.ExplosionInteraction.TNT, this.enderExplosionType, true
                 );
             }

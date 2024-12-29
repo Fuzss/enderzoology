@@ -1,6 +1,6 @@
 package fuzs.enderzoology.data.loot;
 
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.ModBlocks;
 import fuzs.puzzleslib.api.data.v2.AbstractLootProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
@@ -20,9 +20,9 @@ public class ModBlockLootProvider extends AbstractLootProvider.Blocks {
 
     @Override
     public void addLootTables() {
-        this.dropExplosive(ModRegistry.ENDER_CHARGE_BLOCK.value());
-        this.dropExplosive(ModRegistry.CONFUSING_CHARGE_BLOCK.value());
-        this.dropExplosive(ModRegistry.CONCUSSION_CHARGE_BLOCK.value());
+        this.dropExplosive(ModBlocks.ENDER_CHARGE_BLOCK.value());
+        this.dropExplosive(ModBlocks.CONFUSING_CHARGE_BLOCK.value());
+        this.dropExplosive(ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
     }
 
     public void dropExplosive(Block block) {

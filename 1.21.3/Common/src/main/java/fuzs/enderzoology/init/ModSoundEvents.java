@@ -21,7 +21,7 @@ public class ModSoundEvents {
     public static final Holder.Reference<SoundEvent> OWL_EGG_THROW_SOUND_EVENT = ModRegistry.REGISTRIES.registerSoundEvent(
             "entity.owl_egg.throw");
 
-    public static void touch() {
+    public static void bootstrap() {
         // NO-OP
     }
 }

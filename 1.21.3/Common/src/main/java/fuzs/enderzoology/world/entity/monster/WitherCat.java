@@ -2,10 +2,8 @@ package fuzs.enderzoology.world.entity.monster;
 
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.world.entity.ai.goal.FollowMobOwnerGoal;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -32,19 +30,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WitherCat extends Monster implements CompanionMob<Witch> {
-    private static final float NORMAL_SCALE = 1.0F;
-    private static final float ANGRY_SCALE = 2.0F;
+    private static final ResourceLocation SCALE_MODIFIER_ANGRY_ID = EnderZoology.id("angry");
+    private static final float DEFAULT_SCALE_VALUE = (float) Attributes.SCALE.value().getDefaultValue();
+    private static final float ANGRY_SCALE_VALUE = 2.0F;
     private static final float SCALE_INCREMENTS = 0.05F;
     private static final int MIN_DEAGGRESSION_TIME = 600;
-    private static final EntityDataAccessor<Float> DATA_SCALE_ID = SynchedEntityData.defineId(WitherCat.class, EntityDataSerializers.FLOAT);
     private static final ResourceLocation SPEED_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_speed_boost");
     private static final ResourceLocation HEALTH_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_health_boost");
-    private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_ID, 0.15, AttributeModifier.Operation.ADD_VALUE);
-    private static final AttributeModifier HEALTH_MODIFIER_ATTACKING = new AttributeModifier(HEALTH_MODIFIER_ATTACKING_ID, 20.0, AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_ID,
+            0.15,
+            AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier HEALTH_MODIFIER_ATTACKING = new AttributeModifier(
+            HEALTH_MODIFIER_ATTACKING_ID,
+            20.0,
+            AttributeModifier.Operation.ADD_VALUE);
 
     private int targetLostTime = -MIN_DEAGGRESSION_TIME;
     private int ticksUntilNextAlert;
-    private float scaleO;
+    private float scaleO = DEFAULT_SCALE_VALUE;
 
     public WitherCat(EntityType<? extends WitherCat> entityType, Level level) {
         super(entityType, level);
@@ -65,13 +68,6 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_SCALE_ID, NORMAL_SCALE);
-        this.scaleO = NORMAL_SCALE;
-    }
-
-    @Override
     public void setTarget(@Nullable LivingEntity target) {
         if (target == null) {
             this.targetLostTime = this.tickCount;
@@ -86,7 +82,7 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
     }
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(ServerLevel serverLevel) {
         AttributeInstance movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
         AttributeInstance maxHealthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
         if (this.isAngry()) {
@@ -110,16 +106,16 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
         this.maybeAlertCompanions();
 
         if (this.isAngry()) {
-            if (this.getScale() < ANGRY_SCALE) {
-                this.setScale(Math.min(ANGRY_SCALE, this.getScale() + SCALE_INCREMENTS));
+            if (this.getScale() < ANGRY_SCALE_VALUE) {
+                this.setScale(Math.min(ANGRY_SCALE_VALUE, this.getScale() + SCALE_INCREMENTS));
             }
         } else {
-            if (this.getScale() > NORMAL_SCALE) {
-                this.setScale(Math.max(NORMAL_SCALE, this.getScale() - SCALE_INCREMENTS));
+            if (this.getScale() > DEFAULT_SCALE_VALUE) {
+                this.setScale(Math.max(DEFAULT_SCALE_VALUE, this.getScale() - SCALE_INCREMENTS));
             }
         }
 
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     @Override
@@ -151,30 +147,24 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
         this.setPos(d, e, f);
     }
 
-    @Override
-    public float getScale() {
-        return this.entityData.get(DATA_SCALE_ID);
-    }
-
     public float getScaleAmount(float tickDelta) {
         return Mth.lerp(tickDelta, this.scaleO, this.getScale());
     }
 
-    private void setScale(float scale) {
-        this.entityData.set(DATA_SCALE_ID, scale);
-    }
-
-    @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-        if (DATA_SCALE_ID.equals(key)) {
-            this.refreshDimensions();
+    public void setScale(float scaleValue) {
+        AttributeInstance attribute = this.getAttribute(Attributes.SCALE);
+        double defaultValue = attribute.getAttribute().value().getDefaultValue();
+        if (scaleValue == DEFAULT_SCALE_VALUE) {
+            attribute.removeModifier(SCALE_MODIFIER_ANGRY_ID);
+        } else {
+            attribute.addOrUpdateTransientModifier(new AttributeModifier(SCALE_MODIFIER_ANGRY_ID,
+                    scaleValue - DEFAULT_SCALE_VALUE,
+                    AttributeModifier.Operation.ADD_VALUE));
         }
-
-        super.onSyncedDataUpdated(key);
     }
 
     public boolean isVisuallyAngry() {
-        return this.getScale() != NORMAL_SCALE;
+        return this.getScale() != DEFAULT_SCALE_VALUE;
     }
 
     private boolean isAngry() {
@@ -182,8 +172,8 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        return super.isInvulnerableTo(source) || source.getEntity() instanceof Witch;
+    public boolean isInvulnerableTo(ServerLevel serverLevel, DamageSource damageSource) {
+        return super.isInvulnerableTo(serverLevel, damageSource) || damageSource.getEntity() instanceof Witch;
     }
 
     @Override

@@ -8,11 +8,12 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.monster.Zombie;
 
-public class EnderInfestedZombieOuterLayer<T extends Zombie> extends RenderLayer<T, ZombieModel<T>> {
-    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/zombie/ender_infested_zombie_outer_layer.png");
+public class EnderInfestedZombieOuterLayer<T extends ZombieRenderState> extends RenderLayer<T, ZombieModel<T>> {
+    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id(
+            "textures/entity/zombie/ender_infested_zombie_outer_layer.png");
 
     private final ZombieModel<T> model;
 
@@ -22,7 +23,13 @@ public class EnderInfestedZombieOuterLayer<T extends Zombie> extends RenderLayer
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        coloredCutoutModelCopyLayerRender(this.getParentModel(), this.model, TEXTURE_LOCATION, poseStack, buffer, packedLight, livingEntity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, -1);
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T renderState, float yRot, float xRot) {
+        coloredCutoutModelCopyLayerRender(this.model,
+                TEXTURE_LOCATION,
+                poseStack,
+                bufferSource,
+                packedLight,
+                renderState,
+                -1);
     }
 }

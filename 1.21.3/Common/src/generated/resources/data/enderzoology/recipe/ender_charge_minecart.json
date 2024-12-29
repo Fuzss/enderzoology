@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "enderzoology:ender_charge"
-    },
-    {
-      "item": "minecraft:minecart"
-    }
+    "enderzoology:ender_charge",
+    "minecraft:minecart"
   ],
   "result": {
     "count": 1,

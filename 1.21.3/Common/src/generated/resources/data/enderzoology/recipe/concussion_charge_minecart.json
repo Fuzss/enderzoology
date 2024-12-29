@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "enderzoology:concussion_charge"
-    },
-    {
-      "item": "minecraft:minecart"
-    }
+    "enderzoology:concussion_charge",
+    "minecraft:minecart"
   ],
   "result": {
     "count": 1,

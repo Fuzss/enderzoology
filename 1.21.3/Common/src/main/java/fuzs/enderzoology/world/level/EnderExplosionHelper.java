@@ -11,8 +11,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.level.EntityBasedExplosionDamageCalculator;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,24 +21,23 @@ import java.util.Objects;
 
 public class EnderExplosionHelper {
 
-    public static Explosion explode(Level level, Entity exploder, @Nullable DamageSource damageSource, double x, double y, double z, float radius, Level.ExplosionInteraction mode, EnderExplosionType enderExplosionType, boolean spawnLingeringCloud) {
+    public static void explode(ServerLevel serverLevel, Entity exploder, @Nullable DamageSource damageSource, double x, double y, double z, float radius, Level.ExplosionInteraction explosionInteraction, EnderExplosionType enderExplosionType, boolean spawnLingeringCloud) {
         Objects.requireNonNull(exploder, "exploder is null");
         // we use the damage calculator for holding custom explosion data to avoid having to implement our own explosion
         EnderExplosionDamageCalculator damageCalculator = new EnderExplosionDamageCalculator(exploder,
                 enderExplosionType,
-                spawnLingeringCloud
-        );
-        return level.explode(exploder, damageSource, damageCalculator, x, y, z, radius, false, mode);
+                spawnLingeringCloud);
+        serverLevel.explode(exploder, damageSource, damageCalculator, x, y, z, radius, false, explosionInteraction);
     }
 
-    public static void onExplosionDetonate(Level level, Explosion explosion, List<BlockPos> affectedBlocks, List<Entity> affectedEntities) {
+    public static void onExplosionDetonate(ServerLevel serverLevel, ServerExplosion explosion, List<BlockPos> affectedBlocks, List<Entity> affectedEntities) {
         if (explosion.damageCalculator instanceof EnderExplosionDamageCalculator damageCalculator) {
             for (Entity entity : affectedEntities) {
                 if (entity instanceof LivingEntity livingEntity && entity.isAlive() &&
                         !entity.getType().is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) {
                     Vec3 originalPosition = livingEntity.position();
                     if (damageCalculator.enderExplosionType.isTeleport()) {
-                        EnderTeleportHelper.teleportEntity((ServerLevel) level, livingEntity, 48, true);
+                        EnderTeleportHelper.teleportEntity(serverLevel, livingEntity, 48, true);
                     }
                     if (damageCalculator.enderExplosionType.isConfusion()) {
                         applyConfusionPotion(explosion.center(), originalPosition, livingEntity, explosion.radius());
@@ -47,12 +46,13 @@ public class EnderExplosionHelper {
             }
             affectedEntities.removeIf(entity -> !(entity instanceof PrimedTnt));
             // don't destroy blocks, but activate other explosives
-            affectedBlocks.removeIf(pos -> level.getBlockState(pos).getBlock().dropFromExplosion(explosion));
+            affectedBlocks.removeIf((BlockPos blockPos) -> serverLevel.getBlockState(blockPos)
+                    .getBlock()
+                    .dropFromExplosion(explosion));
             if (damageCalculator.spawnLingeringCloud) {
-                spawnLingeringCloud(level,
+                spawnLingeringCloud(serverLevel,
                         explosion.center(),
-                        damageCalculator.enderExplosionType.createEffects((int) explosion.radius())
-                );
+                        damageCalculator.enderExplosionType.createEffects((int) explosion.radius()));
             }
         }
     }

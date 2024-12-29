@@ -12,6 +12,7 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class InfestedZombie extends Zombie {
 
@@ -24,6 +25,7 @@ public class InfestedZombie extends Zombie {
         return false;
     }
 
+    @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
         return null;
@@ -40,12 +42,13 @@ public class InfestedZombie extends Zombie {
     }
 
     @Override
-    public boolean doHurtTarget(Entity entity) {
-        if (super.doHurtTarget(entity)) {// ranges from 0.0 to 6.75 according to Minecraft Wiki
-            float localDifficulty = this.level().getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity entity) {
+        if (super.doHurtTarget(serverLevel, entity)) {
+            // ranges from 0.0 to 6.75 according to Minecraft Wiki
+            float localDifficulty = serverLevel.getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
             if (this.isAlive() && entity instanceof LivingEntity && (!(entity instanceof Player player) || !player.getAbilities().invulnerable) &&
                     this.random.nextFloat() < localDifficulty / 10.0F) {
-                EnderTeleportHelper.teleportEntity((ServerLevel) this.level(), (LivingEntity) entity, 8, false);
+                EnderTeleportHelper.teleportEntity(serverLevel, (LivingEntity) entity, 8, false);
             }
             return true;
         } else {
@@ -54,10 +57,10 @@ public class InfestedZombie extends Zombie {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (super.hurt(source, amount)) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
+        if (super.hurtServer(serverLevel, source, amount)) {
             if (this.isAlive() && this.getHealth() < this.getMaxHealth() * 0.5 && this.random.nextInt(4) == 0) {
-                EnderTeleportHelper.teleportEntity((ServerLevel) this.level(), this, 8, false, true);
+                EnderTeleportHelper.teleportEntity(serverLevel, this, 8, false, true);
             }
             return true;
         } else {

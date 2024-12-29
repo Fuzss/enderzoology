@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:bowl"
-    },
-    {
-      "item": "minecraft:milk_bucket"
-    },
-    {
-      "item": "minecraft:wheat"
-    },
-    {
-      "item": "enderzoology:ender_fragment"
-    }
+    "minecraft:bowl",
+    "minecraft:milk_bucket",
+    "minecraft:wheat",
+    "enderzoology:ender_fragment"
   ],
   "result": {
     "count": 1,

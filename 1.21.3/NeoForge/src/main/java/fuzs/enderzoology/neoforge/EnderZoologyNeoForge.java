@@ -18,7 +18,7 @@ import net.neoforged.fml.common.Mod;
 public class EnderZoologyNeoForge {
 
     public EnderZoologyNeoForge() {
-        NeoForgeModRegistry.touch();
+        NeoForgeModRegistry.bootstrap();
         ModConstructor.construct(EnderZoology.MOD_ID, EnderZoology::new);
         DataProviderHelper.registerDataProviders(EnderZoology.MOD_ID,
                 ModEnchantmentProvider::new,
