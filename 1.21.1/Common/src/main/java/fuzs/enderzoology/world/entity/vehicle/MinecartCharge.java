@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.MinecartTNT;
@@ -55,13 +56,13 @@ public class MinecartCharge extends MinecartTNT {
 
     @Override
     protected void explode(@Nullable DamageSource damageSource, double radiusModifier) {
-        if (!this.level().isClientSide) {
+        if (this.level() instanceof ServerLevel serverLevel) {
             double radiusModifierSqrt = Math.sqrt(radiusModifier);
             if (radiusModifierSqrt > 5.0) {
                 radiusModifierSqrt = 5.0;
             }
 
-            EnderExplosionHelper.explode(this.level(),
+            EnderExplosionHelper.explode(serverLevel,
                     this,
                     damageSource,
                     this.getX(),
@@ -70,8 +71,7 @@ public class MinecartCharge extends MinecartTNT {
                     (float) (4.0 + this.random.nextDouble() * 1.5 * radiusModifierSqrt),
                     Level.ExplosionInteraction.TNT,
                     this.enderExplosionType,
-                    true
-            );
+                    true);
             this.discard();
         }
     }

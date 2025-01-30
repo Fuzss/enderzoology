@@ -21,14 +21,13 @@ import java.util.Objects;
 
 public class EnderExplosionHelper {
 
-    public static Explosion explode(Level level, Entity exploder, @Nullable DamageSource damageSource, double x, double y, double z, float radius, Level.ExplosionInteraction mode, EnderExplosionType enderExplosionType, boolean spawnLingeringCloud) {
+    public static Explosion explode(ServerLevel serverLevel, Entity exploder, @Nullable DamageSource damageSource, double x, double y, double z, float radius, Level.ExplosionInteraction mode, EnderExplosionType enderExplosionType, boolean spawnLingeringCloud) {
         Objects.requireNonNull(exploder, "exploder is null");
         // we use the damage calculator for holding custom explosion data to avoid having to implement our own explosion
         EnderExplosionDamageCalculator damageCalculator = new EnderExplosionDamageCalculator(exploder,
                 enderExplosionType,
-                spawnLingeringCloud
-        );
-        return level.explode(exploder, damageSource, damageCalculator, x, y, z, radius, false, mode);
+                spawnLingeringCloud);
+        return serverLevel.explode(exploder, damageSource, damageCalculator, x, y, z, radius, false, mode);
     }
 
     public static void onExplosionDetonate(Level level, Explosion explosion, List<BlockPos> affectedBlocks, List<Entity> affectedEntities) {
@@ -51,8 +50,7 @@ public class EnderExplosionHelper {
             if (damageCalculator.spawnLingeringCloud) {
                 spawnLingeringCloud(level,
                         explosion.center(),
-                        damageCalculator.enderExplosionType.createEffects((int) explosion.radius())
-                );
+                        damageCalculator.enderExplosionType.createEffects((int) explosion.radius()));
             }
         }
     }

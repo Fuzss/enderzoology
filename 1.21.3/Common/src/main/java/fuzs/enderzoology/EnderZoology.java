@@ -8,7 +8,6 @@ import fuzs.enderzoology.init.*;
 import fuzs.enderzoology.world.entity.EntityAttributeProviders;
 import fuzs.enderzoology.world.entity.SpawnPlacementRules;
 import fuzs.enderzoology.world.entity.item.PrimedCharge;
-import fuzs.enderzoology.world.entity.monster.ConcussionCreeper;
 import fuzs.enderzoology.world.entity.monster.DireWolf;
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
@@ -67,7 +66,6 @@ public class EnderZoology implements ModConstructor {
     }
 
     private static void registerEventHandlers() {
-        ExplosionEvents.START.register(ConcussionCreeper::onExplosionStart);
         ExplosionEvents.DETONATE.register(EnderExplosionHelper::onExplosionDetonate);
         UseItemEvents.TICK.register(HuntingBowHandler::onUseItemTick);
         ServerEntityLevelEvents.LOAD.register(MobHuntingHandler::onLoad);
@@ -97,11 +95,20 @@ public class EnderZoology implements ModConstructor {
                 Level level = blockSource.level();
                 BlockPos blockpos = blockSource.pos().relative(blockSource.state().getValue(DispenserBlock.FACING));
                 PrimedTnt primedTnt = new PrimedCharge(level,
-                        (double) blockpos.getX() + 0.5, blockpos.getY(),
-                        (double) blockpos.getZ() + 0.5, null, enderExplosionType
-                );
+                        (double) blockpos.getX() + 0.5,
+                        blockpos.getY(),
+                        (double) blockpos.getZ() + 0.5,
+                        null,
+                        enderExplosionType);
                 level.addFreshEntity(primedTnt);
-                level.playSound(null, primedTnt.getX(), primedTnt.getY(), primedTnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null,
+                        primedTnt.getX(),
+                        primedTnt.getY(),
+                        primedTnt.getZ(),
+                        SoundEvents.TNT_PRIMED,
+                        SoundSource.BLOCKS,
+                        1.0F,
+                        1.0F);
                 level.gameEvent(null, GameEvent.ENTITY_PLACE, blockpos);
                 stack.shrink(1);
                 return stack;
@@ -110,47 +117,95 @@ public class EnderZoology implements ModConstructor {
     }
 
     private static void registerBrewingRecipes(RegisterPotionBrewingMixesCallback.Builder builder) {
-        builder.registerPotionRecipe(Potions.AWKWARD, ModItems.ENDER_FRAGMENT_ITEM.value(), ModPotions.DISPLACEMENT_POTION);
-        builder.registerPotionRecipe(ModPotions.DISPLACEMENT_POTION, Items.GLOWSTONE_DUST, ModPotions.STRONG_DISPLACEMENT_POTION);
+        builder.registerPotionRecipe(Potions.AWKWARD,
+                ModItems.ENDER_FRAGMENT_ITEM.value(),
+                ModPotions.DISPLACEMENT_POTION);
+        builder.registerPotionRecipe(ModPotions.DISPLACEMENT_POTION,
+                Items.GLOWSTONE_DUST,
+                ModPotions.STRONG_DISPLACEMENT_POTION);
         builder.registerPotionRecipe(Potions.AWKWARD, ModItems.WITHERING_DUST_ITEM.value(), ModPotions.DECAY_POTION);
         builder.registerPotionRecipe(ModPotions.DECAY_POTION, Items.REDSTONE, ModPotions.LONG_DECAY_POTION);
         builder.registerPotionRecipe(ModPotions.DECAY_POTION, Items.GLOWSTONE_DUST, ModPotions.STRONG_DECAY_POTION);
-        builder.registerPotionRecipe(Potions.AWKWARD, ModItems.CONFUSING_POWDER_ITEM.value(), ModPotions.CONFUSION_POTION);
+        builder.registerPotionRecipe(Potions.AWKWARD,
+                ModItems.CONFUSING_POWDER_ITEM.value(),
+                ModPotions.CONFUSION_POTION);
         builder.registerPotionRecipe(ModPotions.CONFUSION_POTION, Items.REDSTONE, ModPotions.LONG_CONFUSION_POTION);
-        builder.registerPotionRecipe(ModPotions.CONFUSION_POTION, Items.GLOWSTONE_DUST, ModPotions.STRONG_CONFUSION_POTION);
+        builder.registerPotionRecipe(ModPotions.CONFUSION_POTION,
+                Items.GLOWSTONE_DUST,
+                ModPotions.STRONG_CONFUSION_POTION);
         builder.registerPotionRecipe(Potions.AWKWARD, ModItems.OWL_EGG_ITEM.value(), ModPotions.RISING_POTION);
         builder.registerPotionRecipe(ModPotions.RISING_POTION, Items.REDSTONE, ModPotions.LONG_RISING_POTION);
     }
 
     @Override
     public void onRegisterFlammableBlocks(FlammableBlocksContext context) {
-        context.registerFlammable(15, 100, ModBlocks.ENDER_CHARGE_BLOCK.value(), ModBlocks.CONFUSING_CHARGE_BLOCK.value(), ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
+        context.registerFlammable(15,
+                100,
+                ModBlocks.ENDER_CHARGE_BLOCK.value(),
+                ModBlocks.CONFUSING_CHARGE_BLOCK.value(),
+                ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
     }
 
     @Override
     public void onEntityAttributeCreation(EntityAttributesCreateContext context) {
-        context.registerEntityAttributes(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(), EntityAttributeProviders.createConcussionCreeperAttributes());
-        context.registerEntityAttributes(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(), EntityAttributeProviders.createEnderInfestedZombieAttributes());
-        context.registerEntityAttributes(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(), EntityAttributeProviders.createEnderminyAttributes());
-        context.registerEntityAttributes(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(), EntityAttributeProviders.createDireWolfAttributes());
-        context.registerEntityAttributes(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(), EntityAttributeProviders.createFallenMountAttributes());
-        context.registerEntityAttributes(ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value(), EntityAttributeProviders.createWitherCatAttributes());
-        context.registerEntityAttributes(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(), EntityAttributeProviders.createWitherWitchAttributes());
-        context.registerEntityAttributes(ModEntityTypes.OWL_ENTITY_TYPE.value(), EntityAttributeProviders.createOwlAttributes());
-        context.registerEntityAttributes(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(), EntityAttributeProviders.createFallenKnightAttributes());
+        context.registerEntityAttributes(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createConcussionCreeperAttributes());
+        context.registerEntityAttributes(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createEnderInfestedZombieAttributes());
+        context.registerEntityAttributes(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createEnderminyAttributes());
+        context.registerEntityAttributes(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createDireWolfAttributes());
+        context.registerEntityAttributes(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createFallenMountAttributes());
+        context.registerEntityAttributes(ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createWitherCatAttributes());
+        context.registerEntityAttributes(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createWitherWitchAttributes());
+        context.registerEntityAttributes(ModEntityTypes.OWL_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createOwlAttributes());
+        context.registerEntityAttributes(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(),
+                EntityAttributeProviders.createFallenKnightAttributes());
     }
 
     @Override
     public void onRegisterSpawnPlacements(SpawnPlacementsContext context) {
-        context.registerSpawnPlacement(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkDireWolfSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkMonsterSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkMonsterSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.OWL_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, SpawnPlacementRules::checkOwlSpawnRules);
-        context.registerSpawnPlacement(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkDireWolfSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkMonsterSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkMonsterSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkSurfaceSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.OWL_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING,
+                SpawnPlacementRules::checkOwlSpawnRules);
+        context.registerSpawnPlacement(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacementRules::checkSurfaceSpawnRules);
     }
 
     @Override
@@ -160,47 +215,70 @@ public class EnderZoology implements ModConstructor {
         }, modificationContext -> {
             MobSpawnSettingsContext settings = modificationContext.mobSpawnSettings();
             if (CONFIG.get(CommonConfig.class).concussionCreeper) {
-                registerSpawnData(settings, MobCategory.MONSTER, EntityType.CREEPER, data -> new MobSpawnSettings.SpawnerData(
-                        ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(), Math.max(1,
-                        data.getWeight().asInt() / 4
-                ), data.minCount, data.maxCount));
+                registerSpawnData(settings,
+                        MobCategory.MONSTER,
+                        EntityType.CREEPER,
+                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
+                                Math.max(1, data.getWeight().asInt() / 4),
+                                data.minCount,
+                                data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).infestedZombie) {
-                registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(
-                        ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(), Math.max(1,
-                        data.getWeight().asInt() / 4
-                ), 1, data.maxCount));
+                registerSpawnData(settings,
+                        MobCategory.MONSTER,
+                        EntityType.ZOMBIE,
+                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(),
+                                Math.max(1, data.getWeight().asInt() / 4),
+                                1,
+                                data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).fallenKnight) {
-                registerSpawnData(settings, MobCategory.MONSTER, EntityType.ZOMBIE, data -> new MobSpawnSettings.SpawnerData(
-                        ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(), Math.max(1,
-                        data.getWeight().asInt() / 4
-                ), 4, 6));
+                registerSpawnData(settings,
+                        MobCategory.MONSTER,
+                        EntityType.ZOMBIE,
+                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(),
+                                Math.max(1, data.getWeight().asInt() / 4),
+                                4,
+                                6));
             }
             if (CONFIG.get(CommonConfig.class).enderminy) {
-                registerSpawnData(settings, MobCategory.MONSTER, EntityType.ENDERMAN, data -> new MobSpawnSettings.SpawnerData(
-                        ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
-                        data.getWeight().asInt() * 3, Math.min(data.maxCount, data.minCount * 4), data.maxCount
-                ));
+                registerSpawnData(settings,
+                        MobCategory.MONSTER,
+                        EntityType.ENDERMAN,
+                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
+                                data.getWeight().asInt() * 3,
+                                Math.min(data.maxCount, data.minCount * 4),
+                                data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).direWolf) {
                 if (modificationContext.climateSettings().hasPrecipitation() &&
                         modificationContext.climateSettings().getTemperature() < 0.0F) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {
-                        settings.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(), Math.max(1,
-                                data.getWeight().asInt() / 4
-                        ), 3, 8));
+                        settings.addSpawn(MobCategory.MONSTER,
+                                new MobSpawnSettings.SpawnerData(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(),
+                                        Math.max(1, data.getWeight().asInt() / 4),
+                                        3,
+                                        8));
                     });
                 }
             }
             if (CONFIG.get(CommonConfig.class).witherWitch) {
-                registerSpawnData(settings, MobCategory.MONSTER, EntityType.WITCH, data -> new MobSpawnSettings.SpawnerData(
-                        ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(), data.getWeight(), data.minCount, data.maxCount));
+                registerSpawnData(settings,
+                        MobCategory.MONSTER,
+                        EntityType.WITCH,
+                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(),
+                                data.getWeight(),
+                                data.minCount,
+                                data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).owl) {
                 if (modificationContext.climateSettings().hasPrecipitation()) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.RABBIT).ifPresent(data -> {
-                        settings.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModEntityTypes.OWL_ENTITY_TYPE.value(), data.getWeight(), data.minCount, data.maxCount));
+                        settings.addSpawn(MobCategory.CREATURE,
+                                new MobSpawnSettings.SpawnerData(ModEntityTypes.OWL_ENTITY_TYPE.value(),
+                                        data.getWeight(),
+                                        data.minCount,
+                                        data.maxCount));
                     });
                 }
             }
@@ -208,7 +286,8 @@ public class EnderZoology implements ModConstructor {
     }
 
     private static void registerSpawnData(MobSpawnSettingsContext settings, MobCategory mobCategory, EntityType<?> vanillaEntityType, Function<MobSpawnSettings.SpawnerData, MobSpawnSettings.SpawnerData> factory) {
-        findVanillaSpawnData(settings, mobCategory, vanillaEntityType).ifPresent(data -> settings.addSpawn(mobCategory, factory.apply(data)));
+        findVanillaSpawnData(settings, mobCategory, vanillaEntityType).ifPresent(data -> settings.addSpawn(mobCategory,
+                factory.apply(data)));
     }
 
     private static Optional<MobSpawnSettings.SpawnerData> findVanillaSpawnData(MobSpawnSettingsContext settings, MobCategory mobCategory, EntityType<?> entityType) {
@@ -216,8 +295,11 @@ public class EnderZoology implements ModConstructor {
     }
 
     private static void registerSpawnCost(MobSpawnSettingsContext spawnSettings, EntityType<?> vanillaEntityType, EntityType<?> modEntityType, DoubleUnaryOperator chargeConverter, DoubleUnaryOperator energyBudgetConverter) {
-        Optional<MobSpawnSettings.MobSpawnCost> optionalMobSpawnCost = Optional.ofNullable(spawnSettings.getSpawnCost(vanillaEntityType));
-        optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType, chargeConverter.applyAsDouble(cost.charge()), energyBudgetConverter.applyAsDouble(cost.energyBudget())));
+        Optional<MobSpawnSettings.MobSpawnCost> optionalMobSpawnCost = Optional.ofNullable(spawnSettings.getSpawnCost(
+                vanillaEntityType));
+        optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType,
+                chargeConverter.applyAsDouble(cost.charge()),
+                energyBudgetConverter.applyAsDouble(cost.energyBudget())));
     }
 
     @Override

@@ -2,7 +2,6 @@ package fuzs.enderzoology.world.entity.monster;
 
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
-import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -11,7 +10,6 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerExplosion;
 
 public class ConcussionCreeper extends Creeper {
 
@@ -59,22 +57,25 @@ public class ConcussionCreeper extends Creeper {
         super.aiStep();
     }
 
-    public static EventResult onExplosionStart(ServerLevel serverLevel, ServerExplosion explosion) {
-        if (explosion.getDirectSourceEntity() instanceof ConcussionCreeper concussionCreeper &&
-                !(explosion.damageCalculator instanceof EnderExplosionHelper.EnderExplosionDamageCalculator)) {
+    @Override
+    protected void explodeCreeper() {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            float poweredMultiplier = this.isPowered() ? 2.0F : 1.0F;
+            this.dead = true;
             EnderExplosionHelper.explode(serverLevel,
-                    concussionCreeper,
+                    this,
                     null,
-                    concussionCreeper.getX(),
-                    concussionCreeper.getY(),
-                    concussionCreeper.getZ(),
-                    explosion.radius(),
+                    this.getX(),
+                    this.getY(),
+                    this.getZ(),
+                    this.explosionRadius * poweredMultiplier,
                     Level.ExplosionInteraction.MOB,
                     EnderExplosionType.CONCUSSION,
                     false);
-            return EventResult.INTERRUPT;
-        } else {
-            return EventResult.PASS;
+
+            this.spawnLingeringCloud();
+            this.triggerOnDeathMobEffects(serverLevel, RemovalReason.KILLED);
+            this.discard();
         }
     }
 }
