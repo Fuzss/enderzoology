@@ -18,7 +18,9 @@ public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, Hors
     public static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/horse/horse_zombie.png");
 
     public FallenMountRenderer(EntityRendererProvider.Context context) {
-        super(context, new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT)), new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_BABY)), 1.0F);
+        super(context,
+                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT)),
+                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_BABY)));
         this.addLayer(new HorseArmorLayer(this, context.getModelSet(), context.getEquipmentRenderer()));
     }
 

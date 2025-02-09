@@ -17,20 +17,20 @@ public class ModEntityTypeTagProvider extends AbstractTagProvider<EntityType<?>>
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.add(EntityTypeTags.IMPACT_PROJECTILES).add(ModEntityTypes.OWL_EGG_ENTITY_TYPE.value());
-        this.add(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)
+        this.tag(EntityTypeTags.IMPACT_PROJECTILES).add(ModEntityTypes.OWL_EGG_ENTITY_TYPE.value());
+        this.tag(ModRegistry.FALLEN_MOUNT_TARGETS_ENTITY_TYPE_TAG)
                 .add(EntityType.HORSE, EntityType.DONKEY, EntityType.MULE);
-        this.add(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)
-                .add(EntityType.ENDERMAN, EntityType.ENDERMITE, EntityType.SHULKER,
-                        ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(), ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
-                        ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value()
-                )
-                .addOptionalTag("c:bosses")
-                .addOptionalTag("forge:bosses")
-                .addOptionalTag("neoforge:bosses");
-        this.add(EntityTypeTags.UNDEAD)
-                .add(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE, ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE,
-                        ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE
-                );
+        this.tag(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)
+                .add(EntityType.ENDERMAN,
+                        EntityType.ENDERMITE,
+                        EntityType.SHULKER,
+                        ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
+                        ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
+                        ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value())
+                .addOptionalTag("c:bosses");
+        this.tag(EntityTypeTags.UNDEAD)
+                .add(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE,
+                        ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE,
+                        ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE);
     }
 }

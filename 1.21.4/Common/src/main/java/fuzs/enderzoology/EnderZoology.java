@@ -11,12 +11,16 @@ import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.entity.monster.DireWolf;
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
+import fuzs.puzzleslib.api.biome.v1.BiomeLoadingContext;
 import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
+import fuzs.puzzleslib.api.biome.v1.BiomeModificationContext;
 import fuzs.puzzleslib.api.biome.v1.MobSpawnSettingsContext;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
-import fuzs.puzzleslib.api.core.v1.ContentRegistrationFlags;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
-import fuzs.puzzleslib.api.core.v1.context.*;
+import fuzs.puzzleslib.api.core.v1.context.BiomeModificationsContext;
+import fuzs.puzzleslib.api.core.v1.context.EntityAttributesCreateContext;
+import fuzs.puzzleslib.api.core.v1.context.FlammableBlocksContext;
+import fuzs.puzzleslib.api.core.v1.context.SpawnPlacementsContext;
 import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.LivingDropsCallback;
@@ -24,7 +28,6 @@ import fuzs.puzzleslib.api.event.v1.entity.living.UseItemEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerCopyEvents;
 import fuzs.puzzleslib.api.event.v1.level.ExplosionEvents;
 import fuzs.puzzleslib.api.event.v1.server.RegisterPotionBrewingMixesCallback;
-import fuzs.puzzleslib.api.item.v2.CreativeModeTabConfigurator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
@@ -210,10 +213,10 @@ public class EnderZoology implements ModConstructor {
 
     @Override
     public void onRegisterBiomeModifications(BiomeModificationsContext context) {
-        context.register(BiomeLoadingPhase.ADDITIONS, loadingContext -> {
-            return loadingContext.canGenerateIn(LevelStem.OVERWORLD);
-        }, modificationContext -> {
-            MobSpawnSettingsContext settings = modificationContext.mobSpawnSettings();
+        context.registerBiomeModification(BiomeLoadingPhase.ADDITIONS, (BiomeLoadingContext biomeLoadingContext) -> {
+            return biomeLoadingContext.canGenerateIn(LevelStem.OVERWORLD);
+        }, (BiomeModificationContext biomeModificationContext) -> {
+            MobSpawnSettingsContext settings = biomeModificationContext.mobSpawnSettings();
             if (CONFIG.get(CommonConfig.class).concussionCreeper) {
                 registerSpawnData(settings,
                         MobCategory.MONSTER,
@@ -251,8 +254,8 @@ public class EnderZoology implements ModConstructor {
                                 data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).direWolf) {
-                if (modificationContext.climateSettings().hasPrecipitation() &&
-                        modificationContext.climateSettings().getTemperature() < 0.0F) {
+                if (biomeModificationContext.climateSettings().hasPrecipitation() &&
+                        biomeModificationContext.climateSettings().getTemperature() < 0.0F) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {
                         settings.addSpawn(MobCategory.MONSTER,
                                 new MobSpawnSettings.SpawnerData(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(),
@@ -272,7 +275,7 @@ public class EnderZoology implements ModConstructor {
                                 data.maxCount));
             }
             if (CONFIG.get(CommonConfig.class).owl) {
-                if (modificationContext.climateSettings().hasPrecipitation()) {
+                if (biomeModificationContext.climateSettings().hasPrecipitation()) {
                     findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.RABBIT).ifPresent(data -> {
                         settings.addSpawn(MobCategory.CREATURE,
                                 new MobSpawnSettings.SpawnerData(ModEntityTypes.OWL_ENTITY_TYPE.value(),
@@ -300,40 +303,6 @@ public class EnderZoology implements ModConstructor {
         optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType,
                 chargeConverter.applyAsDouble(cost.charge()),
                 energyBudgetConverter.applyAsDouble(cost.energyBudget())));
-    }
-
-    @Override
-    public void onRegisterCreativeModeTabs(CreativeModeTabContext context) {
-        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID, ModItems.ENDER_FRAGMENT_ITEM)
-                .appendEnchantmentsAndPotions()
-                .displayItems((itemDisplayParameters, output) -> {
-                    output.accept(ModItems.ENDER_CHARGE_ITEM.value());
-                    output.accept(ModItems.CONFUSING_CHARGE_ITEM.value());
-                    output.accept(ModItems.CONCUSSION_CHARGE_ITEM.value());
-                    output.accept(ModItems.CONFUSING_POWDER_ITEM.value());
-                    output.accept(ModItems.ENDER_FRAGMENT_ITEM.value());
-                    output.accept(ModItems.HUNTING_BOW_ITEM.value());
-                    output.accept(ModItems.OWL_EGG_ITEM.value());
-                    output.accept(ModItems.WITHERING_DUST_ITEM.value());
-                    output.accept(ModItems.ENDERIOS_ITEM.value());
-                    output.accept(ModItems.ENDER_CHARGE_MINECART_ITEM.value());
-                    output.accept(ModItems.CONFUSING_CHARGE_MINECART_ITEM.value());
-                    output.accept(ModItems.CONCUSSION_CHARGE_MINECART_ITEM.value());
-                    output.accept(ModItems.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.INFESTED_ZOMBIE_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.ENDERMINY_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.DIRE_WOLF_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.FALLEN_MOUNT_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.WITHER_CAT_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.WITHER_WITCH_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.OWL_SPAWN_EGG_ITEM.value());
-                    output.accept(ModItems.FALLEN_KNIGHT_SPAWN_EGG_ITEM.value());
-                }));
-    }
-
-    @Override
-    public ContentRegistrationFlags[] getContentRegistrationFlags() {
-        return new ContentRegistrationFlags[]{ContentRegistrationFlags.BIOME_MODIFICATIONS};
     }
 
     public static ResourceLocation id(String path) {

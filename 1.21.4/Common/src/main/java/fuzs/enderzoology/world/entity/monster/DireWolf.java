@@ -213,7 +213,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         super.aiStep();
     }
 
-    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, int remainingUseDuration, ItemStack originalItemStack) {
+    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, ItemStack originalItemStack) {
         if (livingEntity instanceof DireWolf) {
             FoodProperties foodProperties = originalItemStack.get(DataComponents.FOOD);
             if (foodProperties != null) {

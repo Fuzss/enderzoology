@@ -1,7 +1,7 @@
 package fuzs.enderzoology.neoforge;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.data.ModEnchantmentProvider;
+import fuzs.enderzoology.data.ModDatapackRegistriesProvider;
 import fuzs.enderzoology.data.ModRecipeProvider;
 import fuzs.enderzoology.data.loot.ModBlockLootProvider;
 import fuzs.enderzoology.data.loot.ModEntityTypeLootProvider;
@@ -21,7 +21,7 @@ public class EnderZoologyNeoForge {
         NeoForgeModRegistry.bootstrap();
         ModConstructor.construct(EnderZoology.MOD_ID, EnderZoology::new);
         DataProviderHelper.registerDataProviders(EnderZoology.MOD_ID,
-                ModEnchantmentProvider::new,
+                ModDatapackRegistriesProvider::new,
                 ModBlockLootProvider::new,
                 ModBlockTagProvider::new,
                 ModItemTagProvider::new,

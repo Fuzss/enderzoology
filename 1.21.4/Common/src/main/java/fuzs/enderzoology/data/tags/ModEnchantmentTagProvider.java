@@ -16,6 +16,6 @@ public class ModEnchantmentTagProvider extends AbstractTagProvider<Enchantment> 
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.add(EnchantmentTags.TREASURE).add(ModRegistry.REPELLENT_ENCHANTMENT);
+        this.tag(EnchantmentTags.TREASURE).add(ModRegistry.REPELLENT_ENCHANTMENT);
     }
 }

@@ -17,10 +17,13 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 public class ModRegistry {
     static final RegistryManager REGISTRIES = RegistryManager.from(EnderZoology.MOD_ID);
+    public static final Holder.Reference<CreativeModeTab> CREATIVE_MODE_TAB = REGISTRIES.registerCreativeModeTab(
+            ModItems.ENDER_FRAGMENT_ITEM);
     public static final ResourceKey<Enchantment> DECAY_ENCHANTMENT = REGISTRIES.registerEnchantment("decay");
     public static final ResourceKey<Enchantment> REPELLENT_ENCHANTMENT = REGISTRIES.registerEnchantment("repellent");
     public static final ResourceKey<Enchantment> SOULBOUND_ENCHANTMENT = REGISTRIES.registerEnchantment("soulbound");

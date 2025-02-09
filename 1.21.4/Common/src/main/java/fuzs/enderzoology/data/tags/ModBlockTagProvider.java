@@ -16,7 +16,9 @@ public class ModBlockTagProvider extends AbstractTagProvider<Block> {
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.add(BlockTags.ENDERMAN_HOLDABLE)
-                .add(ModBlocks.ENDER_CHARGE_BLOCK.value(), ModBlocks.CONFUSING_CHARGE_BLOCK.value(), ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
+        this.tag(BlockTags.ENDERMAN_HOLDABLE)
+                .add(ModBlocks.ENDER_CHARGE_BLOCK.value(),
+                        ModBlocks.CONFUSING_CHARGE_BLOCK.value(),
+                        ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
     }
 }

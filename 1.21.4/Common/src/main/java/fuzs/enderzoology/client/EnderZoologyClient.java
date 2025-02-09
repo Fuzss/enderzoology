@@ -7,11 +7,9 @@ import fuzs.enderzoology.client.model.OwlModel;
 import fuzs.enderzoology.client.packs.DynamicallyCopiedPackResources;
 import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModEntityTypes;
-import fuzs.enderzoology.init.ModItems;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.api.client.core.v1.context.EntityRenderersContext;
-import fuzs.puzzleslib.api.client.core.v1.context.EntitySpectatorShaderContext;
-import fuzs.puzzleslib.api.client.core.v1.context.ItemModelPropertiesContext;
+import fuzs.puzzleslib.api.client.core.v1.context.EntitySpectatorShadersContext;
 import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
 import fuzs.puzzleslib.api.client.event.v1.entity.player.ComputeFovModifierCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandEvents;
@@ -22,12 +20,9 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshTransformer;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.TntMinecartRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 
 public class EnderZoologyClient implements ClientModConstructor {
 
@@ -65,30 +60,11 @@ public class EnderZoologyClient implements ClientModConstructor {
     }
 
     @Override
-    public void onRegisterEntitySpectatorShaders(EntitySpectatorShaderContext context) {
+    public void onRegisterEntitySpectatorShaders(EntitySpectatorShadersContext context) {
         context.registerSpectatorShader(ResourceLocationHelper.withDefaultNamespace("shaders/post/creeper.json"),
                 ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value());
         context.registerSpectatorShader(ResourceLocationHelper.withDefaultNamespace("shaders/post/invert.json"),
                 ModEntityTypes.ENDERMINY_ENTITY_TYPE.value());
-    }
-
-    @Override
-    public void onRegisterItemModelProperties(ItemModelPropertiesContext context) {
-        context.registerItemProperty(ResourceLocationHelper.withDefaultNamespace("pull"),
-                (ItemStack itemStack, ClientLevel level, LivingEntity entity, int data) -> {
-                    if (entity == null) {
-                        return 0.0F;
-                    } else {
-                        return entity.getUseItem() != itemStack ? 0.0F :
-                                (float) (itemStack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / 20.0F;
-                    }
-                },
-                ModItems.HUNTING_BOW_ITEM.value());
-        context.registerItemProperty(ResourceLocationHelper.withDefaultNamespace("pulling"),
-                (stack, level, entity, data) -> {
-                    return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
-                },
-                ModItems.HUNTING_BOW_ITEM.value());
     }
 
     @Override
@@ -129,7 +105,8 @@ public class EnderZoologyClient implements ClientModConstructor {
                         .apply(MeshTransformer.scaling(1.2F)));
         context.registerLayerDefinition(ModelLayerLocations.DIRE_WOLF_BABY,
                 () -> LayerDefinition.create(WolfModel.createMeshDefinition(CubeDeformation.NONE), 64, 32)
-                        .apply(MeshTransformer.scaling(1.2F)).apply(WolfModel.BABY_TRANSFORMER));
+                        .apply(MeshTransformer.scaling(1.2F))
+                        .apply(WolfModel.BABY_TRANSFORMER));
         context.registerLayerDefinition(ModelLayerLocations.CONCUSSION_CREEPER,
                 () -> CreeperModel.createBodyLayer(CubeDeformation.NONE));
         context.registerLayerDefinition(ModelLayerLocations.CONCUSSION_CREEPER_ARMOR,

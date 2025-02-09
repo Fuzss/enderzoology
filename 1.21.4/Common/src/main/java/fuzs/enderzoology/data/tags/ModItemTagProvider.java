@@ -16,8 +16,8 @@ public class ModItemTagProvider extends AbstractTagProvider<Item> {
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.add(ItemTags.DURABILITY_ENCHANTABLE).add(ModItems.HUNTING_BOW_ITEM);
-        this.add(ItemTags.BOW_ENCHANTABLE).add(ModItems.HUNTING_BOW_ITEM);
-        this.add(ItemTags.CROSSBOW_ENCHANTABLE).add(ModItems.HUNTING_BOW_ITEM);
+        this.tag(ItemTags.DURABILITY_ENCHANTABLE).add(ModItems.HUNTING_BOW_ITEM);
+        this.tag(ItemTags.BOW_ENCHANTABLE).add(ModItems.HUNTING_BOW_ITEM);
+        this.tag(ItemTags.CROSSBOW_ENCHANTABLE).add(ModItems.HUNTING_BOW_ITEM);
     }
 }

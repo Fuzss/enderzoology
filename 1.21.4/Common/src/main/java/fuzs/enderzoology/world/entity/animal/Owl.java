@@ -85,7 +85,6 @@ public class Owl extends Animal implements FlyingAnimal {
         FlyingPathNavigation pathNavigation = new FlyingPathNavigation(this, level);
         pathNavigation.setCanOpenDoors(false);
         pathNavigation.setCanFloat(true);
-        pathNavigation.setCanPassDoors(true);
         return pathNavigation;
     }
 
@@ -95,8 +94,11 @@ public class Owl extends Animal implements FlyingAnimal {
 
         this.calculateFlapping();
 
-        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby() && serverLevel.getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
-            this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby() &&
+                serverLevel.getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
+            this.playSound(SoundEvents.CHICKEN_EGG,
+                    1.0F,
+                    (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             this.spawnAtLocation(serverLevel, ModItems.OWL_EGG_ITEM.value());
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(2000) + 2000;
@@ -106,7 +108,7 @@ public class Owl extends Animal implements FlyingAnimal {
     private void calculateFlapping() {
         this.oFlap = this.flap;
         this.oFlapSpeed = this.flapSpeed;
-        this.flapSpeed += (float)(!this.onGround() && !this.isPassenger() ? 4.0 : -1.0) * 0.3F;
+        this.flapSpeed += (float) (!this.onGround() && !this.isPassenger() ? 4.0 : -1.0) * 0.3F;
         this.flapSpeed = Mth.clamp(this.flapSpeed, 0.0F, 1.0F);
         if (!this.onGround() && this.flapping < 1.0F) {
             this.flapping = 1.0F;
@@ -188,7 +190,9 @@ public class Owl extends Animal implements FlyingAnimal {
 
     @Override
     public boolean doHurtTarget(ServerLevel serverLevel, Entity entity) {
-        return entity.hurtServer(serverLevel, this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        return entity.hurtServer(serverLevel,
+                this.damageSources().mobAttack(this),
+                (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
     }
 
     @Nullable
@@ -234,11 +238,18 @@ public class Owl extends Animal implements FlyingAnimal {
             BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
             BlockPos.MutableBlockPos blockpos$mutableblockpos1 = new BlockPos.MutableBlockPos();
 
-            for (BlockPos blockpos1 : BlockPos.betweenClosed(Mth.floor(this.mob.getX() - 3.0D), Mth.floor(this.mob.getY() - 6.0D), Mth.floor(this.mob.getZ() - 3.0D), Mth.floor(this.mob.getX() + 3.0D), Mth.floor(this.mob.getY() + 6.0D), Mth.floor(this.mob.getZ() + 3.0D))) {
+            for (BlockPos blockpos1 : BlockPos.betweenClosed(Mth.floor(this.mob.getX() - 3.0D),
+                    Mth.floor(this.mob.getY() - 6.0D),
+                    Mth.floor(this.mob.getZ() - 3.0D),
+                    Mth.floor(this.mob.getX() + 3.0D),
+                    Mth.floor(this.mob.getY() + 6.0D),
+                    Mth.floor(this.mob.getZ() + 3.0D))) {
                 if (!blockpos.equals(blockpos1)) {
-                    BlockState blockstate = this.mob.level().getBlockState(blockpos$mutableblockpos1.setWithOffset(blockpos1, Direction.DOWN));
+                    BlockState blockstate = this.mob.level()
+                            .getBlockState(blockpos$mutableblockpos1.setWithOffset(blockpos1, Direction.DOWN));
                     boolean flag = blockstate.getBlock() instanceof LeavesBlock || blockstate.is(BlockTags.LOGS);
-                    if (flag && this.mob.level().isEmptyBlock(blockpos1) && this.mob.level().isEmptyBlock(blockpos$mutableblockpos.setWithOffset(blockpos1, Direction.UP))) {
+                    if (flag && this.mob.level().isEmptyBlock(blockpos1) && this.mob.level()
+                            .isEmptyBlock(blockpos$mutableblockpos.setWithOffset(blockpos1, Direction.UP))) {
                         return Vec3.atBottomCenterOf(blockpos1);
                     }
                 }

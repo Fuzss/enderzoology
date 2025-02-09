@@ -9,14 +9,6 @@
     {
       "id": "#c:bosses",
       "required": false
-    },
-    {
-      "id": "#forge:bosses",
-      "required": false
-    },
-    {
-      "id": "#neoforge:bosses",
-      "required": false
     }
   ]
 }
