@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:bowl",
+    "minecraft:milk_bucket",
+    "minecraft:wheat",
+    "enderzoology:ender_fragment"
+  ],
+  "result": {
+    "count": 1,
+    "id": "enderzoology:enderios"
+  }
+}
