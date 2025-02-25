@@ -3,6 +3,7 @@
   "block.enderzoology.confusing_charge": "Запутывающий заряд",
   "block.enderzoology.ender_charge": "Эндер заряд",
   "effect.enderzoology.displacement": "Перемещение",
+  "effect.enderzoology.displacement.description": "Телепортирует в случайное место поблизости. Имеет шанс появления эндермита.",
   "enchantment.enderzoology.decay": "Распад",
   "enchantment.enderzoology.decay.desc": "Применяет кратковременное иссушение к атакованным.",
   "enchantment.enderzoology.repellent": "Отталкивающий",
