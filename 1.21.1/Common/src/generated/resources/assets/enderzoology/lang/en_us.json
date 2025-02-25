@@ -3,6 +3,7 @@
   "block.enderzoology.confusing_charge": "Confusing Charge",
   "block.enderzoology.ender_charge": "Ender Charge",
   "effect.enderzoology.displacement": "Displacement",
+  "effect.enderzoology.displacement.description": "Teleports to a random place nearby. Has a chance to spawn an endermite.",
   "enchantment.enderzoology.decay": "Decay",
   "enchantment.enderzoology.decay.desc": "Applies the Wither effect to attacked enemies.",
   "enchantment.enderzoology.repellent": "Repellent",
