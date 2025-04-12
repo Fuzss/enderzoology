@@ -51,9 +51,16 @@ public class PrimedCharge extends PrimedTnt {
         if (this.getFuse() - 1 <= 0) {
             this.discard();
             if (this.level() instanceof ServerLevel serverLevel) {
-                EnderExplosionHelper.explode(serverLevel, this, null, this.getX(), this.getY(0.0625), this.getZ(),
-                        4.0F, Level.ExplosionInteraction.TNT, this.enderExplosionType, true
-                );
+                EnderExplosionHelper.explode(serverLevel,
+                        this,
+                        null,
+                        this.getX(),
+                        this.getY(0.0625),
+                        this.getZ(),
+                        4.0F,
+                        Level.ExplosionInteraction.TNT,
+                        this.enderExplosionType,
+                        true);
             }
         } else {
             super.tick();
@@ -75,7 +82,7 @@ public class PrimedCharge extends PrimedTnt {
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.enderExplosionType = EnderExplosionType.values()[compound.getByte(TAG_ENTITY_INTERACTION)];
+        this.enderExplosionType = EnderExplosionType.values()[compound.getByteOr(TAG_ENTITY_INTERACTION, (byte) 0)];
     }
 
     @Override

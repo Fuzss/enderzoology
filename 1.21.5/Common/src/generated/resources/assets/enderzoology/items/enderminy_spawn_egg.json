@@ -1,15 +1,15 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/template_spawn_egg",
+    "model": "enderzoology:item/enderminy_spawn_egg",
     "tints": [
       {
         "type": "minecraft:constant",
-        "value": -14196147
+        "value": -14599885
       },
       {
         "type": "minecraft:constant",
-        "value": -14606047
+        "value": -15390172
       }
     ]
   }

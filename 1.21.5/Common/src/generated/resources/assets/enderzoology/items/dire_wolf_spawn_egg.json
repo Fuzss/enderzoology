@@ -1,15 +1,15 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/template_spawn_egg",
+    "model": "enderzoology:item/dire_wolf_spawn_egg",
     "tints": [
       {
         "type": "minecraft:constant",
-        "value": -10461088
+        "value": -12368819
       },
       {
         "type": "minecraft:constant",
-        "value": -6250336
+        "value": -13618887
       }
     ]
   }

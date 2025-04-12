@@ -208,9 +208,4 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
     protected SoundEvent getDeathSound() {
         return SoundEvents.CAT_DEATH;
     }
-
-    @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
-        return false;
-    }
 }

@@ -1,15 +1,15 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/template_spawn_egg",
+    "model": "enderzoology:item/infested_zombie_spawn_egg",
     "tints": [
       {
         "type": "minecraft:constant",
-        "value": -15519915
+        "value": -13470121
       },
       {
         "type": "minecraft:constant",
-        "value": -13947620
+        "value": -14985156
       }
     ]
   }

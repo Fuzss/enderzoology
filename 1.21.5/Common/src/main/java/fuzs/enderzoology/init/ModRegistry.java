@@ -10,24 +10,20 @@ import fuzs.puzzleslib.api.attachment.v4.DataAttachmentType;
 import fuzs.puzzleslib.api.init.v3.registry.RegistryManager;
 import fuzs.puzzleslib.api.init.v3.tags.TagFactory;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.enchantment.Enchantment;
 
 public class ModRegistry {
+    public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder().add(Registries.ENCHANTMENT,
+            ModEnchantments::boostrap);
+
     static final RegistryManager REGISTRIES = RegistryManager.from(EnderZoology.MOD_ID);
-    public static final Holder.Reference<CreativeModeTab> CREATIVE_MODE_TAB = REGISTRIES.registerCreativeModeTab(
-            ModItems.ENDER_FRAGMENT_ITEM);
-    public static final ResourceKey<Enchantment> DECAY_ENCHANTMENT = REGISTRIES.registerEnchantment("decay");
-    public static final ResourceKey<Enchantment> REPELLENT_ENCHANTMENT = REGISTRIES.registerEnchantment("repellent");
-    public static final ResourceKey<Enchantment> SOULBOUND_ENCHANTMENT = REGISTRIES.registerEnchantment("soulbound");
-    public static final ResourceKey<Enchantment> WITHERING_ENCHANTMENT = REGISTRIES.registerEnchantment("withering");
     public static final Holder.Reference<MobEffect> DISPLACEMENT_MOB_EFFECT = REGISTRIES.registerMobEffect(
             "displacement",
             () -> new DisplacementMobEffect(MobEffectCategory.HARMFUL, 0X932423));
@@ -35,6 +31,8 @@ public class ModRegistry {
             Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE,
             "teleport_entity",
             () -> TeleportEntity.CODEC);
+    public static final Holder.Reference<CreativeModeTab> CREATIVE_MODE_TAB = REGISTRIES.registerCreativeModeTab(
+            ModItems.ENDER_FRAGMENT_ITEM);
 
     public static final DataAttachmentType<Entity, SoulboundItems> SOULBOUND_ITEMS_ATTACHMENT_TYPE = DataAttachmentRegistry.<SoulboundItems>entityBuilder()
             .persistent(SoulboundItems.CODEC)

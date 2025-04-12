@@ -8,8 +8,9 @@ import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import net.minecraft.client.model.HorseModel;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.layers.HorseArmorLayer;
+import net.minecraft.client.renderer.entity.layers.SimpleEquipmentLayer;
 import net.minecraft.client.renderer.entity.state.HorseRenderState;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.ResourceLocation;
 
 public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, HorseRenderState, HorseModel> {
@@ -21,7 +22,12 @@ public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, Hors
         super(context,
                 new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT)),
                 new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_BABY)));
-        this.addLayer(new HorseArmorLayer(this, context.getModelSet(), context.getEquipmentRenderer()));
+        this.addLayer(new SimpleEquipmentLayer<>(this,
+                context.getEquipmentRenderer(),
+                EquipmentClientInfo.LayerType.HORSE_BODY,
+                (HorseRenderState horseRenderState) -> horseRenderState.bodyArmorItem,
+                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_ARMOR)),
+                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_BABY_ARMOR))));
     }
 
     @Override

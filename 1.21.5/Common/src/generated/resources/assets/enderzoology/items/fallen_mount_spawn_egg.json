@@ -1,15 +1,15 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/template_spawn_egg",
+    "model": "enderzoology:item/fallen_mount_spawn_egg",
     "tints": [
       {
         "type": "minecraft:constant",
-        "value": -13215195
+        "value": -13544908
       },
       {
         "type": "minecraft:constant",
-        "value": -6250336
+        "value": -6831484
       }
     ]
   }

@@ -13,7 +13,7 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
 
     @Override
     public void addTranslations(TranslationBuilder builder) {
-        builder.addCreativeModeTab(EnderZoology.MOD_ID, EnderZoology.MOD_NAME);
+        builder.add(ModRegistry.CREATIVE_MODE_TAB.value(), EnderZoology.MOD_NAME);
         builder.add(ModBlocks.ENDER_CHARGE_BLOCK.value(), "Ender Charge");
         builder.add(ModBlocks.CONFUSING_CHARGE_BLOCK.value(), "Confusing Charge");
         builder.add(ModBlocks.CONCUSSION_CHARGE_BLOCK.value(), "Concussion Charge");
@@ -45,26 +45,26 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
         builder.add(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(), "Wither Witch");
         builder.add(ModEntityTypes.OWL_ENTITY_TYPE.value(), "Owl");
         builder.add(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(), "Fallen Knight");
+        builder.add(ModEntityTypes.PRIMED_CHARGE_ENTITY_TYPE.value(), "Primed Charge");
         builder.add(ModEntityTypes.ENDER_CHARGE_MINECART_ENTITY_TYPE.value(), "Minecart with Ender Charge");
         builder.add(ModEntityTypes.CONFUSING_CHARGE_MINECART_ENTITY_TYPE.value(), "Minecart with Confusing Charge");
         builder.add(ModEntityTypes.CONCUSSION_CHARGE_MINECART_ENTITY_TYPE.value(), "Minecart with Concussion Charge");
-        builder.addEnchantment(ModRegistry.DECAY_ENCHANTMENT, "Decay");
-        builder.addEnchantment(ModRegistry.REPELLENT_ENCHANTMENT, "Repellent");
-        builder.addEnchantment(ModRegistry.SOULBOUND_ENCHANTMENT, "Soulbound");
-        builder.addEnchantment(ModRegistry.WITHERING_ENCHANTMENT, "Withering");
-        builder.addEnchantment(ModRegistry.DECAY_ENCHANTMENT, "desc", "Applies the Wither effect to attacked enemies.");
-        builder.addEnchantment(ModRegistry.REPELLENT_ENCHANTMENT,
+        builder.addEnchantment(ModEnchantments.DECAY_ENCHANTMENT, "Decay");
+        builder.addEnchantment(ModEnchantments.REPELLENT_ENCHANTMENT, "Repellent");
+        builder.addEnchantment(ModEnchantments.SOULBOUND_ENCHANTMENT, "Soulbound");
+        builder.addEnchantment(ModEnchantments.WITHERING_ENCHANTMENT, "Withering");
+        builder.addEnchantment(ModEnchantments.DECAY_ENCHANTMENT,
                 "desc",
-                "Randomly teleports enemies when they attack you."
-        );
-        builder.addEnchantment(ModRegistry.SOULBOUND_ENCHANTMENT,
+                "Applies the Wither effect to attacked enemies.");
+        builder.addEnchantment(ModEnchantments.REPELLENT_ENCHANTMENT,
                 "desc",
-                "On death an item will be kept in the inventory and the level may randomly decrease."
-        );
-        builder.addEnchantment(ModRegistry.WITHERING_ENCHANTMENT,
+                "Randomly teleports enemies when they attack you.");
+        builder.addEnchantment(ModEnchantments.SOULBOUND_ENCHANTMENT,
                 "desc",
-                "Applies the Wither effect to enemies hit by arrows."
-        );
+                "On death an item will be kept in the inventory and the level may randomly decrease.");
+        builder.addEnchantment(ModEnchantments.WITHERING_ENCHANTMENT,
+                "desc",
+                "Applies the Wither effect to enemies hit by arrows.");
         builder.add(ModRegistry.DISPLACEMENT_MOB_EFFECT.value(), "Displacement");
         builder.addPotion(ModPotions.DISPLACEMENT_POTION, "Displacement");
         builder.addPotion(ModPotions.DECAY_POTION, "Decay");

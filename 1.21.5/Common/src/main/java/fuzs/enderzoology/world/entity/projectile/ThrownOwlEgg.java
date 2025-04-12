@@ -68,7 +68,7 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
                     Owl owl = ModEntityTypes.OWL_ENTITY_TYPE.value().create(this.level(), EntitySpawnReason.TRIGGERED);
                     if (owl != null) {
                         owl.setAge(-24000);
-                        owl.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                        owl.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
                         if (!owl.fudgePositionAfterSizeChange(ZERO_SIZED_DIMENSIONS)) {
                             break;
                         }

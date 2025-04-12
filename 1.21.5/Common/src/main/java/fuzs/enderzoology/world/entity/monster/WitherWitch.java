@@ -14,7 +14,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestHealableRaiderTargetGoal;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.entity.projectile.ThrownSplashPotion;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -136,6 +136,9 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
         return blockPos;
     }
 
+    /**
+     * @see Witch#performRangedAttack(LivingEntity, float)
+     */
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
         if (!this.isDrinkingPotion()) {
@@ -144,24 +147,24 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
             double e = target.getEyeY() - 1.1 - this.getY();
             double f = target.getZ() + vec3.z - this.getZ();
             double g = Math.sqrt(d * d + f * f);
-            Holder<Potion> potion = target.isInvertedHealAndHarm() ? Potions.HEALING : Potions.HARMING;
+            Holder<Potion> holder = target.isInvertedHealAndHarm() ? Potions.HEALING : Potions.HARMING;
             if (target instanceof Raider || target instanceof WitherCat) {
                 if (this.random.nextInt(4) != 0 || target.getHealth() <= 4.0F) {
-                    potion = Potions.HEALING;
+                    holder = Potions.HEALING;
                 } else {
-                    potion = Potions.REGENERATION;
+                    holder = Potions.REGENERATION;
                 }
 
                 this.setTarget(null);
             } else if (target.getHealth() >= 8.0F && !target.hasEffect(MobEffects.WITHER)) {
-                potion = ModPotions.DECAY_POTION;
+                holder = ModPotions.DECAY_POTION;
             } else if (g <= 3.0 && !target.hasEffect(MobEffects.LEVITATION) && this.random.nextFloat() < 0.05F) {
-                potion = ModPotions.RISING_POTION;
+                holder = ModPotions.RISING_POTION;
             }
 
             if (this.level() instanceof ServerLevel serverLevel) {
-                ItemStack itemStack = PotionContents.createItemStack(Items.SPLASH_POTION, potion);
-                Projectile.spawnProjectileUsingShoot(ThrownPotion::new,
+                ItemStack itemStack = PotionContents.createItemStack(Items.SPLASH_POTION, holder);
+                Projectile.spawnProjectileUsingShoot(ThrownSplashPotion::new,
                         serverLevel,
                         itemStack,
                         this,

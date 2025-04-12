@@ -15,7 +15,10 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -25,7 +28,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.entity.projectile.AbstractThrownPotion;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
@@ -42,7 +45,9 @@ import java.util.UUID;
 
 public class Enderminy extends Monster implements NeutralMob {
     private static final ResourceLocation SPEED_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_speed_boost");
-    private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_ID, 0.15F, AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_ID,
+            0.15F,
+            AttributeModifier.Operation.ADD_VALUE);
     private static final int MIN_DEAGGRESSION_TIME = 600;
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final UniformInt FIRST_ANGER_SOUND_DELAY = TimeUtil.rangeOfSeconds(0, 1);
@@ -66,7 +71,8 @@ public class Enderminy extends Monster implements NeutralMob {
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0, 0.0F));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, this::isAngryAt));
+        this.targetSelector.addGoal(1,
+                new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, this::isAngryAt));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, ConcussionCreeper.class, true, false));
         this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, true));
@@ -83,9 +89,10 @@ public class Enderminy extends Monster implements NeutralMob {
             this.maybeAlertOthers();
         }
 
-        if (serverLevel.isDay() && this.tickCount >= this.targetChangeTime + MIN_DEAGGRESSION_TIME) {
+        if (serverLevel.isBrightOutside() && this.tickCount >= this.targetChangeTime + MIN_DEAGGRESSION_TIME) {
             float f = this.getLightLevelDependentMagicValue();
-            if (f > 0.5F && serverLevel.canSeeSky(this.blockPosition()) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
+            if (f > 0.5F && serverLevel.canSeeSky(this.blockPosition()) &&
+                    this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
                 this.setTarget(null);
                 this.teleport();
             }
@@ -119,7 +126,8 @@ public class Enderminy extends Monster implements NeutralMob {
     private void alertOthers() {
         double followRange = this.getAttributeValue(Attributes.FOLLOW_RANGE);
         AABB aABB = AABB.unitCubeFromLowerCorner(this.position()).inflate(followRange, 10.0, followRange);
-        List<Enderminy> list = this.level().getEntitiesOfClass(Enderminy.class, aABB, EntitySelector.ENTITY_STILL_ALIVE);
+        List<Enderminy> list = this.level()
+                .getEntitiesOfClass(Enderminy.class, aABB, EntitySelector.ENTITY_STILL_ALIVE);
         for (Enderminy enderminy : list) {
             if (enderminy != this) {
                 if (enderminy.getTarget() == null && !enderminy.isAlliedTo(this.getTarget())) {
@@ -200,7 +208,14 @@ public class Enderminy extends Monster implements NeutralMob {
     @Override
     public void aiStep() {
         if (this.level().isClientSide) {
-            this.level().addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5), this.getRandomY() - 0.25, this.getRandomZ(0.5), (this.random.nextDouble() - 0.5) * 2.0, -this.random.nextDouble(), (this.random.nextDouble() - 0.5) * 2.0);
+            this.level()
+                    .addParticle(ParticleTypes.PORTAL,
+                            this.getRandomX(0.5),
+                            this.getRandomY() - 0.25,
+                            this.getRandomZ(0.5),
+                            (this.random.nextDouble() - 0.5) * 2.0,
+                            -this.random.nextDouble(),
+                            (this.random.nextDouble() - 0.5) * 2.0);
         }
 
         this.jumping = false;
@@ -227,7 +242,8 @@ public class Enderminy extends Monster implements NeutralMob {
     private boolean teleport(double x, double y, double z) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(x, y, z);
 
-        while (mutableBlockPos.getY() > this.level().getMinY() && !this.level().getBlockState(mutableBlockPos).blocksMotion()) {
+        while (mutableBlockPos.getY() > this.level().getMinY() &&
+                !this.level().getBlockState(mutableBlockPos).blocksMotion()) {
             mutableBlockPos.move(Direction.DOWN);
         }
 
@@ -240,7 +256,15 @@ public class Enderminy extends Monster implements NeutralMob {
             if (bl3) {
                 this.level().gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
                 if (!this.isSilent()) {
-                    this.level().playSound(null, this.xo, this.yo, this.zo, SoundEvents.ENDERMAN_TELEPORT, this.getSoundSource(), 1.0F, 1.0F);
+                    this.level()
+                            .playSound(null,
+                                    this.xo,
+                                    this.yo,
+                                    this.zo,
+                                    SoundEvents.ENDERMAN_TELEPORT,
+                                    this.getSoundSource(),
+                                    1.0F,
+                                    1.0F);
                     this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
                 }
             }
@@ -266,40 +290,47 @@ public class Enderminy extends Monster implements NeutralMob {
         return SoundEvents.ENDERMAN_DEATH;
     }
 
+    /**
+     * @see net.minecraft.world.entity.monster.EnderMan#hurtServer(ServerLevel, DamageSource, float)
+     */
     @Override
-    public boolean hurtServer(ServerLevel serverLevel, DamageSource damageSource, float damageAmount) {
-        if (this.isInvulnerableTo(serverLevel, damageSource)) {
+    public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
+        if (this.isInvulnerableTo(level, damageSource)) {
             return false;
-        } else if (damageSource.is(DamageTypeTags.IS_PROJECTILE)) {
-            Entity entity = damageSource.getDirectEntity();
-            boolean isHurt;
-            if (entity instanceof ThrownPotion) {
-                isHurt = this.hurtWithCleanWater(serverLevel, damageSource, (ThrownPotion) entity, damageAmount);
-            } else {
-                isHurt = false;
-            }
-
-            for (int i = 0; i < 64; ++i) {
-                if (this.teleport()) {
-                    return true;
-                }
-            }
-
-            return isHurt;
         } else {
-            boolean isHurt = super.hurtServer(serverLevel, damageSource, damageAmount);
-            if (!(damageSource.getEntity() instanceof LivingEntity) && this.random.nextInt(10) != 0) {
-                this.teleport();
-            }
+            AbstractThrownPotion abstractThrownPotion2 =
+                    damageSource.getDirectEntity() instanceof AbstractThrownPotion abstractThrownPotion ?
+                            abstractThrownPotion : null;
+            if (!damageSource.is(DamageTypeTags.IS_PROJECTILE) && abstractThrownPotion2 == null) {
+                boolean bl = super.hurtServer(level, damageSource, amount);
+                if (!(damageSource.getEntity() instanceof LivingEntity) && this.random.nextInt(10) != 0) {
+                    this.teleport();
+                }
 
-            return isHurt;
+                return bl;
+            } else {
+                boolean bl = abstractThrownPotion2 != null &&
+                        this.hurtWithCleanWater(level, damageSource, abstractThrownPotion2, amount);
+
+                for (int i = 0; i < 64; i++) {
+                    if (this.teleport()) {
+                        return true;
+                    }
+                }
+
+                return bl;
+            }
         }
     }
 
-    private boolean hurtWithCleanWater(ServerLevel serverLevel, DamageSource damageSource, ThrownPotion thrownPotion, float damageAmount) {
-        ItemStack itemStack = thrownPotion.getItem();
+    /**
+     * @see net.minecraft.world.entity.monster.EnderMan#hurtWithCleanWater(ServerLevel, DamageSource,
+     *         AbstractThrownPotion, float)
+     */
+    private boolean hurtWithCleanWater(ServerLevel serverLevel, DamageSource damageSource, AbstractThrownPotion abstractThrownPotion, float f) {
+        ItemStack itemStack = abstractThrownPotion.getItem();
         PotionContents potionContents = itemStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-        return potionContents.is(Potions.WATER) && super.hurtServer(serverLevel, damageSource, damageAmount);
+        return potionContents.is(Potions.WATER) ? super.hurtServer(serverLevel, damageSource, f) : false;
     }
 
     @Override

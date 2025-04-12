@@ -95,8 +95,12 @@ public class EnderZoologyClient implements ClientModConstructor {
         context.registerLayerDefinition(ModelLayerLocations.ENDERMINY, EndermanModel::createBodyLayer);
         context.registerLayerDefinition(ModelLayerLocations.FALLEN_MOUNT,
                 () -> LayerDefinition.create(AbstractEquineModel.createBodyMesh(CubeDeformation.NONE), 64, 64));
+        context.registerLayerDefinition(ModelLayerLocations.FALLEN_MOUNT_ARMOR,
+                () -> LayerDefinition.create(AbstractEquineModel.createBodyMesh(new CubeDeformation(0.1F)), 64, 64));
         context.registerLayerDefinition(ModelLayerLocations.FALLEN_MOUNT_BABY,
                 () -> LayerDefinition.create(AbstractEquineModel.createBabyMesh(CubeDeformation.NONE), 64, 64));
+        context.registerLayerDefinition(ModelLayerLocations.FALLEN_MOUNT_BABY_ARMOR,
+                () -> LayerDefinition.create(AbstractEquineModel.createBabyMesh(new CubeDeformation(0.1F)), 64, 64));
         context.registerLayerDefinition(ModelLayerLocations.WITHER_CAT,
                 () -> LayerDefinition.create(OcelotModel.createBodyMesh(CubeDeformation.NONE), 64, 32));
         context.registerLayerDefinition(ModelLayerLocations.WITHER_WITCH, WitchModel::createBodyLayer);

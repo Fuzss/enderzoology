@@ -14,10 +14,6 @@ public class DireWolfRenderState extends WolfRenderState {
     public final ItemStackRenderState heldItem = new ItemStackRenderState();
 
     public static void extractHoldingEntityRenderState(LivingEntity entity, DireWolfRenderState reusedState, ItemModelResolver resolver) {
-        resolver.updateForLiving(reusedState.heldItem,
-                entity.getMainHandItem(),
-                ItemDisplayContext.GROUND,
-                false,
-                entity);
+        resolver.updateForLiving(reusedState.heldItem, entity.getMainHandItem(), ItemDisplayContext.GROUND, entity);
     }
 }

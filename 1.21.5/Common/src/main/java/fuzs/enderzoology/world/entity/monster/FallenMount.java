@@ -3,6 +3,7 @@ package fuzs.enderzoology.world.entity.monster;
 import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.services.CommonAbstractions;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -128,11 +129,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    public boolean isSaddleable() {
-        return false;
-    }
-
-    @Override
     public void positionRider(Entity passenger, MoveFunction callback) {
         super.positionRider(passenger, callback);
         if (passenger instanceof LivingEntity living) {
@@ -218,7 +214,12 @@ public class FallenMount extends AbstractHorse implements Enemy {
 
     @Override
     public boolean canUseSlot(EquipmentSlot slot) {
-        return true;
+        return slot != EquipmentSlot.SADDLE;
+    }
+
+    @Override
+    protected boolean canDispenserEquipIntoSlot(EquipmentSlot slot) {
+        return slot != EquipmentSlot.SADDLE && super.canDispenserEquipIntoSlot(slot);
     }
 
     @Override
@@ -228,25 +229,26 @@ public class FallenMount extends AbstractHorse implements Enemy {
             compoundTag.put(TAG_HORSE_DATA, this.horseData);
         }
         compoundTag.putInt("ConversionTime", this.isConverting() ? this.conversionTime : -1);
-        if (this.conversionStarter != null) {
-            compoundTag.putUUID("ConversionPlayer", this.conversionStarter);
-        }
+        compoundTag.storeNullable("ConversionPlayer", UUIDUtil.CODEC, this.conversionStarter);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.horseData = compoundTag.getCompound(TAG_HORSE_DATA);
-        if (compoundTag.contains("ConversionTime", 99) && compoundTag.getInt("ConversionTime") > -1) {
-            this.startConverting(
-                    compoundTag.hasUUID("ConversionPlayer") ? compoundTag.getUUID("ConversionPlayer") : null,
-                    compoundTag.getInt("ConversionTime"));
+        this.horseData = compoundTag.getCompoundOrEmpty(TAG_HORSE_DATA);
+        int conversionTime = compoundTag.getIntOr("ConversionTime", -1);
+        if (conversionTime != -1) {
+            UUID uUID = compoundTag.read("ConversionPlayer", UUIDUtil.CODEC).orElse(null);
+            this.startConverting(uUID, conversionTime);
+        } else {
+            this.getEntityData().set(DATA_CONVERTING_ID, false);
+            this.conversionTime = -1;
         }
     }
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.isConverting() && (this.horseData == null || !this.horseData.getBoolean("Tame"));
+        return !this.isConverting() && (this.horseData == null || !this.horseData.getBooleanOr("Tame", false));
     }
 
     public boolean isConverting() {
@@ -258,7 +260,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
         this.conversionTime = conversionTime;
         this.getEntityData().set(DATA_CONVERTING_ID, true);
         this.removeEffect(MobEffects.WEAKNESS);
-        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
+        this.addEffect(new MobEffectInstance(MobEffects.STRENGTH,
                 conversionTime,
                 Math.min(this.level().getDifficulty().getId() - 1, 0)));
         this.level().broadcastEntityEvent(this, EntityEvent.ZOMBIE_CONVERTING);
@@ -287,7 +289,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
         this.createHorseFromData(serverLevel, this)
                 .or(() -> this.createFreshHorse(serverLevel))
                 .ifPresent((AbstractHorse abstractHorse) -> {
-                    abstractHorse.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+                    abstractHorse.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 0));
                     if (!this.isSilent()) {
                         serverLevel.levelEvent(null, LevelEvent.SOUND_ZOMBIE_CONVERTED, this.blockPosition(), 0);
                     }
@@ -324,7 +326,10 @@ public class FallenMount extends AbstractHorse implements Enemy {
                     new AgeableMobGroupData(0.0F));
             mob.setTamed(true);
             if (this.conversionStarter != null) {
-                mob.setOwnerUUID(this.conversionStarter);
+                Player player = serverLevel.getPlayerByUUID(this.conversionStarter);
+                if (player != null) {
+                    mob.setOwner(player);
+                }
             }
             mob.setBaby(false);
             CommonAbstractions.INSTANCE.onLivingConvert(this, mob, conversionParams);

@@ -27,7 +27,11 @@ public class ModelLayerLocations {
             "ender_infested_zombie_baby");
     public static final ModelLayerLocation ENDERMINY = MODEL_LAYERS.registerModelLayer("enderminy");
     public static final ModelLayerLocation FALLEN_MOUNT = MODEL_LAYERS.registerModelLayer("fallen_mount");
+    public static final ModelLayerLocation FALLEN_MOUNT_ARMOR = MODEL_LAYERS.registerModelLayer("fallen_mount",
+            "armor");
     public static final ModelLayerLocation FALLEN_MOUNT_BABY = MODEL_LAYERS.registerModelLayer("fallen_mount_baby");
+    public static final ModelLayerLocation FALLEN_MOUNT_BABY_ARMOR = MODEL_LAYERS.registerModelLayer("fallen_mount_baby",
+            "armor");
     public static final ModelLayerLocation WITHER_CAT = MODEL_LAYERS.registerModelLayer("wither_cat");
     public static final ModelLayerLocation WITHER_WITCH = MODEL_LAYERS.registerModelLayer("wither_witch");
     public static final ModelLayerLocation DIRE_WOLF = MODEL_LAYERS.registerModelLayer("dire_wolf");

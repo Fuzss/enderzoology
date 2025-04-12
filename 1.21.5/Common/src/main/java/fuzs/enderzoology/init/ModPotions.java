@@ -21,13 +21,13 @@ public class ModPotions {
             "strong_decay",
             () -> new Potion("decay", new MobEffectInstance(MobEffects.WITHER, 450, 1)));
     public static final Holder.Reference<Potion> CONFUSION_POTION = ModRegistry.REGISTRIES.registerPotion("confusion",
-            (String name) -> new Potion(name, new MobEffectInstance(MobEffects.CONFUSION, 900)));
+            (String name) -> new Potion(name, new MobEffectInstance(MobEffects.NAUSEA, 900)));
     public static final Holder.Reference<Potion> LONG_CONFUSION_POTION = ModRegistry.REGISTRIES.registerPotion(
             "long_confusion",
-            () -> new Potion("confusion", new MobEffectInstance(MobEffects.CONFUSION, 1800)));
+            () -> new Potion("confusion", new MobEffectInstance(MobEffects.NAUSEA, 1800)));
     public static final Holder.Reference<Potion> STRONG_CONFUSION_POTION = ModRegistry.REGISTRIES.registerPotion(
             "strong_confusion",
-            () -> new Potion("confusion", new MobEffectInstance(MobEffects.CONFUSION, 450, 1)));
+            () -> new Potion("confusion", new MobEffectInstance(MobEffects.NAUSEA, 450, 1)));
     public static final Holder.Reference<Potion> RISING_POTION = ModRegistry.REGISTRIES.registerPotion("rising",
             (String name) -> new Potion(name, new MobEffectInstance(MobEffects.LEVITATION, 1800)));
     public static final Holder.Reference<Potion> LONG_RISING_POTION = ModRegistry.REGISTRIES.registerPotion(

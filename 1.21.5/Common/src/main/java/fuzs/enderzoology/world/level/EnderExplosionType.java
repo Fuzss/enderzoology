@@ -37,7 +37,7 @@ public enum EnderExplosionType implements StringRepresentable {
             effects.add(new MobEffectInstance(ModRegistry.DISPLACEMENT_MOB_EFFECT, 1, strength));
         }
         if (this.isConfusion()) {
-            effects.add(new MobEffectInstance(MobEffects.CONFUSION, 100));
+            effects.add(new MobEffectInstance(MobEffects.NAUSEA, 100));
         }
 
         return effects;

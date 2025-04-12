@@ -122,7 +122,7 @@ public class FallenKnight extends AbstractSkeleton {
         spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData);
         if (level.getRandom().nextBoolean()) {
             Mob mob = ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level(), EntitySpawnReason.JOCKEY);
-            mob.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+            mob.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             mob.finalizeSpawn(level, difficulty, EntitySpawnReason.JOCKEY, null);
             this.startRiding(mob);
             level.addFreshEntity(mob);
@@ -245,6 +245,6 @@ public class FallenKnight extends AbstractSkeleton {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setCanBreakDoors(compound.getBoolean("CanBreakDoors"));
+        this.setCanBreakDoors(compound.getBooleanOr("CanBreakDoors", false));
     }
 }

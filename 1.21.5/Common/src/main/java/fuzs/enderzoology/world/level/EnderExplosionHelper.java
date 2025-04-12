@@ -1,8 +1,11 @@
 package fuzs.enderzoology.world.level;
 
 import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -10,9 +13,8 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.EntityBasedExplosionDamageCalculator;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerExplosion;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +65,7 @@ public class EnderExplosionHelper {
             if (distance < explosionRadius * explosionRadius) {
                 double multiplier = 1.0 - Math.sqrt(distance) / explosionRadius;
                 int duration = 100 + (int) (multiplier * 200.0);
-                entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 0));
+                entity.addEffect(new MobEffectInstance(MobEffects.NAUSEA, duration, 0));
             }
         }
     }
@@ -77,6 +79,43 @@ public class EnderExplosionHelper {
         areaEffectCloud.setRadiusPerTick(-areaEffectCloud.getRadius() / (float) areaEffectCloud.getDuration());
         effects.forEach(areaEffectCloud::addEffect);
         level.addFreshEntity(areaEffectCloud);
+    }
+
+    public static boolean onChargeCaughtFire(Level level, BlockPos blockPos, @Nullable LivingEntity igniter, EnderExplosionType enderExplosionType) {
+        if (level instanceof ServerLevel serverLevel &&
+                serverLevel.getGameRules().getBoolean(GameRules.RULE_TNT_EXPLODES)) {
+            PrimedTnt primedTnt = new PrimedCharge(level,
+                    blockPos.getX() + 0.5,
+                    blockPos.getY(),
+                    blockPos.getZ() + 0.5,
+                    igniter,
+                    enderExplosionType);
+            level.addFreshEntity(primedTnt);
+            level.playSound(null,
+                    primedTnt.getX(),
+                    primedTnt.getY(),
+                    primedTnt.getZ(),
+                    SoundEvents.TNT_PRIMED,
+                    SoundSource.BLOCKS,
+                    1.0F,
+                    1.0F);
+            level.gameEvent(igniter, GameEvent.PRIME_FUSE, blockPos);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void chargeWasExploded(ServerLevel serverLevel, BlockPos blockPos, Explosion explosion, EnderExplosionType enderExplosionType) {
+        PrimedTnt primedTnt = new PrimedCharge(serverLevel,
+                blockPos.getX() + 0.5,
+                blockPos.getY(),
+                blockPos.getZ() + 0.5,
+                explosion.getIndirectSourceEntity(),
+                enderExplosionType);
+        int fuse = primedTnt.getFuse();
+        primedTnt.setFuse(serverLevel.random.nextInt(fuse / 4) + fuse / 8);
+        serverLevel.addFreshEntity(primedTnt);
     }
 
     public static class EnderExplosionDamageCalculator extends EntityBasedExplosionDamageCalculator {

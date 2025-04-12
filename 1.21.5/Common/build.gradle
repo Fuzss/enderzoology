@@ -3,9 +3,6 @@ apply from: "https://raw.githubusercontent.com/Fuzss/modresources/main/gradle/${
 dependencies {
     // Puzzles Lib
     modApi libs.puzzleslib.common
-
-    // Extensible Enums
-    modApi libs.extensibleenums.common
 }
 
 tasks.withType(net.fabricmc.loom.task.AbstractRemapJarTask).configureEach {

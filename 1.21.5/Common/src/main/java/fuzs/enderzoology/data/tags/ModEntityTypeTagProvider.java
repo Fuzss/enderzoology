@@ -32,5 +32,7 @@ public class ModEntityTypeTagProvider extends AbstractTagProvider<EntityType<?>>
                 .add(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE,
                         ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE,
                         ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE);
+        this.tag(EntityTypeTags.FALL_DAMAGE_IMMUNE)
+                .add(ModEntityTypes.WITHER_CAT_ENTITY_TYPE, ModEntityTypes.OWL_ENTITY_TYPE);
     }
 }

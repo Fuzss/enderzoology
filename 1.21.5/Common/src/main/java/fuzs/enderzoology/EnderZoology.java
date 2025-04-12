@@ -18,8 +18,8 @@ import fuzs.puzzleslib.api.biome.v1.MobSpawnSettingsContext;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.BiomeModificationsContext;
-import fuzs.puzzleslib.api.core.v1.context.EntityAttributesCreateContext;
-import fuzs.puzzleslib.api.core.v1.context.FlammableBlocksContext;
+import fuzs.puzzleslib.api.core.v1.context.EntityAttributesContext;
+import fuzs.puzzleslib.api.core.v1.context.GameplayContentContext;
 import fuzs.puzzleslib.api.core.v1.context.SpawnPlacementsContext;
 import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
@@ -35,25 +35,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.apache.commons.lang3.math.Fraction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
-import java.util.function.DoubleUnaryOperator;
-import java.util.function.Function;
 
 public class EnderZoology implements ModConstructor {
     public static final String MOD_ID = "enderzoology";
@@ -141,33 +136,31 @@ public class EnderZoology implements ModConstructor {
     }
 
     @Override
-    public void onRegisterFlammableBlocks(FlammableBlocksContext context) {
-        context.registerFlammable(15,
-                100,
-                ModBlocks.ENDER_CHARGE_BLOCK.value(),
-                ModBlocks.CONFUSING_CHARGE_BLOCK.value(),
-                ModBlocks.CONCUSSION_CHARGE_BLOCK.value());
+    public void onRegisterGameplayContent(GameplayContentContext context) {
+        context.registerFlammable(ModBlocks.ENDER_CHARGE_BLOCK, 15, 100);
+        context.registerFlammable(ModBlocks.CONFUSING_CHARGE_BLOCK, 15, 100);
+        context.registerFlammable(ModBlocks.CONCUSSION_CHARGE_BLOCK, 15, 100);
     }
 
     @Override
-    public void onEntityAttributeCreation(EntityAttributesCreateContext context) {
-        context.registerEntityAttributes(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
+    public void onRegisterEntityAttributes(EntityAttributesContext context) {
+        context.registerAttributes(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createConcussionCreeperAttributes());
-        context.registerEntityAttributes(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createEnderInfestedZombieAttributes());
-        context.registerEntityAttributes(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createEnderminyAttributes());
-        context.registerEntityAttributes(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createDireWolfAttributes());
-        context.registerEntityAttributes(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createFallenMountAttributes());
-        context.registerEntityAttributes(ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.WITHER_CAT_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createWitherCatAttributes());
-        context.registerEntityAttributes(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createWitherWitchAttributes());
-        context.registerEntityAttributes(ModEntityTypes.OWL_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.OWL_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createOwlAttributes());
-        context.registerEntityAttributes(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(),
+        context.registerAttributes(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(),
                 EntityAttributeProviders.createFallenKnightAttributes());
     }
 
@@ -218,91 +211,50 @@ public class EnderZoology implements ModConstructor {
         }, (BiomeModificationContext biomeModificationContext) -> {
             MobSpawnSettingsContext settings = biomeModificationContext.mobSpawnSettings();
             if (CONFIG.get(CommonConfig.class).concussionCreeper) {
-                registerSpawnData(settings,
-                        MobCategory.MONSTER,
-                        EntityType.CREEPER,
-                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
-                                Math.max(1, data.getWeight().asInt() / 4),
-                                data.minCount,
-                                data.maxCount));
+                SpawnerDataBuilder.create(settings, EntityType.CREEPER)
+                        .setWeight(Fraction.ONE_QUARTER)
+                        .apply(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value());
             }
             if (CONFIG.get(CommonConfig.class).infestedZombie) {
-                registerSpawnData(settings,
-                        MobCategory.MONSTER,
-                        EntityType.ZOMBIE,
-                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value(),
-                                Math.max(1, data.getWeight().asInt() / 4),
-                                1,
-                                data.maxCount));
+                SpawnerDataBuilder.create(settings, EntityType.ZOMBIE)
+                        .setWeight(Fraction.ONE_QUARTER)
+                        .setMinCount(1)
+                        .apply(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value());
             }
             if (CONFIG.get(CommonConfig.class).fallenKnight) {
-                registerSpawnData(settings,
-                        MobCategory.MONSTER,
-                        EntityType.ZOMBIE,
-                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value(),
-                                Math.max(1, data.getWeight().asInt() / 4),
-                                4,
-                                6));
+                SpawnerDataBuilder.create(settings, EntityType.ZOMBIE)
+                        .setWeight(Fraction.ONE_QUARTER)
+                        .setMinCount(4)
+                        .setMaxCount(6)
+                        .apply(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE.value());
             }
             if (CONFIG.get(CommonConfig.class).enderminy) {
-                registerSpawnData(settings,
-                        MobCategory.MONSTER,
-                        EntityType.ENDERMAN,
-                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
-                                data.getWeight().asInt() * 3,
-                                Math.min(data.maxCount, data.minCount * 4),
-                                data.maxCount));
+                SpawnerDataBuilder.create(settings, EntityType.ENDERMAN)
+                        .setWeight(Fraction.getFraction(3, 1))
+                        .setMinCount(Fraction.getFraction(4, 1))
+                        .apply(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value());
             }
             if (CONFIG.get(CommonConfig.class).direWolf) {
                 if (biomeModificationContext.climateSettings().hasPrecipitation() &&
                         biomeModificationContext.climateSettings().getTemperature() < 0.0F) {
-                    findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.WOLF).ifPresent(data -> {
-                        settings.addSpawn(MobCategory.MONSTER,
-                                new MobSpawnSettings.SpawnerData(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value(),
-                                        Math.max(1, data.getWeight().asInt() / 4),
-                                        3,
-                                        8));
-                    });
+                    SpawnerDataBuilder.create(settings, EntityType.WOLF)
+                            .setWeight(Fraction.ONE_QUARTER)
+                            .setMinCount(3)
+                            .setMaxCount(8)
+                            .apply(ModEntityTypes.DIRE_WOLF_ENTITY_TYPE.value());
                 }
             }
             if (CONFIG.get(CommonConfig.class).witherWitch) {
-                registerSpawnData(settings,
-                        MobCategory.MONSTER,
-                        EntityType.WITCH,
-                        data -> new MobSpawnSettings.SpawnerData(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value(),
-                                data.getWeight(),
-                                data.minCount,
-                                data.maxCount));
+                SpawnerDataBuilder.create(settings, EntityType.WITCH)
+                        .apply(ModEntityTypes.WITHER_WITCH_ENTITY_TYPE.value());
             }
             if (CONFIG.get(CommonConfig.class).owl) {
                 if (biomeModificationContext.climateSettings().hasPrecipitation()) {
-                    findVanillaSpawnData(settings, MobCategory.CREATURE, EntityType.RABBIT).ifPresent(data -> {
-                        settings.addSpawn(MobCategory.CREATURE,
-                                new MobSpawnSettings.SpawnerData(ModEntityTypes.OWL_ENTITY_TYPE.value(),
-                                        data.getWeight(),
-                                        data.minCount,
-                                        data.maxCount));
-                    });
+                    SpawnerDataBuilder.create(settings, EntityType.RABBIT)
+                            .apply(ModEntityTypes.OWL_ENTITY_TYPE.value());
                 }
             }
         });
-    }
-
-    private static void registerSpawnData(MobSpawnSettingsContext settings, MobCategory mobCategory, EntityType<?> vanillaEntityType, Function<MobSpawnSettings.SpawnerData, MobSpawnSettings.SpawnerData> factory) {
-        findVanillaSpawnData(settings, mobCategory, vanillaEntityType).ifPresent(data -> settings.addSpawn(mobCategory,
-                factory.apply(data)));
-    }
-
-    private static Optional<MobSpawnSettings.SpawnerData> findVanillaSpawnData(MobSpawnSettingsContext settings, MobCategory mobCategory, EntityType<?> entityType) {
-        return settings.getSpawnerData(mobCategory).stream().filter(data -> data.type == entityType).findAny();
-    }
-
-    private static void registerSpawnCost(MobSpawnSettingsContext spawnSettings, EntityType<?> vanillaEntityType, EntityType<?> modEntityType, DoubleUnaryOperator chargeConverter, DoubleUnaryOperator energyBudgetConverter) {
-        Optional<MobSpawnSettings.MobSpawnCost> optionalMobSpawnCost = Optional.ofNullable(spawnSettings.getSpawnCost(
-                vanillaEntityType));
-        optionalMobSpawnCost.ifPresent(cost -> spawnSettings.setSpawnCost(modEntityType,
-                chargeConverter.applyAsDouble(cost.charge()),
-                energyBudgetConverter.applyAsDouble(cost.energyBudget())));
     }
 
     public static ResourceLocation id(String path) {

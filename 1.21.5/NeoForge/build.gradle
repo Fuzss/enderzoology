@@ -3,7 +3,4 @@ apply from: "https://raw.githubusercontent.com/Fuzss/modresources/main/gradle/${
 dependencies {
     // Puzzles Lib
     modApi libs.puzzleslib.neoforge
-
-    // Extensible Enums
-    modApi(include(libs.extensibleenums.neoforge.get()))
 }

@@ -1,13 +1,12 @@
-package fuzs.enderzoology.data;
+package fuzs.enderzoology.init;
 
-import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.world.item.enchantment.effects.TeleportEntity;
 import fuzs.puzzleslib.api.data.v2.AbstractDatapackRegistriesProvider;
-import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -22,21 +21,19 @@ import net.minecraft.world.item.enchantment.effects.ChangeItemDamage;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.EnchantmentLevelProvider;
 
-public class ModDatapackRegistriesProvider extends AbstractDatapackRegistriesProvider {
+public class ModEnchantments {
+    public static final ResourceKey<Enchantment> DECAY_ENCHANTMENT = ModRegistry.REGISTRIES.registerEnchantment("decay");
+    public static final ResourceKey<Enchantment> REPELLENT_ENCHANTMENT = ModRegistry.REGISTRIES.registerEnchantment(
+            "repellent");
+    public static final ResourceKey<Enchantment> SOULBOUND_ENCHANTMENT = ModRegistry.REGISTRIES.registerEnchantment(
+            "soulbound");
+    public static final ResourceKey<Enchantment> WITHERING_ENCHANTMENT = ModRegistry.REGISTRIES.registerEnchantment(
+            "withering");
 
-    public ModDatapackRegistriesProvider(DataProviderContext context) {
-        super(context);
-    }
-
-    @Override
-    public void addBootstrap(RegistryBoostrapConsumer consumer) {
-        consumer.add(Registries.ENCHANTMENT, ModDatapackRegistriesProvider::boostrapEnchantments);
-    }
-
-    static void boostrapEnchantments(BootstrapContext<Enchantment> context) {
+    public static void boostrap(BootstrapContext<Enchantment> context) {
         HolderGetter<Item> itemLookup = context.lookup(Registries.ITEM);
-        registerEnchantment(context,
-                ModRegistry.SOULBOUND_ENCHANTMENT,
+        AbstractDatapackRegistriesProvider.registerEnchantment(context,
+                SOULBOUND_ENCHANTMENT,
                 Enchantment.enchantment(Enchantment.definition(itemLookup.getOrThrow(ItemTags.VANISHING_ENCHANTABLE),
                         1,
                         3,
@@ -44,8 +41,8 @@ public class ModDatapackRegistriesProvider extends AbstractDatapackRegistriesPro
                         Enchantment.dynamicCost(65, 9),
                         8,
                         EquipmentSlotGroup.MAINHAND)));
-        registerEnchantment(context,
-                ModRegistry.DECAY_ENCHANTMENT,
+        AbstractDatapackRegistriesProvider.registerEnchantment(context,
+                DECAY_ENCHANTMENT,
                 Enchantment.enchantment(Enchantment.definition(itemLookup.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
                                 2,
                                 1,
@@ -61,8 +58,8 @@ public class ModDatapackRegistriesProvider extends AbstractDatapackRegistriesPro
                                         LevelBasedValue.perLevel(5.0F, 5.0F),
                                         LevelBasedValue.constant(0.0F),
                                         LevelBasedValue.constant(0.0F))));
-        registerEnchantment(context,
-                ModRegistry.WITHERING_ENCHANTMENT,
+        AbstractDatapackRegistriesProvider.registerEnchantment(context,
+                WITHERING_ENCHANTMENT,
                 Enchantment.enchantment(Enchantment.definition(itemLookup.getOrThrow(ItemTags.BOW_ENCHANTABLE),
                                 2,
                                 1,
@@ -78,8 +75,8 @@ public class ModDatapackRegistriesProvider extends AbstractDatapackRegistriesPro
                                         LevelBasedValue.perLevel(5.0F, 5.0F),
                                         LevelBasedValue.constant(0.0F),
                                         LevelBasedValue.constant(0.0F))));
-        registerEnchantment(context,
-                ModRegistry.REPELLENT_ENCHANTMENT,
+        AbstractDatapackRegistriesProvider.registerEnchantment(context,
+                REPELLENT_ENCHANTMENT,
                 Enchantment.enchantment(Enchantment.definition(itemLookup.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
                                 itemLookup.getOrThrow(ItemTags.CHEST_ARMOR_ENCHANTABLE),
                                 1,

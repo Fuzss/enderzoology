@@ -1,6 +1,6 @@
 package fuzs.enderzoology.data.tags;
 
-import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.init.ModEnchantments;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import fuzs.puzzleslib.api.data.v2.tags.AbstractTagProvider;
 import net.minecraft.core.HolderLookup;
@@ -16,6 +16,6 @@ public class ModEnchantmentTagProvider extends AbstractTagProvider<Enchantment> 
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.tag(EnchantmentTags.TREASURE).add(ModRegistry.REPELLENT_ENCHANTMENT);
+        this.tag(EnchantmentTags.TREASURE).add(ModEnchantments.REPELLENT_ENCHANTMENT);
     }
 }

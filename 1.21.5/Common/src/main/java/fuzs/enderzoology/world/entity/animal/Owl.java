@@ -131,9 +131,7 @@ public class Owl extends Animal implements FlyingAnimal {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.contains("EggLayTime")) {
-            this.eggTime = compound.getInt("EggLayTime");
-        }
+        this.eggTime = compound.getIntOr("EggLayTime", 0);
     }
 
     @Override
@@ -143,13 +141,8 @@ public class Owl extends Animal implements FlyingAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
-        return false;
-    }
-
-    @Override
     protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
-
+        // NO-OP
     }
 
     @Override

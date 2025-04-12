@@ -1,8 +1,8 @@
 package fuzs.enderzoology.data.loot;
 
+import fuzs.enderzoology.init.ModEnchantments;
 import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.init.ModItems;
-import fuzs.enderzoology.init.ModRegistry;
 import fuzs.puzzleslib.api.data.v2.AbstractLootProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import fuzs.puzzleslib.api.init.v3.registry.LookupHelper;
@@ -87,7 +87,7 @@ public class ModEntityTypeLootProvider extends AbstractLootProvider.EntityTypes 
                                 .add(LootItem.lootTableItem(Items.BOOK)
                                         .apply((new EnchantRandomlyFunction.Builder()).withEnchantment(LookupHelper.lookupEnchantment(
                                                 this.registries(),
-                                                ModRegistry.REPELLENT_ENCHANTMENT))))
+                                                ModEnchantments.REPELLENT_ENCHANTMENT))))
                                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
                                 .when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(this.registries(),
                                         0.025F,

@@ -50,7 +50,7 @@ public class EnderTeleportHelper {
                             level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
                         Endermite endermite = EntityType.ENDERMITE.create(level, EntitySpawnReason.TRIGGERED);
                         if (endermite != null) {
-                            endermite.moveTo(vec3.x, vec3.y, vec3.z, entity.getYRot(), entity.getXRot());
+                            endermite.snapTo(vec3.x, vec3.y, vec3.z, entity.getYRot(), entity.getXRot());
                             level.addFreshEntity(endermite);
                         }
                     }
