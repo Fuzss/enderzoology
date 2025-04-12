@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:enderman",
+    "minecraft:endermite",
+    "minecraft:shulker",
+    "enderzoology:concussion_creeper",
+    "enderzoology:enderminy",
+    "enderzoology:infested_zombie",
+    {
+      "id": "#c:bosses",
+      "required": false
+    }
+  ]
+}
