@@ -4,7 +4,6 @@ import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -14,6 +13,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 public class PrimedCharge extends PrimedTnt {
@@ -74,15 +75,15 @@ public class PrimedCharge extends PrimedTnt {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putByte(TAG_ENTITY_INTERACTION, (byte) this.enderExplosionType.ordinal());
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        valueOutput.putByte(TAG_ENTITY_INTERACTION, (byte) this.enderExplosionType.ordinal());
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.enderExplosionType = EnderExplosionType.values()[compound.getByteOr(TAG_ENTITY_INTERACTION, (byte) 0)];
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        this.enderExplosionType = EnderExplosionType.values()[valueInput.getByteOr(TAG_ENTITY_INTERACTION, (byte) 0)];
     }
 
     @Override

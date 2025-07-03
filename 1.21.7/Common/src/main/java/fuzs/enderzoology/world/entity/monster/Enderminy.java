@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -36,6 +35,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -91,8 +92,8 @@ public class Enderminy extends Monster implements NeutralMob {
 
         if (serverLevel.isBrightOutside() && this.tickCount >= this.targetChangeTime + MIN_DEAGGRESSION_TIME) {
             float f = this.getLightLevelDependentMagicValue();
-            if (f > 0.5F && serverLevel.canSeeSky(this.blockPosition()) &&
-                    this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
+            if (f > 0.5F && serverLevel.canSeeSky(this.blockPosition())
+                    && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
                 this.setTarget(null);
                 this.teleport();
             }
@@ -194,15 +195,15 @@ public class Enderminy extends Monster implements NeutralMob {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        this.addPersistentAngerSaveData(compound);
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        this.addPersistentAngerSaveData(valueOutput);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.readPersistentAngerSaveData(this.level(), compound);
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        this.readPersistentAngerSaveData(this.level(), valueInput);
     }
 
     @Override
@@ -242,8 +243,9 @@ public class Enderminy extends Monster implements NeutralMob {
     private boolean teleport(double x, double y, double z) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(x, y, z);
 
-        while (mutableBlockPos.getY() > this.level().getMinY() &&
-                !this.level().getBlockState(mutableBlockPos).blocksMotion()) {
+        while (mutableBlockPos.getY() > this.level().getMinY() && !this.level()
+                .getBlockState(mutableBlockPos)
+                .blocksMotion()) {
             mutableBlockPos.move(Direction.DOWN);
         }
 
@@ -309,8 +311,10 @@ public class Enderminy extends Monster implements NeutralMob {
 
                 return bl;
             } else {
-                boolean bl = abstractThrownPotion2 != null &&
-                        this.hurtWithCleanWater(level, damageSource, abstractThrownPotion2, amount);
+                boolean bl = abstractThrownPotion2 != null && this.hurtWithCleanWater(level,
+                        damageSource,
+                        abstractThrownPotion2,
+                        amount);
 
                 for (int i = 0; i < 64; i++) {
                     if (this.teleport()) {

@@ -3,12 +3,12 @@ package fuzs.enderzoology.world.entity.monster;
 import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.enderzoology.services.CommonAbstractions;
+import fuzs.puzzleslib.api.util.v1.ValueSerializationHelper;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -37,7 +37,10 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -57,12 +60,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
     public FallenMount(EntityType<? extends AbstractHorse> entityType, Level level) {
         super(entityType, level);
         this.xpReward = XP_REWARD_MEDIUM;
-    }
-
-    protected static String getEncodeId(Entity entity) {
-        EntityType<?> entityType = entity.getType();
-        ResourceLocation resourceLocation = EntityType.getKey(entityType);
-        return entityType.canSerialize() && resourceLocation != null ? resourceLocation.toString() : null;
     }
 
     @Override
@@ -223,22 +220,20 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
-        super.addAdditionalSaveData(compoundTag);
-        if (this.horseData != null) {
-            compoundTag.put(TAG_HORSE_DATA, this.horseData);
-        }
-        compoundTag.putInt("ConversionTime", this.isConverting() ? this.conversionTime : -1);
-        compoundTag.storeNullable("ConversionPlayer", UUIDUtil.CODEC, this.conversionStarter);
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        valueOutput.storeNullable(TAG_HORSE_DATA, CompoundTag.CODEC, this.horseData);
+        valueOutput.putInt("ConversionTime", this.isConverting() ? this.conversionTime : -1);
+        valueOutput.storeNullable("ConversionPlayer", UUIDUtil.CODEC, this.conversionStarter);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
-        super.readAdditionalSaveData(compoundTag);
-        this.horseData = compoundTag.getCompoundOrEmpty(TAG_HORSE_DATA);
-        int conversionTime = compoundTag.getIntOr("ConversionTime", -1);
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        this.horseData = valueInput.read(TAG_HORSE_DATA, CompoundTag.CODEC).orElse(null);
+        int conversionTime = valueInput.getIntOr("ConversionTime", -1);
         if (conversionTime != -1) {
-            UUID uUID = compoundTag.read("ConversionPlayer", UUIDUtil.CODEC).orElse(null);
+            UUID uUID = valueInput.read("ConversionPlayer", UUIDUtil.CODEC).orElse(null);
             this.startConverting(uUID, conversionTime);
         } else {
             this.getEntityData().set(DATA_CONVERTING_ID, false);
@@ -297,18 +292,26 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     private Optional<AbstractHorse> createHorseFromData(ServerLevel serverLevel, FallenMount fallenMount) {
+        MutableObject<Optional<AbstractHorse>> mutableObject = new MutableObject<>(Optional.empty());
         if (fallenMount.horseData != null && !fallenMount.horseData.isEmpty()) {
-            return EntityType.create(fallenMount.horseData, serverLevel, EntitySpawnReason.CONVERSION)
-                    .map((Entity entity) -> {
-                        AbstractHorse abstractHorse = (AbstractHorse) entity;
-                        abstractHorse.copyPosition(fallenMount);
-                        fallenMount.discard();
-                        serverLevel.addFreshEntity(abstractHorse);
-                        return abstractHorse;
+            ValueSerializationHelper.load(this.problemPath(),
+                    this.registryAccess(),
+                    fallenMount.horseData,
+                    valueInput -> {
+                        Optional<AbstractHorse> optional = EntityType.create(valueInput,
+                                serverLevel,
+                                EntitySpawnReason.CONVERSION).map((Entity entity) -> {
+                            AbstractHorse abstractHorse = (AbstractHorse) entity;
+                            abstractHorse.copyPosition(fallenMount);
+                            fallenMount.discard();
+                            serverLevel.addFreshEntity(abstractHorse);
+                            return abstractHorse;
+                        });
+                        mutableObject.setValue(optional);
                     });
-        } else {
-            return Optional.empty();
         }
+
+        return mutableObject.getValue();
     }
 
     private Optional<AbstractHorse> createFreshHorse(ServerLevel serverLevel) {
@@ -349,9 +352,9 @@ public class FallenMount extends AbstractHorse implements Enemy {
     @Override
     public boolean killedEntity(ServerLevel level, LivingEntity entity) {
         boolean killedEntity = super.killedEntity(level, entity);
-        if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD) &&
-                entity instanceof AbstractHorse abstractHorse &&
-                CommonAbstractions.INSTANCE.canLivingConvert(entity, ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value())) {
+        if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD)
+                && entity instanceof AbstractHorse abstractHorse && CommonAbstractions.INSTANCE.canLivingConvert(entity,
+                ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value())) {
             if (level.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
                 return killedEntity;
             } else {
@@ -359,12 +362,14 @@ public class FallenMount extends AbstractHorse implements Enemy {
                 FallenMount fallenMount = abstractHorse.convertTo(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value(),
                         conversionParams,
                         (FallenMount mob) -> {
-                            CompoundTag compoundTag = new CompoundTag();
-                            compoundTag.putString("id", getEncodeId(abstractHorse));
                             abstractHorse.setHealth(abstractHorse.getMaxHealth());
                             abstractHorse.setDeltaMovement(Vec3.ZERO);
-                            abstractHorse.saveWithoutId(compoundTag);
-                            mob.horseData = compoundTag;
+                            mob.horseData = ValueSerializationHelper.save(mob.problemPath(),
+                                    mob.registryAccess(),
+                                    valueOutput -> {
+                                        valueOutput.putString("id", abstractHorse.getEncodeId());
+                                        abstractHorse.saveWithoutId(valueOutput);
+                                    });
                             CommonAbstractions.INSTANCE.onLivingConvert(abstractHorse, mob, conversionParams);
                             if (!this.isSilent()) {
                                 level.levelEvent(null, LevelEvent.SOUND_ZOMBIE_INFECTED, this.blockPosition(), 0);

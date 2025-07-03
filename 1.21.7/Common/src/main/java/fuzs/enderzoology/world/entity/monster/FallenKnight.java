@@ -3,9 +3,8 @@ package fuzs.enderzoology.world.entity.monster;
 import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.init.ModItems;
 import fuzs.enderzoology.world.entity.ai.goal.RangedBowEasyAttackGoal;
-import fuzs.puzzleslib.api.init.v3.registry.LookupHelper;
+import fuzs.puzzleslib.api.item.v2.EnchantingHelper;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -24,6 +23,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -45,7 +46,13 @@ public class FallenKnight extends AbstractSkeleton {
     protected void registerGoals() {
         super.registerGoals();
         // don't flee from wolves
-        this.goalSelector.getAvailableGoals().stream().map(WrappedGoal::getGoal).filter(goal -> goal instanceof AvoidEntityGoal).limit(1).toList().forEach(this.goalSelector::removeGoal);
+        this.goalSelector.getAvailableGoals()
+                .stream()
+                .map(WrappedGoal::getGoal)
+                .filter(goal -> goal instanceof AvoidEntityGoal)
+                .limit(1)
+                .toList()
+                .forEach(this.goalSelector::removeGoal);
     }
 
     @Override
@@ -104,7 +111,7 @@ public class FallenKnight extends AbstractSkeleton {
         if (random.nextInt(10) == 0) {
             ItemStack itemstack = this.getMainHandItem();
             if (itemstack.is(ModItems.HUNTING_BOW_ITEM.value())) {
-                Holder<Enchantment> enchantment = LookupHelper.lookupEnchantment(level, Enchantments.PIERCING);
+                Holder<Enchantment> enchantment = EnchantingHelper.lookup(level, Enchantments.PIERCING);
                 itemstack.enchant(enchantment, 1);
                 this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
             }
@@ -187,7 +194,8 @@ public class FallenKnight extends AbstractSkeleton {
 
     private ItemStack getCorrectBowWeapon(@Nullable ItemStack weaponStack) {
         if (weaponStack != null && (weaponStack.isEmpty() || weaponStack.is(Items.BOW))) {
-            InteractionHand interactionHand = RangedBowEasyAttackGoal.getWeaponHoldingHand(this, itemStack -> itemStack.getItem() instanceof BowItem);
+            InteractionHand interactionHand = RangedBowEasyAttackGoal.getWeaponHoldingHand(this,
+                    itemStack -> itemStack.getItem() instanceof BowItem);
             return this.getItemInHand(interactionHand);
         } else {
             return weaponStack;
@@ -237,14 +245,14 @@ public class FallenKnight extends AbstractSkeleton {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putBoolean("CanBreakDoors", this.canBreakDoors());
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        valueOutput.putBoolean("CanBreakDoors", this.canBreakDoors());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setCanBreakDoors(compound.getBooleanOr("CanBreakDoors", false));
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        this.setCanBreakDoors(valueInput.getBooleanOr("CanBreakDoors", false));
     }
 }

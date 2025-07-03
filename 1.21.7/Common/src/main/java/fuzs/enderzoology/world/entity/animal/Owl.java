@@ -5,7 +5,6 @@ import fuzs.enderzoology.init.ModItems;
 import fuzs.enderzoology.init.ModSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -34,6 +33,8 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,8 +95,9 @@ public class Owl extends Animal implements FlyingAnimal {
 
         this.calculateFlapping();
 
-        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby() &&
-                serverLevel.getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES) && --this.eggTime <= 0) {
+        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby()
+                && serverLevel.getBlockState(this.blockPosition().below()).is(BlockTags.LEAVES)
+                && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG,
                     1.0F,
                     (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
@@ -129,15 +131,15 @@ public class Owl extends Animal implements FlyingAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.eggTime = compound.getIntOr("EggLayTime", 0);
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        valueOutput.putInt("EggLayTime", this.eggTime);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("EggLayTime", this.eggTime);
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        this.eggTime = valueInput.getIntOr("EggLayTime", 0);
     }
 
     @Override

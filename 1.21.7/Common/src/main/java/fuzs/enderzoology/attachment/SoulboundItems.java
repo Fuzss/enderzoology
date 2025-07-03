@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import fuzs.enderzoology.init.ModEnchantments;
 import fuzs.enderzoology.init.ModRegistry;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.api.init.v3.registry.LookupHelper;
+import fuzs.puzzleslib.api.item.v2.EnchantingHelper;
 import fuzs.puzzleslib.api.item.v2.GiveItemHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
@@ -40,8 +40,7 @@ public record SoulboundItems(List<ItemStack> items) {
     }
 
     static SoulboundItems saveOnDeath(ServerPlayer serverPlayer, Collection<ItemEntity> drops) {
-        Holder<Enchantment> enchantment = LookupHelper.lookupEnchantment(serverPlayer,
-                ModEnchantments.SOULBOUND_ENCHANTMENT);
+        Holder<Enchantment> enchantment = EnchantingHelper.lookup(serverPlayer, ModEnchantments.SOULBOUND_ENCHANTMENT);
         List<ItemStack> items = drops.stream()
                 .filter((ItemEntity itemEntity) -> {
                     return EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemEntity.getItem()) > 0;

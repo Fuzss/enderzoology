@@ -66,7 +66,7 @@ public class EnderZoology implements ModConstructor {
     private static void registerEventHandlers() {
         ExplosionEvents.DETONATE.register(EnderExplosionHelper::onExplosionDetonate);
         UseItemEvents.TICK.register(HuntingBowHandler::onUseItemTick);
-        ServerEntityLevelEvents.LOAD.register(MobHuntingHandler::onLoad);
+        ServerEntityLevelEvents.LOAD.register(MobHuntingHandler::onEntityLoad);
         PlayerCopyEvents.COPY.register(SoulboundItems::onCopy);
         LivingDropsCallback.EVENT.register(SoulboundItems::onLivingDrops);
         RegisterPotionBrewingMixesCallback.EVENT.register(EnderZoology::registerBrewingRecipes);

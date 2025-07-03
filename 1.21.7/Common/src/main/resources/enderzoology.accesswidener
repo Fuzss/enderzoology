@@ -9,3 +9,4 @@ accessible  field   net/minecraft/client/renderer/entity/AgeableMobRenderer adul
 mutable field   net/minecraft/client/renderer/entity/AgeableMobRenderer adultModel  Lnet/minecraft/client/model/EntityModel;
 accessible  field   net/minecraft/client/renderer/entity/AgeableMobRenderer babyModel   Lnet/minecraft/client/model/EntityModel;
 mutable field   net/minecraft/client/renderer/entity/AgeableMobRenderer babyModel   Lnet/minecraft/client/model/EntityModel;
+transitive-accessible   method  net/minecraft/world/entity/Entity   getEncodeId ()Ljava/lang/String;

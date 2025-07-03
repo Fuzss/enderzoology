@@ -61,10 +61,10 @@ public class EnderZoologyClient implements ClientModConstructor {
 
     @Override
     public void onRegisterEntitySpectatorShaders(EntitySpectatorShadersContext context) {
-        context.registerSpectatorShader(ResourceLocationHelper.withDefaultNamespace("shaders/post/creeper.json"),
-                ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value());
-        context.registerSpectatorShader(ResourceLocationHelper.withDefaultNamespace("shaders/post/invert.json"),
-                ModEntityTypes.ENDERMINY_ENTITY_TYPE.value());
+        context.registerSpectatorShader(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
+                ResourceLocationHelper.withDefaultNamespace("shaders/post/creeper.json"));
+        context.registerSpectatorShader(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
+                ResourceLocationHelper.withDefaultNamespace("shaders/post/invert.json"));
     }
 
     @Override

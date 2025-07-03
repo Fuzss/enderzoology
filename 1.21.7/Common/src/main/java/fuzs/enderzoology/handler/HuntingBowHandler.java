@@ -2,7 +2,7 @@ package fuzs.enderzoology.handler;
 
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.api.event.v1.data.MutableInt;
-import fuzs.puzzleslib.api.init.v3.registry.LookupHelper;
+import fuzs.puzzleslib.api.item.v2.EnchantingHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BowItem;
@@ -15,7 +15,7 @@ public class HuntingBowHandler {
 
     public static EventResult onUseItemTick(LivingEntity entity, ItemStack useItem, MutableInt useItemRemaining) {
         if (useItem.getItem() instanceof BowItem && useItem.getUseDuration(entity) - useItemRemaining.getAsInt() < 20) {
-            Holder<Enchantment> enchantment = LookupHelper.lookupEnchantment(entity, Enchantments.QUICK_CHARGE);
+            Holder<Enchantment> enchantment = EnchantingHelper.lookup(entity, Enchantments.QUICK_CHARGE);
             int quickChargeLevel = EnchantmentHelper.getItemEnchantmentLevel(enchantment, useItem);
             useItemRemaining.mapInt(duration -> duration - quickChargeLevel);
         }

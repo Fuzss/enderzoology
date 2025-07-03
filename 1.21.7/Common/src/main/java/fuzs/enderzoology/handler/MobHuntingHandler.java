@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 
 public class MobHuntingHandler {
 
-    public static EventResult onLoad(Entity entity, ServerLevel level) {
+    public static EventResult onEntityLoad(Entity entity, ServerLevel serverLevel, boolean isNewlySpawned) {
         if (entity instanceof PathfinderMob mob) {
             if (mob.getType() == EntityType.WOLF) {
                 mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, DireWolf.class, 16.0F, 1.0, 1.2));

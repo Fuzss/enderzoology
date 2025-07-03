@@ -49,20 +49,16 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
         builder.add(ModEntityTypes.ENDER_CHARGE_MINECART_ENTITY_TYPE.value(), "Minecart with Ender Charge");
         builder.add(ModEntityTypes.CONFUSING_CHARGE_MINECART_ENTITY_TYPE.value(), "Minecart with Confusing Charge");
         builder.add(ModEntityTypes.CONCUSSION_CHARGE_MINECART_ENTITY_TYPE.value(), "Minecart with Concussion Charge");
-        builder.addEnchantment(ModEnchantments.DECAY_ENCHANTMENT, "Decay");
-        builder.addEnchantment(ModEnchantments.REPELLENT_ENCHANTMENT, "Repellent");
-        builder.addEnchantment(ModEnchantments.SOULBOUND_ENCHANTMENT, "Soulbound");
-        builder.addEnchantment(ModEnchantments.WITHERING_ENCHANTMENT, "Withering");
-        builder.addEnchantment(ModEnchantments.DECAY_ENCHANTMENT,
-                "desc",
-                "Applies the Wither effect to attacked enemies.");
-        builder.addEnchantment(ModEnchantments.REPELLENT_ENCHANTMENT,
-                "desc",
-                "Randomly teleports enemies when they attack you.");
-        builder.addEnchantment(ModEnchantments.SOULBOUND_ENCHANTMENT,
+        builder.add(ModEnchantments.DECAY_ENCHANTMENT, "Decay");
+        builder.add(ModEnchantments.REPELLENT_ENCHANTMENT, "Repellent");
+        builder.add(ModEnchantments.SOULBOUND_ENCHANTMENT, "Soulbound");
+        builder.add(ModEnchantments.WITHERING_ENCHANTMENT, "Withering");
+        builder.add(ModEnchantments.DECAY_ENCHANTMENT, "desc", "Applies the Wither effect to attacked enemies.");
+        builder.add(ModEnchantments.REPELLENT_ENCHANTMENT, "desc", "Randomly teleports enemies when they attack you.");
+        builder.add(ModEnchantments.SOULBOUND_ENCHANTMENT,
                 "desc",
                 "On death an item will be kept in the inventory and the level may randomly decrease.");
-        builder.addEnchantment(ModEnchantments.WITHERING_ENCHANTMENT,
+        builder.add(ModEnchantments.WITHERING_ENCHANTMENT,
                 "desc",
                 "Applies the Wither effect to enemies hit by arrows.");
         builder.add(ModRegistry.DISPLACEMENT_MOB_EFFECT.value(), "Displacement");

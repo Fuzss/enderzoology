@@ -3,7 +3,7 @@ package fuzs.enderzoology.client.handler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.enderzoology.init.ModItems;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.api.event.v1.data.DefaultedFloat;
+import fuzs.puzzleslib.api.event.v1.data.MutableFloat;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class FovModifierHandler {
 
-    public static void onComputeFovModifier(Player player, DefaultedFloat fieldOfViewModifier) {
+    public static void onComputeFovModifier(Player player, MutableFloat fieldOfViewModifier) {
         if (player.isUsingItem()) {
             ItemStack itemStack = player.getUseItem();
             if (itemStack.is(ModItems.HUNTING_BOW_ITEM.value())) {
@@ -26,7 +26,7 @@ public class FovModifierHandler {
                     g *= g;
                 }
                 float h = g;
-                fieldOfViewModifier.mapFloat(f -> f * (1.0F - h * 0.15F));
+                fieldOfViewModifier.mapFloat((Float value) -> value * (1.0F - h * 0.15F));
             }
         }
     }

@@ -5,7 +5,7 @@ import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.enderzoology.init.ModItems;
 import fuzs.puzzleslib.api.data.v2.AbstractLootProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
-import fuzs.puzzleslib.api.init.v3.registry.LookupHelper;
+import fuzs.puzzleslib.api.item.v2.EnchantingHelper;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.EntityTypeTags;
@@ -85,7 +85,7 @@ public class ModEntityTypeLootProvider extends AbstractLootProvider.EntityTypes 
                                 .add(LootItem.lootTableItem(Items.POTATO)
                                         .apply(SmeltItemFunction.smelted().when(this.shouldSmeltLoot())))
                                 .add(LootItem.lootTableItem(Items.BOOK)
-                                        .apply((new EnchantRandomlyFunction.Builder()).withEnchantment(LookupHelper.lookupEnchantment(
+                                        .apply((new EnchantRandomlyFunction.Builder()).withEnchantment(EnchantingHelper.lookup(
                                                 this.registries(),
                                                 ModEnchantments.REPELLENT_ENCHANTMENT))))
                                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
