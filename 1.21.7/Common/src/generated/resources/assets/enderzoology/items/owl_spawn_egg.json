@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "enderzoology:item/owl_spawn_egg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -9677504
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -2445527
+      }
+    ]
+  }
+}
