@@ -1,16 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "enderzoology:item/concussion_creeper_spawn_egg",
-    "tints": [
-      {
-        "type": "minecraft:constant",
-        "value": -12945042
-      },
-      {
-        "type": "minecraft:constant",
-        "value": -14525872
-      }
-    ]
+    "model": "enderzoology:item/concussion_creeper_spawn_egg"
   }
 }

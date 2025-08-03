@@ -1,16 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "enderzoology:item/fallen_knight_spawn_egg",
-    "tints": [
-      {
-        "type": "minecraft:constant",
-        "value": -11964107
-      },
-      {
-        "type": "minecraft:constant",
-        "value": -15000805
-      }
-    ]
+    "model": "enderzoology:item/fallen_knight_spawn_egg"
   }
 }

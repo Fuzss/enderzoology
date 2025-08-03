@@ -1,16 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "enderzoology:item/wither_witch_spawn_egg",
-    "tints": [
-      {
-        "type": "minecraft:constant",
-        "value": -12829636
-      },
-      {
-        "type": "minecraft:constant",
-        "value": -13816531
-      }
-    ]
+    "model": "enderzoology:item/wither_witch_spawn_egg"
   }
 }

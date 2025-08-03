@@ -32,17 +32,16 @@ public class ModModelProvider extends AbstractModelProvider {
         itemModelGenerators.generateFlatItem(ModItems.ENDER_FRAGMENT_ITEM.value(), ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.OWL_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.WITHERING_DUST_ITEM.value(), ModelTemplates.FLAT_ITEM);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.value(),
-                itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.INFESTED_ZOMBIE_SPAWN_EGG_ITEM.value(),
-                itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.ENDERMINY_SPAWN_EGG_ITEM.value(), itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.DIRE_WOLF_SPAWN_EGG_ITEM.value(), itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.FALLEN_MOUNT_SPAWN_EGG_ITEM.value(), itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.WITHER_CAT_SPAWN_EGG_ITEM.value(), itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.WITHER_WITCH_SPAWN_EGG_ITEM.value(), itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.OWL_SPAWN_EGG_ITEM.value(), itemModelGenerators);
-        ItemModelGenerationHelper.generateSpawnEgg(ModItems.FALLEN_KNIGHT_SPAWN_EGG_ITEM.value(), itemModelGenerators);
+        itemModelGenerators.generateFlatItem(ModItems.CONCUSSION_CREEPER_SPAWN_EGG_ITEM.value(),
+                ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.INFESTED_ZOMBIE_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.ENDERMINY_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.DIRE_WOLF_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.FALLEN_MOUNT_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.WITHER_CAT_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.WITHER_WITCH_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.OWL_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.FALLEN_KNIGHT_SPAWN_EGG_ITEM.value(), ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.ENDER_CHARGE_MINECART_ITEM.value(), ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.CONFUSING_CHARGE_MINECART_ITEM.value(), ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.CONCUSSION_CHARGE_MINECART_ITEM.value(),
