@@ -26,12 +26,12 @@ public class ModSoundDefinitionProvider extends AbstractSoundProvider {
         this.add(ModSoundEvents.DIRE_WOLF_HOWL_SOUND_EVENT.value(),
                 SoundDefinitionsProvider.sound(EnderZoology.id("mob/dire_wolf/howl")));
         this.add(ModSoundEvents.OWL_HOOT_SOUND_EVENT.value(),
-                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hoot1")).volume(0.2F),
-                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hoot2")).volume(0.2F));
+                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hoot1")).volume(0.05F),
+                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hoot2")).volume(0.05F));
         this.add(ModSoundEvents.OWL_HURT_SOUND_EVENT.value(),
-                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hurt")).volume(0.2F));
+                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hurt")).volume(0.05F));
         this.add(ModSoundEvents.OWL_DEATH_SOUND_EVENT.value(),
-                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hurt")).volume(0.2F));
+                SoundDefinitionsProvider.sound(EnderZoology.id("mob/owl/hurt")).volume(0.05F));
         this.add(ModSoundEvents.OWL_EGG_THROW_SOUND_EVENT.value(), sound(SoundEvents.EGG_THROW));
     }
 }

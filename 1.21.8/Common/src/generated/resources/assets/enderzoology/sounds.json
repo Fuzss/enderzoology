@@ -29,7 +29,7 @@
     "sounds": [
       {
         "name": "enderzoology:mob/owl/hurt",
-        "volume": 0.2
+        "volume": 0.05
       }
     ],
     "subtitle": "subtitles.entity.owl.death"
@@ -38,11 +38,11 @@
     "sounds": [
       {
         "name": "enderzoology:mob/owl/hoot1",
-        "volume": 0.2
+        "volume": 0.05
       },
       {
         "name": "enderzoology:mob/owl/hoot2",
-        "volume": 0.2
+        "volume": 0.05
       }
     ],
     "subtitle": "subtitles.entity.owl.hoot"
@@ -51,7 +51,7 @@
     "sounds": [
       {
         "name": "enderzoology:mob/owl/hurt",
-        "volume": 0.2
+        "volume": 0.05
       }
     ],
     "subtitle": "subtitles.entity.owl.hurt"

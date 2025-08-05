@@ -31,9 +31,9 @@ public class DireWolfHeldItemLayer extends RenderLayer<WolfRenderState, WolfMode
         ItemStackRenderState itemStackRenderState = ((DireWolfRenderState) renderState).heldItem;
         if (!itemStackRenderState.isEmpty()) {
             poseStack.pushPose();
-            poseStack.translate(this.getParentModel().head.x / 16.0F,
-                    this.getParentModel().head.y / 16.0F,
-                    this.getParentModel().head.z / 16.0F);
+            poseStack.translate(this.getParentModel().getHead().x / 16.0F,
+                    this.getParentModel().getHead().y / 16.0F,
+                    this.getParentModel().getHead().z / 16.0F);
             if (renderState.isBaby) {
                 poseStack.scale(0.75F, 0.75F, 0.75F);
             }
