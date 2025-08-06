@@ -3,6 +3,7 @@ package fuzs.enderzoology.client.model;
 import fuzs.enderzoology.client.renderer.entity.state.OwlRenderState;
 import net.minecraft.client.model.BabyModelTransform;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -10,7 +11,7 @@ import net.minecraft.util.Mth;
 
 import java.util.Set;
 
-public class OwlModel extends EntityModel<OwlRenderState> {
+public class OwlModel extends EntityModel<OwlRenderState> implements HeadedModel {
     public static final MeshTransformer BABY_TRANSFORMER = new BabyModelTransform(true,
             24.0F,
             0.0F,
@@ -109,5 +110,10 @@ public class OwlModel extends EntityModel<OwlRenderState> {
             this.rightLeg.xRot -= xRotFlying / 2.0F;
             this.tail.xRot -= xRotFlying / 2.0F;
         }
+    }
+
+    @Override
+    public ModelPart getHead() {
+        return this.head;
     }
 }
