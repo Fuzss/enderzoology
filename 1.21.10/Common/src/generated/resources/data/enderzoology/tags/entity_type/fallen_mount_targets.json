@@ -1,7 +1,7 @@
 {
   "values": [
-    "minecraft:horse",
     "minecraft:donkey",
+    "minecraft:horse",
     "minecraft:mule"
   ]
 }

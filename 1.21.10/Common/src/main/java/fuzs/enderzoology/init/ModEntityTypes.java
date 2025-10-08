@@ -29,7 +29,8 @@ public class ModEntityTypes {
             "concussion_creeper",
             () -> EntityType.Builder.of(ConcussionCreeper::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.7F)
-                    .clientTrackingRange(8));
+                    .clientTrackingRange(8)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<InfestedZombie>> INFESTED_ZOMBIE_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "infested_zombie",
             () -> EntityType.Builder.of(InfestedZombie::new, MobCategory.MONSTER)
@@ -37,38 +38,46 @@ public class ModEntityTypes {
                     .eyeHeight(1.74F)
                     .passengerAttachments(2.0125F)
                     .ridingOffset(-0.7F)
-                    .clientTrackingRange(8));
+                    .clientTrackingRange(8)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<Enderminy>> ENDERMINY_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "enderminy",
             () -> EntityType.Builder.of(Enderminy::new, MobCategory.MONSTER)
                     .sized(0.3F, 0.725F)
                     .eyeHeight(0.6375F)
                     .passengerAttachments(0.7015625F)
-                    .clientTrackingRange(8));
+                    .clientTrackingRange(8)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<DireWolf>> DIRE_WOLF_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "dire_wolf",
-            () -> EntityType.Builder.of(DireWolf::new, MobCategory.MONSTER).sized(0.7F, 1.0F).clientTrackingRange(10));
+            () -> EntityType.Builder.of(DireWolf::new, MobCategory.MONSTER)
+                    .sized(0.7F, 1.0F)
+                    .clientTrackingRange(10)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<FallenMount>> FALLEN_MOUNT_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "fallen_mount",
             () -> EntityType.Builder.of(FallenMount::new, MobCategory.MONSTER)
                     .sized(1.3964844F, 1.6F)
                     .eyeHeight(1.52F)
                     .passengerAttachments(1.31875F)
-                    .clientTrackingRange(10));
+                    .clientTrackingRange(10)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<WitherCat>> WITHER_CAT_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "wither_cat",
             () -> EntityType.Builder.of(WitherCat::new, MobCategory.MONSTER)
                     .sized(0.6F, 0.7F)
                     .eyeHeight(0.35F)
                     .passengerAttachments(0.5125F)
-                    .clientTrackingRange(8));
+                    .clientTrackingRange(8)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<WitherWitch>> WITHER_WITCH_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "wither_witch",
             () -> EntityType.Builder.of(WitherWitch::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
                     .eyeHeight(1.62F)
                     .passengerAttachments(2.2625F)
-                    .clientTrackingRange(8));
+                    .clientTrackingRange(8)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<Owl>> OWL_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "owl",
             () -> EntityType.Builder.of(Owl::new, MobCategory.CREATURE)
@@ -81,7 +90,8 @@ public class ModEntityTypes {
                     .sized(0.6F, 1.99F)
                     .eyeHeight(1.74F)
                     .ridingOffset(-0.7F)
-                    .clientTrackingRange(8));
+                    .clientTrackingRange(8)
+                    .notInPeaceful());
     public static final Holder.Reference<EntityType<MinecartCharge>> ENDER_CHARGE_MINECART_ENTITY_TYPE = ModRegistry.REGISTRIES.registerEntityType(
             "ender_charge_minecart",
             () -> EntityType.Builder.of(EnderExplosionType.ENDER.getMinecartFactory(), MobCategory.MISC)

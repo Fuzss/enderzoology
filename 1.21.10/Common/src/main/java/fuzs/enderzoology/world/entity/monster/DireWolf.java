@@ -41,8 +41,8 @@ import java.util.stream.Stream;
 public class DireWolf extends Wolf implements Enemy, PackMob {
     private static final UniformInt EATING_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final Predicate<ItemEntity> ALLOWED_ITEMS = (itemEntity) -> {
-        return !itemEntity.hasPickUpDelay() && itemEntity.isAlive() &&
-                !(itemEntity.getItem().getItem() instanceof BlockItem);
+        return !itemEntity.hasPickUpDelay() && itemEntity.isAlive() && !(itemEntity.getItem()
+                .getItem() instanceof BlockItem);
     };
 
     @Nullable
@@ -75,8 +75,8 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
                         8,
                         true,
                         false,
-                        (LivingEntity livingEntity, ServerLevel serverLevel) -> livingEntity.getType() ==
-                                EntityType.WOLF));
+                        (LivingEntity livingEntity, ServerLevel serverLevel) -> livingEntity.getType()
+                                == EntityType.WOLF));
         this.targetSelector.addGoal(4,
                 new NearestAttackableTargetGoal<>(this,
                         Mob.class,
@@ -84,20 +84,15 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
                         true,
                         false,
                         (LivingEntity livingEntity, ServerLevel serverLevel) ->
-                                (livingEntity instanceof Animal || livingEntity instanceof Zombie) &&
-                                        !(livingEntity instanceof Wolf) && this.isHungry() &&
-                                        !this.getMainHandItem().has(DataComponents.FOOD)));
+                                (livingEntity instanceof Animal || livingEntity instanceof Zombie)
+                                        && !(livingEntity instanceof Wolf) && this.isHungry() && !this.getMainHandItem()
+                                        .has(DataComponents.FOOD)));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, true));
     }
 
     @Override
     public int getBaseExperienceReward(ServerLevel serverLevel) {
         return this.xpReward;
-    }
-
-    @Override
-    protected boolean shouldDespawnInPeaceful() {
-        return true;
     }
 
     @Override
@@ -200,10 +195,10 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
 
     @Override
     public void aiStep() {
-        if (!this.level().isClientSide && this.isAlive() && this.isEffectiveAi()) {
+        if (this.level() instanceof ServerLevel && this.isAlive() && this.isEffectiveAi()) {
             ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
-            if (this.canEat(itemStack) && --this.ticksSinceEaten < 40 && this.random.nextFloat() < 0.1F &&
-                    !this.isUsingItem()) {
+            if (this.canEat(itemStack) && --this.ticksSinceEaten < 40 && this.random.nextFloat() < 0.1F
+                    && !this.isUsingItem()) {
                 this.startUsingItem(InteractionHand.MAIN_HAND);
             } else if (this.ticksSinceEaten < 0) {
                 this.ticksSinceEaten = EATING_TIME.sample(this.random);
@@ -266,8 +261,8 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
     @Override
     public boolean canHoldItem(ItemStack stack) {
         ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
-        return itemStack.isEmpty() ||
-                this.ticksSinceEaten > 0 && stack.has(DataComponents.FOOD) && !itemStack.has(DataComponents.FOOD);
+        return itemStack.isEmpty() || this.ticksSinceEaten > 0 && stack.has(DataComponents.FOOD) && !itemStack.has(
+                DataComponents.FOOD);
     }
 
     private void spitOutItem(ServerLevel serverLevel, ItemStack itemStack) {

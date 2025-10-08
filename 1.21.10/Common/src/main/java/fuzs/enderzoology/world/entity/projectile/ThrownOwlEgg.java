@@ -5,6 +5,7 @@ import fuzs.enderzoology.init.ModItems;
 import fuzs.enderzoology.world.entity.animal.Owl;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.entity.projectile.ThrownEgg;
@@ -57,7 +58,7 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        if (!this.level().isClientSide) {
+        if (this.level() instanceof ServerLevel serverLevel) {
             if (this.random.nextInt(8) == 0) {
                 int i = 1;
                 if (this.random.nextInt(32) == 0) {
@@ -73,7 +74,7 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
                             break;
                         }
 
-                        this.level().addFreshEntity(owl);
+                        serverLevel.addFreshEntity(owl);
                     }
                 }
             }

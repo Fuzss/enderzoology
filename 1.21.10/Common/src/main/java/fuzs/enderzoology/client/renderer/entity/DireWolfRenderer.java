@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ModelLayerLocations;
+import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.model.DireWolfModel;
 import fuzs.enderzoology.client.renderer.entity.layers.DireWolfHeldItemLayer;
 import fuzs.enderzoology.client.renderer.entity.state.DireWolfRenderState;
@@ -16,8 +16,8 @@ public class DireWolfRenderer extends WolfRenderer {
 
     public DireWolfRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = this.adultModel = new DireWolfModel(context.bakeLayer(ModelLayerLocations.DIRE_WOLF));
-        this.babyModel = new DireWolfModel(context.bakeLayer(ModelLayerLocations.DIRE_WOLF_BABY));
+        this.model = this.adultModel = new DireWolfModel(context.bakeLayer(ModModelLayers.DIRE_WOLF));
+        this.babyModel = new DireWolfModel(context.bakeLayer(ModModelLayers.DIRE_WOLF_BABY));
         this.shadowRadius = 0.6F;
         this.addLayer(new DireWolfHeldItemLayer(this));
     }

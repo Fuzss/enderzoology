@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ModelLayerLocations;
+import fuzs.enderzoology.client.init.ModModelLayers;
 import net.minecraft.client.model.WitchModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.WitchRenderer;
@@ -13,7 +13,7 @@ public class WitherWitchRenderer extends WitchRenderer {
 
     public WitherWitchRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new WitchModel(context.bakeLayer(ModelLayerLocations.WITHER_WITCH));
+        this.model = new WitchModel(context.bakeLayer(ModModelLayers.WITHER_WITCH));
     }
 
     @Override

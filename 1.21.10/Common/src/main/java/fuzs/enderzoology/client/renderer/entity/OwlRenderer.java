@@ -1,23 +1,16 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ModelLayerLocations;
+import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.model.OwlModel;
 import fuzs.enderzoology.client.renderer.entity.state.OwlRenderState;
 import fuzs.enderzoology.world.entity.animal.Owl;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.AgeableMobRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.LivingEntityEmissiveLayer;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-
-import java.util.List;
-import java.util.function.Function;
 
 public class OwlRenderer extends AgeableMobRenderer<Owl, OwlRenderState, OwlModel> {
     private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/owl/owl.png");
@@ -25,35 +18,25 @@ public class OwlRenderer extends AgeableMobRenderer<Owl, OwlRenderState, OwlMode
 
     public OwlRenderer(EntityRendererProvider.Context context) {
         super(context,
-                new OwlModel(context.bakeLayer(ModelLayerLocations.OWL)),
-                new OwlModel(context.bakeLayer(ModelLayerLocations.OWL_BABY)),
+                new OwlModel(context.bakeLayer(ModModelLayers.OWL)),
+                new OwlModel(context.bakeLayer(ModModelLayers.OWL_BABY)),
                 0.3F);
         this.addLayer(new LivingEntityEmissiveLayer<>(this,
-                EYES_TEXTURE_LOCATION,
-                getConstantAlpha(1.0F),
-                getHeadPart(),
+                (OwlRenderState renderState) -> EYES_TEXTURE_LOCATION,
+                (OwlRenderState renderState, float ageInTicks) -> {
+                    return renderState.isBaby ? 0.0F : 1.0F;
+                },
+                new OwlModel(context.bakeLayer(ModModelLayers.OWL_EYES)),
                 RenderType::eyes,
                 true));
-    }
-
-    public static <S extends LivingEntityRenderState> LivingEntityEmissiveLayer.AlphaFunction<S> getConstantAlpha(float alphaValue) {
-        return (S renderState, float ageInTicks) -> {
-            return alphaValue;
-        };
-    }
-
-    public static <S extends LivingEntityRenderState, M extends EntityModel<S> & HeadedModel> LivingEntityEmissiveLayer.DrawSelector<S, M> getHeadPart() {
-        return getHeadSelector(List::of);
-    }
-
-    public static <S extends LivingEntityRenderState, M extends EntityModel<S> & HeadedModel> LivingEntityEmissiveLayer.DrawSelector<S, M> getAllHeadParts() {
-        return getHeadSelector(ModelPart::getAllParts);
-    }
-
-    public static <S extends LivingEntityRenderState, M extends EntityModel<S> & HeadedModel> LivingEntityEmissiveLayer.DrawSelector<S, M> getHeadSelector(Function<ModelPart, List<ModelPart>> partSelector) {
-        return (M entityModel, S renderState) -> {
-            return partSelector.apply(entityModel.getHead());
-        };
+        this.addLayer(new LivingEntityEmissiveLayer<>(this,
+                (OwlRenderState renderState) -> EYES_TEXTURE_LOCATION,
+                (OwlRenderState renderState, float ageInTicks) -> {
+                    return renderState.isBaby ? 1.0F : 0.0F;
+                },
+                new OwlModel(context.bakeLayer(ModModelLayers.OWL_BABY_EYES)),
+                RenderType::eyes,
+                true));
     }
 
     @Override
@@ -67,11 +50,11 @@ public class OwlRenderer extends AgeableMobRenderer<Owl, OwlRenderState, OwlMode
     }
 
     @Override
-    public void extractRenderState(Owl owl, OwlRenderState reusedState, float partialTick) {
-        super.extractRenderState(owl, reusedState, partialTick);
-        reusedState.isFlying = owl.isFlying();
+    public void extractRenderState(Owl owl, OwlRenderState renderState, float partialTick) {
+        super.extractRenderState(owl, renderState, partialTick);
+        renderState.isFlying = owl.isFlying();
         float flap = Mth.lerp(partialTick, owl.oFlap, owl.flap);
         float flapSpeed = Mth.lerp(partialTick, owl.oFlapSpeed, owl.flapSpeed);
-        reusedState.flapAngle = (Mth.sin(flap) + 1.0F) * flapSpeed;
+        renderState.flapAngle = (Mth.sin(flap) + 1.0F) * flapSpeed;
     }
 }

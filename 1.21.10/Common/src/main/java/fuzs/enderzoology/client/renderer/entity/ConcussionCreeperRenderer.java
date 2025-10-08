@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ModelLayerLocations;
+import fuzs.enderzoology.client.init.ModModelLayers;
 import net.minecraft.client.model.CreeperModel;
 import net.minecraft.client.renderer.entity.CreeperRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -14,7 +14,7 @@ public class ConcussionCreeperRenderer extends CreeperRenderer {
 
     public ConcussionCreeperRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new CreeperModel(context.bakeLayer(ModelLayerLocations.CONCUSSION_CREEPER));
+        this.model = new CreeperModel(context.bakeLayer(ModModelLayers.CONCUSSION_CREEPER));
     }
 
     @Override

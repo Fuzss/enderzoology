@@ -208,7 +208,7 @@ public class Enderminy extends Monster implements NeutralMob {
 
     @Override
     public void aiStep() {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.level()
                     .addParticle(ParticleTypes.PORTAL,
                             this.getRandomX(0.5),
@@ -220,7 +220,6 @@ public class Enderminy extends Monster implements NeutralMob {
         }
 
         this.jumping = false;
-
         super.aiStep();
     }
 

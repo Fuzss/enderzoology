@@ -5,6 +5,7 @@ import fuzs.enderzoology.init.ModItems;
 import fuzs.enderzoology.world.entity.ai.goal.RangedBowEasyAttackGoal;
 import fuzs.puzzleslib.api.item.v2.EnchantingHelper;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -164,13 +165,13 @@ public class FallenKnight extends AbstractSkeleton {
 
     @Override
     public void reassessWeaponGoal() {
-        if (this.level() != null && !this.level().isClientSide) {
+        if (this.level() instanceof ServerLevel serverLevel) {
             this.goalSelector.removeGoal(this.meleeGoal());
             this.goalSelector.removeGoal(this.bowGoal());
             ItemStack weaponStack = this.getCorrectBowWeapon(ItemStack.EMPTY);
             if (weaponStack.getItem() instanceof BowItem) {
                 int i = 20;
-                if (this.level().getDifficulty() != Difficulty.HARD) {
+                if (serverLevel.getDifficulty() != Difficulty.HARD) {
                     i = 40;
                 }
 

@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ModelLayerLocations;
+import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.renderer.entity.state.WitherCatRenderState;
 import fuzs.enderzoology.world.entity.monster.WitherCat;
 import net.minecraft.client.model.FelineModel;
@@ -15,7 +15,7 @@ public class WitherCatRenderer extends MobRenderer<WitherCat, WitherCatRenderSta
             "textures/entity/cat/wither_cat_angry.png");
 
     public WitherCatRenderer(EntityRendererProvider.Context context) {
-        super(context, new FelineModel<>(context.bakeLayer(ModelLayerLocations.WITHER_CAT)), 0.4F);
+        super(context, new FelineModel<>(context.bakeLayer(ModModelLayers.WITHER_CAT)), 0.4F);
     }
 
     @Override

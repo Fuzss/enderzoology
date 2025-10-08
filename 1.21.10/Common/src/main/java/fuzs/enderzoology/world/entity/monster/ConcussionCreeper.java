@@ -42,7 +42,7 @@ public class ConcussionCreeper extends Creeper {
 
     @Override
     public void aiStep() {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             for (int i = 0; i < 2; ++i) {
                 this.level()
                         .addParticle(ParticleTypes.PORTAL,
@@ -54,6 +54,7 @@ public class ConcussionCreeper extends Creeper {
                                 (this.random.nextDouble() - 0.5D) * 2.0D);
             }
         }
+
         super.aiStep();
     }
 

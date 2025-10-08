@@ -6,7 +6,7 @@ import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.api.event.v1.data.MutableFloat;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
@@ -25,13 +25,14 @@ public class FovModifierHandler {
                 } else {
                     g *= g;
                 }
+
                 float h = g;
                 fieldOfViewModifier.mapFloat((Float value) -> value * (1.0F - h * 0.15F));
             }
         }
     }
 
-    public static EventResult onRenderBothHands(ItemInHandRenderer itemInHandRenderer, InteractionHand interactionHand, AbstractClientPlayer player, HumanoidArm humanoidArm, ItemStack itemStack, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
+    public static EventResult onRenderBothHands(ItemInHandRenderer itemInHandRenderer, InteractionHand interactionHand, AbstractClientPlayer player, HumanoidArm humanoidArm, ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int combinedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
         if (player.isUsingItem() && player.getUsedItemHand() != interactionHand && player.getUseItem()
                 .is(ModItems.HUNTING_BOW_ITEM.value())) {
             return EventResult.INTERRUPT;

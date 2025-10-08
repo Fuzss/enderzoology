@@ -39,6 +39,13 @@ public class OwlModel extends EntityModel<OwlRenderState> implements HeadedModel
         this.leftWing = this.body.getChild("left_wing");
     }
 
+    public static LayerDefinition createEyesLayer() {
+        return createBodyLayer().apply(meshDefinition -> {
+            meshDefinition.getRoot().retainExactParts(Set.of("head"));
+            return meshDefinition;
+        });
+    }
+
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshDefinition = new MeshDefinition();
         PartDefinition partDefinition = meshDefinition.getRoot();

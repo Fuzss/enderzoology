@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ModelLayerLocations;
+import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.renderer.entity.state.FallenMountRenderState;
 import fuzs.enderzoology.world.entity.monster.FallenMount;
 import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
@@ -20,14 +20,14 @@ public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, Hors
 
     public FallenMountRenderer(EntityRendererProvider.Context context) {
         super(context,
-                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT)),
-                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_BABY)));
+                new HorseModel(context.bakeLayer(ModModelLayers.FALLEN_MOUNT)),
+                new HorseModel(context.bakeLayer(ModModelLayers.FALLEN_MOUNT_BABY)));
         this.addLayer(new SimpleEquipmentLayer<>(this,
                 context.getEquipmentRenderer(),
                 EquipmentClientInfo.LayerType.HORSE_BODY,
                 (HorseRenderState horseRenderState) -> horseRenderState.bodyArmorItem,
-                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_ARMOR)),
-                new HorseModel(context.bakeLayer(ModelLayerLocations.FALLEN_MOUNT_BABY_ARMOR))));
+                new HorseModel(context.bakeLayer(ModModelLayers.FALLEN_MOUNT_ARMOR)),
+                new HorseModel(context.bakeLayer(ModModelLayers.FALLEN_MOUNT_BABY_ARMOR))));
     }
 
     @Override

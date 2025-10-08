@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.renderer.entity;
 
 import fuzs.enderzoology.EnderZoology;
-import fuzs.enderzoology.client.init.ModelLayerLocations;
+import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.renderer.entity.layers.EnderInfestedZombieEyeLayer;
 import fuzs.enderzoology.client.renderer.entity.layers.EnderInfestedZombieOuterLayer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -15,12 +15,10 @@ public class EnderInfestedZombieRenderer extends ZombieRenderer {
 
     public EnderInfestedZombieRenderer(EntityRendererProvider.Context context) {
         super(context,
-                ModelLayerLocations.ENDER_INFESTED_ZOMBIE,
-                ModelLayerLocations.ENDER_INFESTED_ZOMBIE_BABY,
-                ModelLayerLocations.ENDER_INFESTED_ZOMBIE_INNER_ARMOR,
-                ModelLayerLocations.ENDER_INFESTED_ZOMBIE_OUTER_ARMOR,
-                ModelLayerLocations.ENDER_INFESTED_ZOMBIE_BABY_INNER_ARMOR,
-                ModelLayerLocations.ENDER_INFESTED_ZOMBIE_BABY_OUTER_ARMOR);
+                ModModelLayers.ENDER_INFESTED_ZOMBIE,
+                ModModelLayers.ENDER_INFESTED_ZOMBIE_BABY,
+                ModModelLayers.ENDER_INFESTED_ZOMBIE_ARMOR,
+                ModModelLayers.ENDER_INFESTED_ZOMBIE_BABY_ARMOR);
         this.addLayer(new EnderInfestedZombieOuterLayer<>(this, context.getModelSet()));
         this.addLayer(new EnderInfestedZombieEyeLayer<>(this));
     }

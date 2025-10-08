@@ -42,8 +42,8 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
         this.healCatsGoal = new NearestHealableRaiderTargetGoal<>(this,
                 WitherCat.class,
                 true,
-                (LivingEntity livingEntity, ServerLevel serverLevel) -> livingEntity.getHealth() <
-                        livingEntity.getMaxHealth()) {
+                (LivingEntity livingEntity, ServerLevel serverLevel) -> livingEntity.getHealth()
+                        < livingEntity.getMaxHealth()) {
 
             @Override
             public boolean canUse() {
@@ -72,7 +72,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide && this.isAlive()) {
+        if (this.level() instanceof ServerLevel && this.isAlive()) {
             this.healCatsGoal.decrementCooldown();
             this.attackPlayersGoal.setCanAttack(
                     this.healRaidersGoal.getCooldown() <= 0 || this.healCatsGoal.getCooldown() <= 0);

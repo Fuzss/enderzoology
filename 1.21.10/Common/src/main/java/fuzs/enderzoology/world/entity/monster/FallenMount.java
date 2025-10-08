@@ -93,11 +93,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    protected boolean shouldDespawnInPeaceful() {
-        return true;
-    }
-
-    @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_CONVERTING_ID, false);
@@ -160,7 +155,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
                     itemStack.shrink(1);
                 }
 
-                if (!this.level().isClientSide) {
+                if (this.level() instanceof ServerLevel) {
                     this.startConverting(player.getUUID(), this.random.nextInt(2400) + 3600);
                 }
 
@@ -350,12 +345,12 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    public boolean killedEntity(ServerLevel level, LivingEntity entity) {
-        boolean killedEntity = super.killedEntity(level, entity);
-        if ((level.getDifficulty() == Difficulty.NORMAL || level.getDifficulty() == Difficulty.HARD)
+    public boolean killedEntity(ServerLevel serverLevel, LivingEntity entity, DamageSource damageSource) {
+        boolean killedEntity = super.killedEntity(serverLevel, entity, damageSource);
+        if ((serverLevel.getDifficulty() == Difficulty.NORMAL || serverLevel.getDifficulty() == Difficulty.HARD)
                 && entity instanceof AbstractHorse abstractHorse && CommonAbstractions.INSTANCE.canLivingConvert(entity,
                 ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value())) {
-            if (level.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
+            if (serverLevel.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
                 return killedEntity;
             } else {
                 ConversionParams conversionParams = ConversionParams.single(abstractHorse, true, true);
@@ -372,7 +367,7 @@ public class FallenMount extends AbstractHorse implements Enemy {
                                     });
                             CommonAbstractions.INSTANCE.onLivingConvert(abstractHorse, mob, conversionParams);
                             if (!this.isSilent()) {
-                                level.levelEvent(null, LevelEvent.SOUND_ZOMBIE_INFECTED, this.blockPosition(), 0);
+                                serverLevel.levelEvent(null, LevelEvent.SOUND_ZOMBIE_INFECTED, this.blockPosition(), 0);
                             }
                         });
 

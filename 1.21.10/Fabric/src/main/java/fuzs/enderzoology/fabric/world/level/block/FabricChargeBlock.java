@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Basically a copy of the {@link TntBlock} class on NeoForge, which patches in additional methods that support
- * customizing explosion behavior.
+ * customising explosion behaviour.
  */
 public class FabricChargeBlock extends TntBlock {
     private final EnderExplosionType enderExplosionType;
@@ -84,7 +84,7 @@ public class FabricChargeBlock extends TntBlock {
                 Item item = itemStack.getItem();
                 if (!player.isCreative()) {
                     if (itemStack.is(Items.FLINT_AND_STEEL)) {
-                        itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(interactionHand));
+                        itemStack.hurtAndBreak(1, player, interactionHand.asEquipmentSlot());
                     } else {
                         itemStack.consume(1, player);
                     }
@@ -98,7 +98,7 @@ public class FabricChargeBlock extends TntBlock {
                 }
             }
 
-            return InteractionResultHelper.sidedSuccess(level.isClientSide);
+            return InteractionResultHelper.sidedSuccess(level.isClientSide());
         }
     }
 
