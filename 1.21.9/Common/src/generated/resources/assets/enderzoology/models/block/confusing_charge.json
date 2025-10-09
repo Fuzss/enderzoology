@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "enderzoology:block/confusing_charge_bottom",
+    "side": "enderzoology:block/confusing_charge_side",
+    "top": "enderzoology:block/confusing_charge_top"
+  }
+}
