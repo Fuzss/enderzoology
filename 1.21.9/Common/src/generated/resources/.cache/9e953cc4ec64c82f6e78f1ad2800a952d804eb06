@@ -1,4 +1,4 @@
-// 1.21.10	2025-10-08T23:50:07.602959	Tags for minecraft:entity_type mod id vanilla
+// 1.21.9	2025-10-09T21:27:22.874018	Tags for minecraft:entity_type mod id vanilla
 9afaea75aa1ba9d1eccfd5733d19e7b871b956f4 data/enderzoology/tags/entity_type/concussion_immune.json
 79df9bdfbf8bf9d6768e0b595f2b1d5202acbc7d data/enderzoology/tags/entity_type/fallen_mount_targets.json
 1ed3d38bdead5ab52ac6bd0da0cdc79ed0079ea0 data/minecraft/tags/entity_type/fall_damage_immune.json
