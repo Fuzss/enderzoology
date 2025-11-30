@@ -11,10 +11,7 @@ import fuzs.enderzoology.world.entity.item.PrimedCharge;
 import fuzs.enderzoology.world.entity.monster.DireWolf;
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
-import fuzs.puzzleslib.api.biome.v1.BiomeLoadingContext;
-import fuzs.puzzleslib.api.biome.v1.BiomeLoadingPhase;
-import fuzs.puzzleslib.api.biome.v1.BiomeModificationContext;
-import fuzs.puzzleslib.api.biome.v1.MobSpawnSettingsContext;
+import fuzs.puzzleslib.api.biome.v1.*;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.BiomeModificationsContext;
@@ -235,8 +232,8 @@ public class EnderZoology implements ModConstructor {
                         .apply(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value());
             }
             if (CONFIG.get(CommonConfig.class).direWolf) {
-                if (biomeModificationContext.climateSettings().hasPrecipitation() &&
-                        biomeModificationContext.climateSettings().getTemperature() < 0.0F) {
+                if (biomeModificationContext.climateSettings().hasPrecipitation()
+                        && biomeModificationContext.climateSettings().getTemperature() < 0.0F) {
                     SpawnerDataBuilder.create(settings, EntityType.WOLF)
                             .setWeight(Fraction.ONE_QUARTER)
                             .setMinCount(3)

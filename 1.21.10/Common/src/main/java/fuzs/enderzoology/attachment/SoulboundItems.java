@@ -39,7 +39,7 @@ public record SoulboundItems(List<ItemStack> items) {
         return EventResult.PASS;
     }
 
-    static SoulboundItems saveOnDeath(ServerPlayer serverPlayer, Collection<ItemEntity> drops) {
+    private static SoulboundItems saveOnDeath(ServerPlayer serverPlayer, Collection<ItemEntity> drops) {
         Holder<Enchantment> enchantment = EnchantingHelper.lookup(serverPlayer, ModEnchantments.SOULBOUND_ENCHANTMENT);
         List<ItemStack> items = drops.stream()
                 .filter((ItemEntity itemEntity) -> {
