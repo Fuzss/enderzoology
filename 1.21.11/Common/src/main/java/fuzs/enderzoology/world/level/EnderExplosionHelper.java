@@ -13,10 +13,14 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.EntityBasedExplosionDamageCalculator;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,8 +39,8 @@ public class EnderExplosionHelper {
     public static void onExplosionDetonate(ServerLevel serverLevel, ServerExplosion explosion, List<BlockPos> affectedBlocks, List<Entity> affectedEntities) {
         if (explosion.damageCalculator instanceof EnderExplosionDamageCalculator damageCalculator) {
             for (Entity entity : affectedEntities) {
-                if (entity instanceof LivingEntity livingEntity && entity.isAlive() &&
-                        !entity.getType().is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) {
+                if (entity instanceof LivingEntity livingEntity && entity.isAlive() && !entity.getType()
+                        .is(ModRegistry.CONCUSSION_IMMUNE_ENTITY_TYPE_TAG)) {
                     Vec3 originalPosition = livingEntity.position();
                     if (damageCalculator.enderExplosionType.isTeleport()) {
                         EnderTeleportHelper.teleportEntity(serverLevel, livingEntity, 48, true);
@@ -82,8 +86,7 @@ public class EnderExplosionHelper {
     }
 
     public static boolean onChargeCaughtFire(Level level, BlockPos blockPos, @Nullable LivingEntity igniter, EnderExplosionType enderExplosionType) {
-        if (level instanceof ServerLevel serverLevel &&
-                serverLevel.getGameRules().getBoolean(GameRules.RULE_TNT_EXPLODES)) {
+        if (level instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.TNT_EXPLODES)) {
             PrimedTnt primedTnt = new PrimedCharge(level,
                     blockPos.getX() + 0.5,
                     blockPos.getY(),

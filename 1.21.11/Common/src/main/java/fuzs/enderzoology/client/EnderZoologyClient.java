@@ -14,17 +14,24 @@ import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
 import fuzs.puzzleslib.api.client.event.v1.entity.player.ComputeFovModifierCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandEvents;
 import fuzs.puzzleslib.api.core.v1.context.PackRepositorySourcesContext;
-import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.resources.v1.PackResourcesHelper;
-import net.minecraft.client.model.*;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.animal.equine.AbstractEquineModel;
+import net.minecraft.client.model.animal.feline.OcelotModel;
+import net.minecraft.client.model.animal.wolf.WolfModel;
 import net.minecraft.client.model.geom.LayerDefinitions;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.MeshTransformer;
+import net.minecraft.client.model.monster.creeper.CreeperModel;
+import net.minecraft.client.model.monster.enderman.EndermanModel;
+import net.minecraft.client.model.monster.skeleton.SkeletonModel;
+import net.minecraft.client.model.monster.witch.WitchModel;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.TntMinecartRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
+import net.minecraft.resources.Identifier;
 
 public class EnderZoologyClient implements ClientModConstructor {
 
@@ -64,9 +71,9 @@ public class EnderZoologyClient implements ClientModConstructor {
     @Override
     public void onRegisterEntitySpectatorShaders(EntitySpectatorShadersContext context) {
         context.registerSpectatorShader(ModEntityTypes.CONCUSSION_CREEPER_ENTITY_TYPE.value(),
-                ResourceLocationHelper.withDefaultNamespace("shaders/post/creeper.json"));
+                Identifier.withDefaultNamespace("shaders/post/creeper.json"));
         context.registerSpectatorShader(ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
-                ResourceLocationHelper.withDefaultNamespace("shaders/post/invert.json"));
+                Identifier.withDefaultNamespace("shaders/post/invert.json"));
     }
 
     @Override
@@ -79,20 +86,20 @@ public class EnderZoologyClient implements ClientModConstructor {
                 () -> OwlModel.createEyesLayer().apply(OwlModel.BABY_TRANSFORMER));
         context.registerLayerDefinition(ModModelLayers.FALLEN_KNIGHT, SkeletonModel::createBodyLayer);
         context.registerArmorDefinition(ModModelLayers.FALLEN_KNIGHT_ARMOR,
-                HumanoidModel.createArmorMeshSet(LayerDefinitions.INNER_ARMOR_DEFORMATION,
+                () -> HumanoidModel.createArmorMeshSet(LayerDefinitions.INNER_ARMOR_DEFORMATION,
                                 LayerDefinitions.OUTER_ARMOR_DEFORMATION)
                         .map((MeshDefinition meshDefinition) -> LayerDefinition.create(meshDefinition, 64, 32)));
         context.registerLayerDefinition(ModModelLayers.ENDER_INFESTED_ZOMBIE,
                 () -> LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64));
         context.registerArmorDefinition(ModModelLayers.ENDER_INFESTED_ZOMBIE_ARMOR,
-                HumanoidModel.createArmorMeshSet(LayerDefinitions.INNER_ARMOR_DEFORMATION,
+                () -> HumanoidModel.createArmorMeshSet(LayerDefinitions.INNER_ARMOR_DEFORMATION,
                                 LayerDefinitions.OUTER_ARMOR_DEFORMATION)
                         .map((MeshDefinition meshDefinition) -> LayerDefinition.create(meshDefinition, 64, 32)));
         context.registerLayerDefinition(ModModelLayers.ENDER_INFESTED_ZOMBIE_BABY,
                 () -> LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64)
                         .apply(HumanoidModel.BABY_TRANSFORMER));
         context.registerArmorDefinition(ModModelLayers.ENDER_INFESTED_ZOMBIE_BABY_ARMOR,
-                HumanoidModel.createArmorMeshSet(LayerDefinitions.INNER_ARMOR_DEFORMATION,
+                () -> HumanoidModel.createArmorMeshSet(LayerDefinitions.INNER_ARMOR_DEFORMATION,
                                 LayerDefinitions.OUTER_ARMOR_DEFORMATION)
                         .map((MeshDefinition meshDefinition) -> LayerDefinition.create(meshDefinition, 64, 32)
                                 .apply(HumanoidModel.BABY_TRANSFORMER)));

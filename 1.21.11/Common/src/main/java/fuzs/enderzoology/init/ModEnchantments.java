@@ -43,7 +43,7 @@ public class ModEnchantments {
                         EquipmentSlotGroup.MAINHAND)));
         AbstractDatapackRegistriesProvider.registerEnchantment(context,
                 DECAY_ENCHANTMENT,
-                Enchantment.enchantment(Enchantment.definition(itemLookup.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                Enchantment.enchantment(Enchantment.definition(itemLookup.getOrThrow(ItemTags.MELEE_WEAPON_ENCHANTABLE),
                                 2,
                                 1,
                                 Enchantment.dynamicCost(10, 20),

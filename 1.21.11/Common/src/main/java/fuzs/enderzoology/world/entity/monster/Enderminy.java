@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -14,10 +14,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -27,7 +24,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractThrownPotion;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
@@ -39,13 +36,15 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
+/**
+ * @see net.minecraft.world.entity.monster.EnderMan
+ */
 public class Enderminy extends Monster implements NeutralMob {
-    private static final ResourceLocation SPEED_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_speed_boost");
+    private static final Identifier SPEED_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_speed_boost");
     private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_ID,
             0.15F,
             AttributeModifier.Operation.ADD_VALUE);
@@ -54,9 +53,8 @@ public class Enderminy extends Monster implements NeutralMob {
     private static final UniformInt FIRST_ANGER_SOUND_DELAY = TimeUtil.rangeOfSeconds(0, 1);
     private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(4, 6);
     private int targetChangeTime;
-    private int remainingPersistentAngerTime;
-    @Nullable
-    private UUID persistentAngerTarget;
+    private long persistentAngerEndTime;
+    private @Nullable EntityReference<LivingEntity> persistentAngerTarget;
     private int playFirstAngerSoundIn;
     private int ticksUntilNextAlert;
 
@@ -170,28 +168,27 @@ public class Enderminy extends Monster implements NeutralMob {
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+        this.setTimeToRemainAngry((long) PERSISTENT_ANGER_TIME.sample(this.random));
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.remainingPersistentAngerTime;
+    public void setPersistentAngerEndTime(long l) {
+        this.persistentAngerEndTime = l;
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int remainingPersistentAngerTime) {
-        this.remainingPersistentAngerTime = remainingPersistentAngerTime;
+    public long getPersistentAngerEndTime() {
+        return this.persistentAngerEndTime;
     }
 
     @Override
-    @Nullable
-    public UUID getPersistentAngerTarget() {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> entityReference) {
+        this.persistentAngerTarget = entityReference;
+    }
+
+    @Override
+    public @Nullable EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.persistentAngerTarget;
-    }
-
-    @Override
-    public void setPersistentAngerTarget(@Nullable UUID persistentAngerTarget) {
-        this.persistentAngerTarget = persistentAngerTarget;
     }
 
     @Override
@@ -241,7 +238,6 @@ public class Enderminy extends Monster implements NeutralMob {
 
     private boolean teleport(double x, double y, double z) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(x, y, z);
-
         while (mutableBlockPos.getY() > this.level().getMinY() && !this.level()
                 .getBlockState(mutableBlockPos)
                 .blocksMotion()) {

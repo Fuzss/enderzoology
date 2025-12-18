@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import fuzs.enderzoology.client.model.DireWolfModel;
 import fuzs.enderzoology.client.renderer.entity.state.DireWolfRenderState;
-import net.minecraft.client.model.WolfModel;
+import net.minecraft.client.model.animal.wolf.WolfModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;

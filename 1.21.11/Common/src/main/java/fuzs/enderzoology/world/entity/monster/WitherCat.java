@@ -2,7 +2,7 @@ package fuzs.enderzoology.world.entity.monster;
 
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.world.entity.ai.goal.FollowMobOwnerGoal;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -20,23 +20,22 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class WitherCat extends Monster implements CompanionMob<Witch> {
-    private static final ResourceLocation SCALE_MODIFIER_ANGRY_ID = EnderZoology.id("angry");
+    private static final Identifier SCALE_MODIFIER_ANGRY_ID = EnderZoology.id("angry");
     private static final float DEFAULT_SCALE_VALUE = (float) Attributes.SCALE.value().getDefaultValue();
     private static final float ANGRY_SCALE_VALUE = 2.0F;
     private static final float SCALE_INCREMENTS = 0.05F;
     private static final int MIN_DEAGGRESSION_TIME = 600;
-    private static final ResourceLocation SPEED_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_speed_boost");
-    private static final ResourceLocation HEALTH_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_health_boost");
+    private static final Identifier SPEED_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_speed_boost");
+    private static final Identifier HEALTH_MODIFIER_ATTACKING_ID = EnderZoology.id("attacking_health_boost");
     private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_ID,
             0.15,
             AttributeModifier.Operation.ADD_VALUE);
@@ -177,14 +176,17 @@ public class WitherCat extends Monster implements CompanionMob<Witch> {
     }
 
     @Override
-    public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        if (!effectInstance.getEffect().value().isBeneficial() && entity instanceof Witch) return false;
-        return super.addEffect(effectInstance, entity);
+    public boolean addEffect(MobEffectInstance mobEffect, @Nullable Entity entity) {
+        if (!mobEffect.getEffect().value().isBeneficial() && entity instanceof Witch) {
+            return false;
+        } else {
+            return super.addEffect(mobEffect, entity);
+        }
     }
 
     @Override
-    public boolean canBeAffected(@NotNull MobEffectInstance potion) {
-        return potion.getEffect() != MobEffects.WITHER && super.canBeAffected(potion);
+    public boolean canBeAffected(MobEffectInstance mobEffect) {
+        return mobEffect.getEffect() != MobEffects.WITHER && super.canBeAffected(mobEffect);
     }
 
     @Override

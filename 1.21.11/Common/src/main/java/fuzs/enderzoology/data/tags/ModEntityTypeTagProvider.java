@@ -28,11 +28,14 @@ public class ModEntityTypeTagProvider extends AbstractTagProvider<EntityType<?>>
                         ModEntityTypes.ENDERMINY_ENTITY_TYPE.value(),
                         ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE.value())
                 .addOptionalTag("c:bosses");
-        this.tag(EntityTypeTags.UNDEAD)
-                .add(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE,
-                        ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE,
-                        ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE);
+        this.tag(EntityTypeTags.SKELETONS).add(ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE);
+        this.tag(EntityTypeTags.ZOMBIES).add(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE);
+        this.tag(EntityTypeTags.UNDEAD).add(ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE);
         this.tag(EntityTypeTags.FALL_DAMAGE_IMMUNE)
                 .add(ModEntityTypes.WITHER_CAT_ENTITY_TYPE, ModEntityTypes.OWL_ENTITY_TYPE);
+        this.tag(EntityTypeTags.BURN_IN_DAYLIGHT)
+                .add(ModEntityTypes.INFESTED_ZOMBIE_ENTITY_TYPE,
+                        ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE,
+                        ModEntityTypes.FALLEN_KNIGHT_ENTITY_TYPE);
     }
 }

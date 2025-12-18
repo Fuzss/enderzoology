@@ -15,23 +15,27 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.*;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 public class FallenKnight extends AbstractSkeleton {
-    private static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = difficulty -> difficulty == Difficulty.HARD;
+    private static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = (Difficulty difficulty) -> {
+        return difficulty == Difficulty.HARD;
+    };
     private static final float BREAK_DOOR_CHANCE = 0.1F;
 
     private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
@@ -120,8 +124,8 @@ public class FallenKnight extends AbstractSkeleton {
     }
 
     @Override
-    public boolean canFireProjectileWeapon(ProjectileWeaponItem projectileWeapon) {
-        return projectileWeapon instanceof BowItem;
+    public boolean canUseNonMeleeWeapon(ItemStack itemStack) {
+        return itemStack.getItem() instanceof BowItem;
     }
 
     @Override
@@ -130,14 +134,15 @@ public class FallenKnight extends AbstractSkeleton {
         spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData);
         if (level.getRandom().nextBoolean()) {
             Mob mob = ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level(), EntitySpawnReason.JOCKEY);
-            mob.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-            mob.finalizeSpawn(level, difficulty, EntitySpawnReason.JOCKEY, null);
-            this.startRiding(mob);
-            level.addFreshEntity(mob);
+            if (mob != null) {
+                mob.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                mob.finalizeSpawn(level, difficulty, EntitySpawnReason.JOCKEY, null);
+                this.startRiding(mob);
+                level.addFreshEntity(mob);
+            }
         }
 
         this.setCanBreakDoors(level.getRandom().nextFloat() < difficulty.getSpecialMultiplier() * BREAK_DOOR_CHANCE);
-
         return spawnData;
     }
 
@@ -149,7 +154,7 @@ public class FallenKnight extends AbstractSkeleton {
         if (GoalUtils.hasGroundPathNavigation(this)) {
             if (this.canBreakDoors != canBreakDoors) {
                 this.canBreakDoors = canBreakDoors;
-                ((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(canBreakDoors);
+                this.getNavigation().setCanOpenDoors(canBreakDoors);
                 if (canBreakDoors) {
                     this.goalSelector.addGoal(1, this.breakDoorGoal);
                 } else {
@@ -170,12 +175,12 @@ public class FallenKnight extends AbstractSkeleton {
             this.goalSelector.removeGoal(this.bowGoal());
             ItemStack weaponStack = this.getCorrectBowWeapon(ItemStack.EMPTY);
             if (weaponStack.getItem() instanceof BowItem) {
-                int i = 20;
+                int attackInterval = 20;
                 if (serverLevel.getDifficulty() != Difficulty.HARD) {
-                    i = 40;
+                    attackInterval = 40;
                 }
 
-                this.bowGoal().setMinAttackInterval(i);
+                this.bowGoal().setMinAttackInterval(attackInterval);
                 this.goalSelector.addGoal(4, this.bowGoal());
             } else {
                 this.goalSelector.addGoal(4, this.meleeGoal());
@@ -227,6 +232,7 @@ public class FallenKnight extends AbstractSkeleton {
                 }
             };
         }
+
         return this.meleeGoal;
     }
 

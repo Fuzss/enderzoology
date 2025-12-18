@@ -18,7 +18,6 @@ import fuzs.puzzleslib.api.core.v1.context.BiomeModificationsContext;
 import fuzs.puzzleslib.api.core.v1.context.EntityAttributesContext;
 import fuzs.puzzleslib.api.core.v1.context.GameplayContentContext;
 import fuzs.puzzleslib.api.core.v1.context.SpawnPlacementsContext;
-import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.LivingDropsCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.UseItemEvents;
@@ -28,7 +27,7 @@ import fuzs.puzzleslib.api.event.v1.server.RegisterPotionBrewingMixesCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -254,7 +253,7 @@ public class EnderZoology implements ModConstructor {
         });
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocationHelper.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

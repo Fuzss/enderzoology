@@ -25,8 +25,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -41,7 +41,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -168,15 +168,6 @@ public class FallenMount extends AbstractHorse implements Enemy {
         } else {
             return InteractionResult.PASS;
         }
-    }
-
-    @Override
-    public void aiStep() {
-        if (this.isAlive() && this.isSunBurnTick() && !this.isVehicle() && !this.isWearingBodyArmor()) {
-            this.igniteForSeconds(8);
-        }
-
-        super.aiStep();
     }
 
     @Override

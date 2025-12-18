@@ -3,16 +3,16 @@ package fuzs.enderzoology.client.renderer.entity.layers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.client.init.ModModelLayers;
-import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.monster.zombie.ZombieModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class EnderInfestedZombieOuterLayer<T extends ZombieRenderState> extends RenderLayer<T, ZombieModel<T>> {
-    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id(
+    private static final Identifier TEXTURE_LOCATION = EnderZoology.id(
             "textures/entity/zombie/ender_infested_zombie_outer_layer.png");
 
     private final ZombieModel<T> model;

@@ -9,12 +9,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Fox;
+import net.minecraft.world.entity.animal.fox.Fox;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Shulker;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.Vec3;
 
 public class EnderTeleportHelper {
@@ -32,7 +32,10 @@ public class EnderTeleportHelper {
                         level.getMinY(),
                         level.getMinY() + level.getLogicalHeight() - 1);
                 double randomZ = entity.getZ() + (entity.getRandom().nextDouble() - 0.5) * teleportRange * 2;
-                if (entity.isPassenger()) entity.stopRiding();
+                if (entity.isPassenger()) {
+                    entity.stopRiding();
+                }
+
                 Vec3 vec3 = entity.position();
                 if (entity.randomTeleport(randomX, randomY, randomZ, true)) {
                     level.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(entity));
@@ -46,14 +49,15 @@ public class EnderTeleportHelper {
                             1.0F,
                             1.0F);
                     entity.playSound(soundEvent, 1.0F, 1.0F);
-                    if (endermiteChance && level.random.nextFloat() < 0.05F &&
-                            level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
+                    if (endermiteChance && level.random.nextFloat() < 0.05F && level.getGameRules()
+                            .get(GameRules.SPAWN_MOBS)) {
                         Endermite endermite = EntityType.ENDERMITE.create(level, EntitySpawnReason.TRIGGERED);
                         if (endermite != null) {
                             endermite.snapTo(vec3.x, vec3.y, vec3.z, entity.getYRot(), entity.getXRot());
                             level.addFreshEntity(endermite);
                         }
                     }
+
                     return;
                 }
             }

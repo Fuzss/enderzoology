@@ -1,7 +1,7 @@
 package fuzs.enderzoology.client.model;
 
 import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.WolfModel;
+import net.minecraft.client.model.animal.wolf.WolfModel;
 import net.minecraft.client.model.geom.ModelPart;
 
 public class DireWolfModel extends WolfModel implements HeadedModel {

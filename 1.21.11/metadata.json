@@ -1,0 +1,61 @@
+{
+    "mod": {
+        "id": "enderzoology",
+        "group": "fuzs.enderzoology",
+        "name": "Ender Zoology",
+        "version": "21.11.0",
+        "authors": [
+            "Fuzs"
+        ],
+        "description": "Vanilla-themed monsters to add some difficulty to the game. A remake of Ender Zoo.",
+        "license": "CC0-1.0"
+    },
+    "dependencies": [
+        {
+            "name": "fabricapi",
+            "type": "required",
+            "platforms": [
+                "fabric"
+            ]
+        },
+        {
+            "name": "forgeconfigapiport",
+            "type": "required",
+            "platforms": [
+                "fabric"
+            ]
+        },
+        {
+            "name": "puzzleslib",
+            "type": "required",
+            "platforms": [
+                "fabric",
+                "neoforge"
+            ]
+        }
+    ],
+    "links": [
+        {
+            "name": "github",
+            "slug": "enderzoology"
+        },
+        {
+            "name": "curseforge",
+            "slug": "ender-zoology",
+            "id": "857968"
+        },
+        {
+            "name": "modrinth",
+            "slug": "ender-zoology",
+            "id": "CUQhzQjg"
+        }
+    ],
+    "environments": {
+        "client": "required",
+        "server": "required"
+    },
+    "platforms": [
+        "fabric",
+        "neoforge"
+    ]
+}

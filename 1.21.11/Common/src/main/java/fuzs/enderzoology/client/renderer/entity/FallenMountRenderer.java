@@ -4,19 +4,18 @@ import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.renderer.entity.state.FallenMountRenderState;
 import fuzs.enderzoology.world.entity.monster.FallenMount;
-import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
-import net.minecraft.client.model.HorseModel;
+import net.minecraft.client.model.animal.equine.HorseModel;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.SimpleEquipmentLayer;
 import net.minecraft.client.renderer.entity.state.HorseRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, HorseRenderState, HorseModel> {
-    public static final ResourceLocation VANILLA_TEXTURE_LOCATION = ResourceLocationHelper.withDefaultNamespace(
+    public static final Identifier VANILLA_TEXTURE_LOCATION = Identifier.withDefaultNamespace(
             "textures/entity/horse/horse_zombie.png");
-    public static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/horse/horse_zombie.png");
+    public static final Identifier TEXTURE_LOCATION = EnderZoology.id("textures/entity/horse/horse_zombie.png");
 
     public FallenMountRenderer(EntityRendererProvider.Context context) {
         super(context,
@@ -43,7 +42,7 @@ public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, Hors
     }
 
     @Override
-    public ResourceLocation getTextureLocation(HorseRenderState renderState) {
+    public Identifier getTextureLocation(HorseRenderState renderState) {
         return TEXTURE_LOCATION;
     }
 

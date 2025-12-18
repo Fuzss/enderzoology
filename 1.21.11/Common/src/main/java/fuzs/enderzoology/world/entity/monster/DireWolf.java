@@ -23,7 +23,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -31,7 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.Path;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -208,7 +208,7 @@ public class DireWolf extends Wolf implements Enemy, PackMob {
         super.aiStep();
     }
 
-    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, ItemStack originalItemStack) {
+    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, ItemStack originalItemStack, InteractionHand interactionHand) {
         if (livingEntity instanceof DireWolf) {
             FoodProperties foodProperties = originalItemStack.get(DataComponents.FOOD);
             if (foodProperties != null) {

@@ -2,7 +2,6 @@ package fuzs.enderzoology.fabric.world.level.block;
 
 import fuzs.enderzoology.world.level.EnderExplosionHelper;
 import fuzs.enderzoology.world.level.EnderExplosionType;
-import fuzs.puzzleslib.api.util.v1.InteractionResultHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -18,15 +17,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Basically a copy of the {@link TntBlock} class on NeoForge, which patches in additional methods that support
@@ -92,13 +91,13 @@ public class FabricChargeBlock extends TntBlock {
 
                 player.awardStat(Stats.ITEM_USED.get(item));
             } else if (level instanceof ServerLevel serverLevel) {
-                if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_TNT_EXPLODES)) {
+                if (!serverLevel.getGameRules().get(GameRules.TNT_EXPLODES)) {
                     player.displayClientMessage(Component.translatable("block.minecraft.tnt.disabled"), true);
                     return InteractionResult.PASS;
                 }
             }
 
-            return InteractionResultHelper.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS;
         }
     }
 

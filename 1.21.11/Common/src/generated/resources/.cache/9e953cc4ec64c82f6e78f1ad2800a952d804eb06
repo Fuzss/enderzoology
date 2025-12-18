@@ -1,6 +1,9 @@
-// 1.21.10	2025-10-08T23:50:07.602959	Tags for minecraft:entity_type mod id vanilla
+// 1.21.11	2025-12-18T14:09:38.947367	Tags for minecraft:entity_type mod id vanilla
 9afaea75aa1ba9d1eccfd5733d19e7b871b956f4 data/enderzoology/tags/entity_type/concussion_immune.json
 79df9bdfbf8bf9d6768e0b595f2b1d5202acbc7d data/enderzoology/tags/entity_type/fallen_mount_targets.json
+93263da8acb339525c33de32e7b86254edaa77c7 data/minecraft/tags/entity_type/burn_in_daylight.json
 1ed3d38bdead5ab52ac6bd0da0cdc79ed0079ea0 data/minecraft/tags/entity_type/fall_damage_immune.json
 7e74c1c68af528c4ef36cb9dbe856d2ee523147e data/minecraft/tags/entity_type/impact_projectiles.json
-93263da8acb339525c33de32e7b86254edaa77c7 data/minecraft/tags/entity_type/undead.json
+867ce0cc1bcc23b9850bae847c30a29103c911cc data/minecraft/tags/entity_type/skeletons.json
+1ebc06e1bd0b89f9789cd101790ea6df942c08d8 data/minecraft/tags/entity_type/undead.json
+47b90988e4b2f0cd71e4e7253e4e024b838b287b data/minecraft/tags/entity_type/zombies.json

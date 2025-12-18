@@ -5,16 +5,16 @@ import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.model.OwlModel;
 import fuzs.enderzoology.client.renderer.entity.state.OwlRenderState;
 import fuzs.enderzoology.world.entity.animal.Owl;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.AgeableMobRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.LivingEntityEmissiveLayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class OwlRenderer extends AgeableMobRenderer<Owl, OwlRenderState, OwlModel> {
-    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id("textures/entity/owl/owl.png");
-    private static final ResourceLocation EYES_TEXTURE_LOCATION = EnderZoology.id("textures/entity/owl/owl_eyes.png");
+    private static final Identifier TEXTURE_LOCATION = EnderZoology.id("textures/entity/owl/owl.png");
+    private static final Identifier EYES_TEXTURE_LOCATION = EnderZoology.id("textures/entity/owl/owl_eyes.png");
 
     public OwlRenderer(EntityRendererProvider.Context context) {
         super(context,
@@ -27,7 +27,7 @@ public class OwlRenderer extends AgeableMobRenderer<Owl, OwlRenderState, OwlMode
                     return renderState.isBaby ? 0.0F : 1.0F;
                 },
                 new OwlModel(context.bakeLayer(ModModelLayers.OWL_EYES)),
-                RenderType::eyes,
+                RenderTypes::eyes,
                 true));
         this.addLayer(new LivingEntityEmissiveLayer<>(this,
                 (OwlRenderState renderState) -> EYES_TEXTURE_LOCATION,
@@ -35,7 +35,7 @@ public class OwlRenderer extends AgeableMobRenderer<Owl, OwlRenderState, OwlMode
                     return renderState.isBaby ? 1.0F : 0.0F;
                 },
                 new OwlModel(context.bakeLayer(ModModelLayers.OWL_BABY_EYES)),
-                RenderType::eyes,
+                RenderTypes::eyes,
                 true));
     }
 
@@ -45,7 +45,7 @@ public class OwlRenderer extends AgeableMobRenderer<Owl, OwlRenderState, OwlMode
     }
 
     @Override
-    public ResourceLocation getTextureLocation(OwlRenderState renderState) {
+    public Identifier getTextureLocation(OwlRenderState renderState) {
         return TEXTURE_LOCATION;
     }
 

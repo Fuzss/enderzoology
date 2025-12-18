@@ -15,7 +15,7 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class PrimedCharge extends PrimedTnt {
     public static final String TAG_ENTITY_INTERACTION = EnderZoology.id("entity_interaction").toString();

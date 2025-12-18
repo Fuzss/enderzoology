@@ -5,12 +5,12 @@ import fuzs.enderzoology.world.level.EnderExplosionType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.vehicle.MinecartTNT;
+import net.minecraft.world.entity.vehicle.minecart.MinecartTNT;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class MinecartCharge extends MinecartTNT {
     private final EnderExplosionType enderExplosionType;
@@ -51,8 +51,7 @@ public class MinecartCharge extends MinecartTNT {
                     (float) (4.0 + this.random.nextDouble() * 1.5 * radiusModifierSqrt),
                     Level.ExplosionInteraction.TNT,
                     this.enderExplosionType,
-                    true
-            );
+                    true);
             this.discard();
         }
     }

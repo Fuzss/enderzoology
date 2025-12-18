@@ -7,10 +7,10 @@ import fuzs.enderzoology.client.renderer.entity.layers.EnderInfestedZombieOuterL
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class EnderInfestedZombieRenderer extends ZombieRenderer {
-    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id(
+    private static final Identifier TEXTURE_LOCATION = EnderZoology.id(
             "textures/entity/zombie/ender_infested_zombie.png");
 
     public EnderInfestedZombieRenderer(EntityRendererProvider.Context context) {
@@ -24,7 +24,7 @@ public class EnderInfestedZombieRenderer extends ZombieRenderer {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(ZombieRenderState renderState) {
+    public Identifier getTextureLocation(ZombieRenderState renderState) {
         return TEXTURE_LOCATION;
     }
 }

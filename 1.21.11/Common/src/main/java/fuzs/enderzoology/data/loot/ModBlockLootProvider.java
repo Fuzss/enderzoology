@@ -3,7 +3,7 @@ package fuzs.enderzoology.data.loot;
 import fuzs.enderzoology.init.ModBlocks;
 import fuzs.puzzleslib.api.data.v2.AbstractLootProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -26,12 +26,14 @@ public class ModBlockLootProvider extends AbstractLootProvider.Blocks {
     }
 
     public void dropExplosive(Block block) {
-        this.add(block, LootTable.lootTable()
-                .withPool(this.applyExplosionCondition(block, LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1.0F))
-                        .add(LootItem.lootTableItem(block)
-                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                                        .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                .hasProperty(TntBlock.UNSTABLE, false)))))));
+        this.add(block,
+                LootTable.lootTable()
+                        .withPool(this.applyExplosionCondition(block,
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .add(LootItem.lootTableItem(block)
+                                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(TntBlock.UNSTABLE, false)))))));
     }
 }

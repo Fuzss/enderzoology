@@ -3,13 +3,13 @@ package fuzs.enderzoology.client.packs;
 import com.mojang.blaze3d.platform.NativeImage;
 import fuzs.puzzleslib.api.resources.v1.AbstractModPackResources;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.VanillaPackResources;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 public class DynamicallyCopiedPackResources extends AbstractModPackResources {
     private final ResourceManager resourceManager;
     private final VanillaPackResources vanillaPackResources;
-    private final Map<ResourceLocation, TextureCopy> textures;
+    private final Map<Identifier, TextureCopy> textures;
 
     protected DynamicallyCopiedPackResources(TextureCopy... textures) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -42,9 +42,9 @@ public class DynamicallyCopiedPackResources extends AbstractModPackResources {
 
     @Nullable
     @Override
-    public IoSupplier<InputStream> getResource(PackType packType, ResourceLocation resourceLocation) {
-        if (this.textures.containsKey(resourceLocation)) {
-            TextureCopy textureCopy = this.textures.get(resourceLocation);
+    public IoSupplier<InputStream> getResource(PackType packType, Identifier identifier) {
+        if (this.textures.containsKey(identifier)) {
+            TextureCopy textureCopy = this.textures.get(identifier);
             Optional<Resource> vanillaResource = this.resourceManager.getResource(textureCopy.vanillaLocation());
             if (vanillaResource.isPresent()) {
                 try (NativeImage nativeImage = NativeImage.read(vanillaResource.get().open())) {
@@ -67,11 +67,11 @@ public class DynamicallyCopiedPackResources extends AbstractModPackResources {
 
     @Override
     public Set<String> getNamespaces(PackType packType) {
-        return this.textures.keySet().stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
+        return this.textures.keySet().stream().map(Identifier::getNamespace).collect(Collectors.toSet());
     }
 
-    public record TextureCopy(ResourceLocation vanillaLocation,
-                              ResourceLocation destinationLocation,
+    public record TextureCopy(Identifier vanillaLocation,
+                              Identifier destinationLocation,
                               int vanillaImageWidth,
                               int vanillaImageHeight) {
 

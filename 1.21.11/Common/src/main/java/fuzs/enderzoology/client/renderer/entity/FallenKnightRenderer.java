@@ -6,10 +6,10 @@ import fuzs.enderzoology.world.entity.monster.FallenKnight;
 import net.minecraft.client.renderer.entity.AbstractSkeletonRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.SkeletonRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FallenKnightRenderer extends AbstractSkeletonRenderer<FallenKnight, SkeletonRenderState> {
-    private static final ResourceLocation TEXTURE_LOCATION = EnderZoology.id(
+    private static final Identifier TEXTURE_LOCATION = EnderZoology.id(
             "textures/entity/skeleton/fallen_knight.png");
 
     public FallenKnightRenderer(EntityRendererProvider.Context context) {
@@ -22,7 +22,7 @@ public class FallenKnightRenderer extends AbstractSkeletonRenderer<FallenKnight,
     }
 
     @Override
-    public ResourceLocation getTextureLocation(SkeletonRenderState skeletonRenderState) {
+    public Identifier getTextureLocation(SkeletonRenderState skeletonRenderState) {
         return TEXTURE_LOCATION;
     }
 }

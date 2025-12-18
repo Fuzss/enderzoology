@@ -14,7 +14,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestHealableRaiderTargetGoal;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownSplashPotion;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -25,8 +25,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     private NearestHealableRaiderTargetGoal<WitherCat> healCatsGoal;
@@ -204,7 +204,7 @@ public class WitherWitch extends Witch implements CompanionMob<WitherCat> {
     }
 
     @Override
-    public boolean canBeAffected(@NotNull MobEffectInstance potion) {
+    public boolean canBeAffected(@NonNull MobEffectInstance potion) {
         return potion.getEffect() != MobEffects.WITHER && super.canBeAffected(potion);
     }
 }

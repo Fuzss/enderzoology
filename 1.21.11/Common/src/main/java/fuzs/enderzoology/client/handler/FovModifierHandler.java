@@ -27,7 +27,7 @@ public class FovModifierHandler {
                 }
 
                 float h = g;
-                fieldOfViewModifier.mapFloat((Float value) -> value * (1.0F - h * 0.15F));
+                fieldOfViewModifier.mapAsFloat((Float value) -> value * (1.0F - h * 0.15F));
             }
         }
     }
