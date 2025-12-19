@@ -13,9 +13,7 @@ import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.Identifier;
 
 public class FallenMountRenderer extends AbstractHorseRenderer<FallenMount, HorseRenderState, HorseModel> {
-    public static final Identifier VANILLA_TEXTURE_LOCATION = Identifier.withDefaultNamespace(
-            "textures/entity/horse/horse_zombie.png");
-    public static final Identifier TEXTURE_LOCATION = EnderZoology.id("textures/entity/horse/horse_zombie.png");
+    public static final Identifier TEXTURE_LOCATION = EnderZoology.id("textures/entity/horse/fallen_mount.png");
 
     public FallenMountRenderer(EntityRendererProvider.Context context) {
         super(context,

@@ -5,8 +5,7 @@ accessible  field   net/minecraft/world/entity/monster/Witch    attackPlayersGoa
 extendable  method  net/minecraft/world/entity/monster/Creeper  explodeCreeper  ()V
 accessible  method  net/minecraft/world/entity/monster/Creeper  spawnLingeringCloud ()V
 accessible  field   net/minecraft/world/entity/monster/Creeper  explosionRadius I
-accessible  field   net/minecraft/client/renderer/entity/AgeableMobRenderer adultModel  Lnet/minecraft/client/model/EntityModel;
-mutable field   net/minecraft/client/renderer/entity/AgeableMobRenderer adultModel  Lnet/minecraft/client/model/EntityModel;
-accessible  field   net/minecraft/client/renderer/entity/AgeableMobRenderer babyModel   Lnet/minecraft/client/model/EntityModel;
-mutable field   net/minecraft/client/renderer/entity/AgeableMobRenderer babyModel   Lnet/minecraft/client/model/EntityModel;
 transitive-accessible   method  net/minecraft/world/entity/Entity   getEncodeId ()Ljava/lang/String;
+transitive-accessible   field   net/minecraft/world/entity/Mob  EQUIPMENT_POPULATION_ORDER  Ljava/util/List;
+accessible  field   net/minecraft/world/entity/ai/sensing/VillagerHostilesSensor    ACCEPTABLE_DISTANCE_FROM_HOSTILES   Lcom/google/common/collect/ImmutableMap;
+mutable field   net/minecraft/world/entity/ai/sensing/VillagerHostilesSensor    ACCEPTABLE_DISTANCE_FROM_HOSTILES   Lcom/google/common/collect/ImmutableMap;

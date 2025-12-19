@@ -5,9 +5,3 @@ plugins {
 dependencies {
     modCompileOnlyApi(libs.puzzleslib.common)
 }
-
-multiloader {
-    mixins {
-        mixin("VillagerHostilesSensorMixin")
-    }
-}

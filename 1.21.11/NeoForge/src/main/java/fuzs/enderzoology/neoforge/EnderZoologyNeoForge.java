@@ -9,6 +9,7 @@ import fuzs.enderzoology.data.tags.ModEnchantmentTagProvider;
 import fuzs.enderzoology.data.tags.ModEntityTypeTagProvider;
 import fuzs.enderzoology.data.tags.ModItemTagProvider;
 import fuzs.enderzoology.init.ModRegistry;
+import fuzs.enderzoology.neoforge.data.ModDataMapProvider;
 import fuzs.enderzoology.neoforge.init.NeoForgeModRegistry;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
@@ -28,6 +29,7 @@ public class EnderZoologyNeoForge {
                 ModEnchantmentTagProvider::new,
                 ModEntityTypeLootProvider::new,
                 ModEntityTypeTagProvider::new,
-                ModRecipeProvider::new);
+                ModRecipeProvider::new,
+                ModDataMapProvider::new);
     }
 }

@@ -1,10 +1,8 @@
 package fuzs.enderzoology.client;
 
-import fuzs.enderzoology.EnderZoology;
 import fuzs.enderzoology.client.handler.FovModifierHandler;
 import fuzs.enderzoology.client.init.ModModelLayers;
 import fuzs.enderzoology.client.model.OwlModel;
-import fuzs.enderzoology.client.packs.DynamicallyCopiedPackResources;
 import fuzs.enderzoology.client.renderer.entity.*;
 import fuzs.enderzoology.init.ModEntityTypes;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
@@ -13,8 +11,6 @@ import fuzs.puzzleslib.api.client.core.v1.context.EntitySpectatorShadersContext;
 import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
 import fuzs.puzzleslib.api.client.event.v1.entity.player.ComputeFovModifierCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandEvents;
-import fuzs.puzzleslib.api.core.v1.context.PackRepositorySourcesContext;
-import fuzs.puzzleslib.api.resources.v1.PackResourcesHelper;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.animal.equine.AbstractEquineModel;
 import net.minecraft.client.model.animal.feline.OcelotModel;
@@ -126,16 +122,5 @@ public class EnderZoologyClient implements ClientModConstructor {
                 () -> CreeperModel.createBodyLayer(CubeDeformation.NONE));
         context.registerLayerDefinition(ModModelLayers.CONCUSSION_CREEPER_ARMOR,
                 () -> CreeperModel.createBodyLayer(new CubeDeformation(2.0F)));
-    }
-
-    @Override
-    public void onAddResourcePackFinders(PackRepositorySourcesContext context) {
-        context.registerRepositorySource(PackResourcesHelper.buildClientPack(EnderZoology.id(
-                        "dynamically_copied_textures"),
-                DynamicallyCopiedPackResources.create(new DynamicallyCopiedPackResources.TextureCopy(FallenMountRenderer.VANILLA_TEXTURE_LOCATION,
-                        FallenMountRenderer.TEXTURE_LOCATION,
-                        64,
-                        64)),
-                false));
     }
 }

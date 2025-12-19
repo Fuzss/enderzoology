@@ -61,51 +61,50 @@ public class FallenKnight extends AbstractSkeleton {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
-        this.populateArmorEquipmentSlots(random);
-        Item item;
-        if (random.nextBoolean()) {
-            item = ModItems.HUNTING_BOW_ITEM.value();
-        } else {
-            if (random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.6F : 0.2F)) {
-                item = Items.IRON_SWORD;
-            } else {
-                item = Items.STONE_SWORD;
+    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficulty) {
+        int equipmentQuality = this.getArmorEquipmentQuality(randomSource);
+        float skipRemainingPiecesChance = this.level().getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F;
+        boolean hasEquippedHelmet = true;
+        for (EquipmentSlot equipmentSlot : EQUIPMENT_POPULATION_ORDER) {
+            ItemStack itemstack = this.getItemBySlot(equipmentSlot);
+            if (!hasEquippedHelmet && randomSource.nextFloat() < skipRemainingPiecesChance) {
+                break;
+            }
+
+            hasEquippedHelmet = false;
+            if (itemstack.isEmpty()) {
+                Item item = getEquipmentForSlot(equipmentSlot, equipmentQuality);
+                if (item != null) {
+                    this.setItemSlot(equipmentSlot, new ItemStack(item));
+                }
             }
         }
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item));
+
+        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(this.getMainHandEquipment(randomSource)));
     }
 
-    private void populateArmorEquipmentSlots(RandomSource random) {
-        float selector = random.nextFloat();
-        int quality;
-        if (selector < 0.1F) {
-            // iron
-            quality = 3;
-        } else if (selector < 0.35F) {
-            // leather
-            quality = 0;
+    private int getArmorEquipmentQuality(RandomSource randomSource) {
+        float randomValue = randomSource.nextFloat();
+        if (randomValue < 0.2F) {
+            // Iron
+            return 4;
+        } else if (randomValue < 0.5F) {
+            // Chainmail
+            return 3;
         } else {
-            // chain mail
-            quality = 2;
+            // Copper
+            return 1;
         }
+    }
 
-        EquipmentSlot[] values = EquipmentSlot.values();
-        for (int i = values.length - 1; i >= 0; i--) {
-            EquipmentSlot slot = values[i];
-            if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
-                ItemStack itemStack = this.getItemBySlot(slot);
-                if (slot != EquipmentSlot.HEAD && random.nextFloat() < (
-                        this.level().getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F)) {
-                    break;
-                }
-
-                if (itemStack.isEmpty()) {
-                    Item item = getEquipmentForSlot(slot, quality);
-                    if (item != null) {
-                        this.setItemSlot(slot, new ItemStack(item));
-                    }
-                }
+    private Item getMainHandEquipment(RandomSource randomSource) {
+        if (randomSource.nextBoolean()) {
+            return ModItems.HUNTING_BOW_ITEM.value();
+        } else {
+            if (randomSource.nextInt(this.level().getDifficulty() == Difficulty.HARD ? 3 : 5) == 0) {
+                return Items.IRON_SWORD;
+            } else {
+                return Items.STONE_SWORD;
             }
         }
     }
@@ -113,13 +112,11 @@ public class FallenKnight extends AbstractSkeleton {
     @Override
     protected void enchantSpawnedWeapon(ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {
         super.enchantSpawnedWeapon(level, random, difficulty);
-        if (random.nextInt(10) == 0) {
-            ItemStack itemstack = this.getMainHandItem();
-            if (itemstack.is(ModItems.HUNTING_BOW_ITEM.value())) {
-                Holder<Enchantment> enchantment = EnchantingHelper.lookup(level, Enchantments.PIERCING);
-                itemstack.enchant(enchantment, 1);
-                this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
-            }
+        ItemStack itemstack = this.getMainHandItem();
+        if (itemstack.is(ModItems.HUNTING_BOW_ITEM.value()) && random.nextInt(5) == 0) {
+            Holder<Enchantment> enchantment = EnchantingHelper.lookup(level, Enchantments.PIERCING);
+            itemstack.enchant(enchantment, 1 + random.nextInt(3));
+            this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
         }
     }
 
@@ -130,20 +127,20 @@ public class FallenKnight extends AbstractSkeleton {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
-        spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData);
-        if (level.getRandom().nextBoolean()) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevel, DifficultyInstance difficulty, EntitySpawnReason entitySpawnReason, @Nullable SpawnGroupData spawnGroupData) {
+        this.setCanBreakDoors(
+                serverLevel.getRandom().nextFloat() < difficulty.getSpecialMultiplier() * BREAK_DOOR_CHANCE);
+        if (serverLevel.getRandom().nextBoolean()) {
             Mob mob = ModEntityTypes.FALLEN_MOUNT_ENTITY_TYPE.value().create(this.level(), EntitySpawnReason.JOCKEY);
             if (mob != null) {
                 mob.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-                mob.finalizeSpawn(level, difficulty, EntitySpawnReason.JOCKEY, null);
-                this.startRiding(mob);
-                level.addFreshEntity(mob);
+                mob.finalizeSpawn(serverLevel, difficulty, EntitySpawnReason.JOCKEY, null);
+                this.startRiding(mob, false, false);
+                serverLevel.addFreshEntity(mob);
             }
         }
 
-        this.setCanBreakDoors(level.getRandom().nextFloat() < difficulty.getSpecialMultiplier() * BREAK_DOOR_CHANCE);
-        return spawnData;
+        return super.finalizeSpawn(serverLevel, difficulty, entitySpawnReason, spawnGroupData);
     }
 
     public boolean canBreakDoors() {

@@ -171,22 +171,22 @@ public class FallenMount extends AbstractHorse implements Enemy {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
-        ItemStack itemStack = new ItemStack(this.pickDefaultHorseArmor(random));
-        this.setItemSlot(EquipmentSlot.BODY, itemStack);
-        this.setDropChance(EquipmentSlot.BODY, 0.0F);
+    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficulty) {
+        Item item = this.getBodyEquipment(randomSource);
+        if (item != null) {
+            this.setItemSlot(EquipmentSlot.BODY, new ItemStack(item));
+            this.setDropChance(EquipmentSlot.BODY, 0.0F);
+        }
     }
 
-    private Item pickDefaultHorseArmor(RandomSource random) {
-        float randomValue = random.nextFloat();
-        if (randomValue < 0.015F) {
-            return Items.DIAMOND_HORSE_ARMOR;
-        } else if (randomValue < 0.05F) {
-            return Items.GOLDEN_HORSE_ARMOR;
-        } else if (randomValue < 0.2F) {
-            return Items.LEATHER_HORSE_ARMOR;
-        } else {
+    private @Nullable Item getBodyEquipment(RandomSource randomSource) {
+        float randomValue = randomSource.nextFloat();
+        if (randomValue < 0.2F) {
             return Items.IRON_HORSE_ARMOR;
+        } else if (randomValue < 0.5F) {
+            return Items.COPPER_HORSE_ARMOR;
+        } else {
+            return null;
         }
     }
 
